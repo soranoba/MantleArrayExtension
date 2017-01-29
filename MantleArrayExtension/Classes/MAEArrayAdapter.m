@@ -244,12 +244,6 @@ static unichar const MAEDefaultSeparator = ' ';
 
 #pragma mark Transformer
 
-/**
- * It returns a transformer for converting MAEArraySerializing modelClass and NSArray.
- *
- * @param modelClass A modelClass that conforms MAEArraySerializing
- * @return A transformer
- */
 + (NSValueTransformer* _Nonnull)arrayTransformerWithModelClass:(Class _Nonnull)modelClass
 {
     return [MTLValueTransformer
@@ -288,12 +282,7 @@ static unichar const MAEDefaultSeparator = ' ';
         }];
 }
 
-/**
- * It returns transformer for converting between number and NSString.
- *
- * @return A transformer
- */
-+ (NSValueTransformer<MTLTransformerErrorHandling>* _Nonnull)numberTransformer
++ (NSValueTransformer* _Nonnull)numberStringTransformer
 {
     return [MTLValueTransformer
         transformerUsingForwardBlock:
@@ -318,12 +307,7 @@ static unichar const MAEDefaultSeparator = ' ';
         }];
 }
 
-/**
- * It returns transformer for converting between bool and NSString.
- *
- * @return A transformer
- */
-+ (NSValueTransformer<MTLTransformerErrorHandling>* _Nonnull)boolTransformer
++ (NSValueTransformer* _Nonnull)boolStringTransformer
 {
     return [MTLValueTransformer
         transformerUsingForwardBlock:
@@ -371,9 +355,9 @@ static unichar const MAEDefaultSeparator = ' ';
         || strcmp(type, @encode(NSNumber)) == 0
         || strcmp(type, @encode(float)) == 0
         || strcmp(type, @encode(double)) == 0) {
-        return [self numberTransformer];
+        return [self numberStringTransformer];
     } else if (strcmp(type, @encode(BOOL)) == 0) {
-        return [self boolTransformer];
+        return [self boolStringTransformer];
     }
     return nil;
 }

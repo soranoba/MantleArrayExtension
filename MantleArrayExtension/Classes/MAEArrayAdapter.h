@@ -81,7 +81,8 @@
 
 @interface MAEArrayAdapter : NSObject
 
-#pragma mark - Conversion between Array and Model
+#pragma mark - Public Methods
+#pragma mark Conversion between Array and Model
 
 /**
  * Convert to model from string
@@ -125,5 +126,29 @@
  */
 + (NSString* _Nullable)stringFromModel:(id<MAEArraySerializing> _Nullable)model
                                  error:(NSError* _Nullable* _Nullable)error;
+
+#pragma mark Transformer
+
+/**
+ * It returns a transformer for converting MAEArraySerializing modelClass and NSArray.
+ *
+ * @param modelClass A modelClass that conforms MAEArraySerializing
+ * @return A transformer
+ */
++ (NSValueTransformer* _Nonnull)arrayTransformerWithModelClass:(Class _Nonnull)modelClass;
+
+/**
+ * It returns transformer for converting between number and NSString.
+ *
+ * @return A transformer
+ */
++ (NSValueTransformer* _Nonnull)numberStringTransformer;
+
+/**
+ * It returns transformer for converting between bool and NSString.
+ *
+ * @return A transformer
+ */
++ (NSValueTransformer* _Nonnull)boolStringTransformer;
 
 @end
