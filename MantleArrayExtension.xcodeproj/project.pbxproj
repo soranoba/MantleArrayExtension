@@ -60,10 +60,10 @@
 		A456FC341E3A528D002EA7B0 = {
 			isa = PBXGroup;
 			children = (
-				A456FC4D1E3A5375002EA7B0 /* MantleArrayExtensionTests.xctest */,
+				12105E5A6875B38B5DD0E40B /* Frameworks */,
 				A456FC4E1E3A5375002EA7B0 /* MantleArrayExtensionTests */,
 				4E8B85E66E042922879361B4 /* Pods */,
-				12105E5A6875B38B5DD0E40B /* Frameworks */,
+				A456FC4D1E3A5375002EA7B0 /* MantleArrayExtensionTests.xctest */,
 			);
 			sourceTree = "<group>";
 		};
@@ -73,9 +73,9 @@
 				A456FC621E3DA337002EA7B0 /* TestModels */,
 				A456FC511E3A5375002EA7B0 /* Info.plist */,
 				A456FC5F1E3DA2BA002EA7B0 /* MAEArrayAdapterTests.m */,
-				A456FC611E3DA2CD002EA7B0 /* MantleArrayExtension-Prefix.pch */,
-				A456FC6A1E3DC589002EA7B0 /* MAESeparatedStringTests.m */,
 				A456FC6C1E3E0A31002EA7B0 /* MAEFragmentTests.m */,
+				A456FC6A1E3DC589002EA7B0 /* MAESeparatedStringTests.m */,
+				A456FC611E3DA2CD002EA7B0 /* MantleArrayExtension-Prefix.pch */,
 			);
 			path = MantleArrayExtensionTests;
 			sourceTree = "<group>";
@@ -86,7 +86,7 @@
 				A456FC631E3DA35C002EA7B0 /* MAETModel.h */,
 				A456FC641E3DA35C002EA7B0 /* MAETModel.m */,
 			);
-			name = TestModels;
+			path = TestModels;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -314,6 +314,7 @@
 				GCC_PREFIX_HEADER = "MantleArrayExtensionTests/MantleArrayExtension-Prefix.pch";
 				HEADER_SEARCH_PATHS = MantleArrayExtension/Classes/Private;
 				INFOPLIST_FILE = MantleArrayExtensionTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = net.soranoba.MantleArrayExtensionTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -328,6 +329,7 @@
 				GCC_PREFIX_HEADER = "MantleArrayExtensionTests/MantleArrayExtension-Prefix.pch";
 				HEADER_SEARCH_PATHS = MantleArrayExtension/Classes/Private;
 				INFOPLIST_FILE = MantleArrayExtensionTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = net.soranoba.MantleArrayExtensionTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
