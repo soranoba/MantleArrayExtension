@@ -6,6 +6,8 @@
 //  Copyright © 2017年 Hinagiku Soranoba. All rights reserved.
 //
 
+#import "MAEErrorCode.h"
+#import "MAEFragment.h"
 #import <Foundation/Foundation.h>
 #import <Mantle/MTLModel.h>
 
@@ -14,42 +16,29 @@
 /**
  * Specifies how to map property keys to index in Array.
  *
- * ------ 1st case -----
+ * Kind of format:
+ *    - @"propetyName"
+ *    - MAEQuoted(@"propertyName")
+ *    - MAESingleQuoted(@"propertyName")
+ *    - MAEOptional(@"propertyName")
+ *    - MAEVariadic(@"propertyName")
  *
- * Input Data
- *      ./command "format" argA argB "argC"
+ *    Please refer to MAEFragment.h
  *
- * ```
- * @property (nonatomic, nullable, copy) NSString* command;               // @"./command"
- * @property (nonatomic, nullable, copy) NSString* format;                // @"format"
- * @property (nonatomic, nullable, copy) NSArray<NSString*>* arguments;   // @[@"argA", @"argB", @"argC"]
+ * Treatment of quoted-string:
+ *    - Not limited to format, unbalanced quoted is not allowed.
+ *    - While enclosed in quoted-string, separator and another quoted-string will be invalid.
+ *    - While enclosed in quoted-string, you can use quoted-string by using backslash.
  *
- * ```
+ * Optional and Variadic:
+ *    - If the number of elements does not match, it is deleted from the last optional or variadic element.
+ *    - Variadic can only be used for the last element.
+ *    - Variadic will be nonnull unless Optional is set. 
+ *      (Conversely, if optional is set, nil is set when there is no value)
  *
- * ```
- * + (NSArray _Nonnull)formatByPropertyKey
- * {
- *     return @[ @"command", MAEQuoted(@"format"), MAEVariadic(MAEMaybeQuoted(@"args")) ];
- * }
- * ```
+ * Nested model:
+ *    - You MUST be sure to specify different separator for parent and child.
  *
- * ----- 2nd case -----
- *
- * Input Data
- *      2017-01-27T01:00:00 MAEArraySerializing:+formatByPropertyKey:20 message
- *
- * ```
- * @property (nonatomic, nullable, strong) NSDate* date;     // 2017-01-27T01:00:00
- * @property (nonatomic, nullable, strong) Model* location;
- * @property (nonatomic, nullable, strong) NSString* msg;    // @"message"
- * ```
- *
- * ```
- * + (NSArray _Nonnull)formatByPropertyKey
- * {
- *     return @[ @"date", @"location", @"msg" ];
- * }
- * ```
  */
 + (NSArray* _Nonnull)formatByPropertyKey;
 
@@ -62,15 +51,15 @@
  * @see MAEArrayAdapter # modelOfClass:fromString:error:
  * @see MAEArrayAdapter # stringFromModel:error:
  */
-+ (NSString* _Nonnull)separator;
++ (unichar)separator;
 
 /**
- * If it is YES, empty strings is removed when it split string with separator.
- * If it is NO, empty strings is remained.
+ * If it is YES, the first and last spaces of the splited string are deleted.
+ * If it is NO, the first and last spaces are remained.
  *
  * Default is YES.
  */
-+ (BOOL)ignoreEmptyString;
++ (BOOL)ignoreEdgeBlank;
 
 /**
  * Specifies how to convert a Value to the given property key.
@@ -116,7 +105,7 @@
  */
 + (id<MAEArraySerializing> _Nullable)modelOfClass:(Class _Nonnull)modelClass
                                         fromArray:(NSArray<NSString*>* _Nullable)array
-                                            error:(NSError* _Nullable *_Nullable)error;
+                                            error:(NSError* _Nullable* _Nullable)error;
 /**
  * Convert to string of array from model
  *
@@ -135,6 +124,6 @@
  * @return If conversion is success, it returns a string. Otherwise, it returns nil.
  */
 + (NSString* _Nullable)stringFromModel:(id<MAEArraySerializing> _Nullable)model
-                                 error:(NSError* _Nullable *_Nullable)error;
+                                 error:(NSError* _Nullable* _Nullable)error;
 
 @end

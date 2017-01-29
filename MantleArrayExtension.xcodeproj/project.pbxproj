@@ -8,15 +8,23 @@
 
 /* Begin PBXBuildFile section */
 		70B3EE55314D835554FE9C0C /* Pods_MantleArrayExtensionTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A4F308B402447A74AE9767A /* Pods_MantleArrayExtensionTests.framework */; };
-		A456FC501E3A5375002EA7B0 /* MantleArrayExtensionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A456FC4F1E3A5375002EA7B0 /* MantleArrayExtensionTests.m */; };
+		A456FC601E3DA2BA002EA7B0 /* MAEArrayAdapterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A456FC5F1E3DA2BA002EA7B0 /* MAEArrayAdapterTests.m */; };
+		A456FC651E3DA35C002EA7B0 /* MAETModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A456FC641E3DA35C002EA7B0 /* MAETModel.m */; };
+		A456FC6B1E3DC589002EA7B0 /* MAESeparatedStringTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A456FC6A1E3DC589002EA7B0 /* MAESeparatedStringTests.m */; };
+		A456FC6D1E3E0A31002EA7B0 /* MAEFragmentTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A456FC6C1E3E0A31002EA7B0 /* MAEFragmentTests.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		0A4F308B402447A74AE9767A /* Pods_MantleArrayExtensionTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MantleArrayExtensionTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8ED6D9B35B13FDBCE0B2AF7C /* Pods-MantleArrayExtensionTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MantleArrayExtensionTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MantleArrayExtensionTests/Pods-MantleArrayExtensionTests.debug.xcconfig"; sourceTree = "<group>"; };
 		A456FC4D1E3A5375002EA7B0 /* MantleArrayExtensionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MantleArrayExtensionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		A456FC4F1E3A5375002EA7B0 /* MantleArrayExtensionTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MantleArrayExtensionTests.m; sourceTree = "<group>"; };
 		A456FC511E3A5375002EA7B0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A456FC5F1E3DA2BA002EA7B0 /* MAEArrayAdapterTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAEArrayAdapterTests.m; sourceTree = "<group>"; };
+		A456FC611E3DA2CD002EA7B0 /* MantleArrayExtension-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MantleArrayExtension-Prefix.pch"; sourceTree = "<group>"; };
+		A456FC631E3DA35C002EA7B0 /* MAETModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAETModel.h; sourceTree = "<group>"; };
+		A456FC641E3DA35C002EA7B0 /* MAETModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAETModel.m; sourceTree = "<group>"; };
+		A456FC6A1E3DC589002EA7B0 /* MAESeparatedStringTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAESeparatedStringTests.m; sourceTree = "<group>"; };
+		A456FC6C1E3E0A31002EA7B0 /* MAEFragmentTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAEFragmentTests.m; sourceTree = "<group>"; };
 		E4D1EFE56F28CCF5700D7E54 /* Pods-MantleArrayExtensionTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MantleArrayExtensionTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-MantleArrayExtensionTests/Pods-MantleArrayExtensionTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -62,10 +70,23 @@
 		A456FC4E1E3A5375002EA7B0 /* MantleArrayExtensionTests */ = {
 			isa = PBXGroup;
 			children = (
-				A456FC4F1E3A5375002EA7B0 /* MantleArrayExtensionTests.m */,
+				A456FC621E3DA337002EA7B0 /* TestModels */,
 				A456FC511E3A5375002EA7B0 /* Info.plist */,
+				A456FC5F1E3DA2BA002EA7B0 /* MAEArrayAdapterTests.m */,
+				A456FC611E3DA2CD002EA7B0 /* MantleArrayExtension-Prefix.pch */,
+				A456FC6A1E3DC589002EA7B0 /* MAESeparatedStringTests.m */,
+				A456FC6C1E3E0A31002EA7B0 /* MAEFragmentTests.m */,
 			);
 			path = MantleArrayExtensionTests;
+			sourceTree = "<group>";
+		};
+		A456FC621E3DA337002EA7B0 /* TestModels */ = {
+			isa = PBXGroup;
+			children = (
+				A456FC631E3DA35C002EA7B0 /* MAETModel.h */,
+				A456FC641E3DA35C002EA7B0 /* MAETModel.m */,
+			);
+			name = TestModels;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -187,7 +208,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A456FC501E3A5375002EA7B0 /* MantleArrayExtensionTests.m in Sources */,
+				A456FC651E3DA35C002EA7B0 /* MAETModel.m in Sources */,
+				A456FC601E3DA2BA002EA7B0 /* MAEArrayAdapterTests.m in Sources */,
+				A456FC6B1E3DC589002EA7B0 /* MAESeparatedStringTests.m in Sources */,
+				A456FC6D1E3E0A31002EA7B0 /* MAEFragmentTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -287,6 +311,8 @@
 			baseConfigurationReference = 8ED6D9B35B13FDBCE0B2AF7C /* Pods-MantleArrayExtensionTests.debug.xcconfig */;
 			buildSettings = {
 				DEVELOPMENT_TEAM = Q67BJ4H5A7;
+				GCC_PREFIX_HEADER = "MantleArrayExtensionTests/MantleArrayExtension-Prefix.pch";
+				HEADER_SEARCH_PATHS = MantleArrayExtension/Classes/Private;
 				INFOPLIST_FILE = MantleArrayExtensionTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = net.soranoba.MantleArrayExtensionTests;
@@ -299,6 +325,8 @@
 			baseConfigurationReference = E4D1EFE56F28CCF5700D7E54 /* Pods-MantleArrayExtensionTests.release.xcconfig */;
 			buildSettings = {
 				DEVELOPMENT_TEAM = Q67BJ4H5A7;
+				GCC_PREFIX_HEADER = "MantleArrayExtensionTests/MantleArrayExtension-Prefix.pch";
+				HEADER_SEARCH_PATHS = MantleArrayExtension/Classes/Private;
 				INFOPLIST_FILE = MantleArrayExtensionTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = net.soranoba.MantleArrayExtensionTests;
@@ -325,6 +353,7 @@
 				A456FC531E3A5375002EA7B0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
