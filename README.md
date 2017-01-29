@@ -1,8 +1,8 @@
 # MantleArrayExtension
-[![CI Status](http://img.shields.io/travis/soranoba/MantleXMLExtension.svg?style=flat)](https://travis-ci.org/soranoba/MantleArrayExtension)
-[![Version](https://img.shields.io/cocoapods/v/MantleXMLExtension.svg?style=flat)](http://cocoapods.org/pods/MantleArrayExtension)
-[![License](https://img.shields.io/cocoapods/l/MantleXMLExtension.svg?style=flat)](http://cocoapods.org/pods/MantleArrayExtension)
-[![Platform](https://img.shields.io/cocoapods/p/MantleXMLExtension.svg?style=flat)](http://cocoapods.org/pods/MantleArrayExtension)
+[![CI Status](http://img.shields.io/travis/soranoba/MantleArrayExtension.svg?style=flat)](https://travis-ci.org/soranoba/MantleArrayExtension)
+[![Version](https://img.shields.io/cocoapods/v/MantleArrayExtension.svg?style=flat)](http://cocoapods.org/pods/MantleArrayExtension)
+[![License](https://img.shields.io/cocoapods/l/MantleArrayExtension.svg?style=flat)](http://cocoapods.org/pods/MantleArrayExtension)
+[![Platform](https://img.shields.io/cocoapods/p/MantleArrayExtension.svg?style=flat)](http://cocoapods.org/pods/MantleArrayExtension)
 
 MantleArrayExtension support mutual conversion between Model object and character-delimited String with Mantle.
 
