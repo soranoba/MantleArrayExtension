@@ -16,8 +16,11 @@
 #import <objc/runtime.h>
 
 static unichar const MAEDefaultSeparator = ' ';
+
+/// It is a Key to use for non-local exits (NSException)
 static NSString* const MAESeparatorChanged = @"MAESeparatorChanged";
-static NSString* const MAEModelClass = @"MAEModelClass";
+
+static NSString* const MAEAdapter = @"MAEAdapter";
 
 @interface MAEArrayAdapter ()
 
@@ -145,10 +148,9 @@ static NSString* const MAEModelClass = @"MAEModelClass";
     @try {
         return [self modelFromSeparatedStrings:[self separateString:string]
                                          error:error];
-    } @catch(NSException* exception) {
+    } @catch (NSException* exception) {
         if (exception.name == MAESeparatorChanged) {
-            Class class = exception.userInfo[MAEModelClass];
-            MAEArrayAdapter* otherAdapter = [[self.class alloc] initWithModelClass:class];
+            MAEArrayAdapter* otherAdapter = exception.userInfo[MAEAdapter];
             return [otherAdapter modelFromString:string error:error];
         }
         @throw exception;
@@ -170,10 +172,9 @@ static NSString* const MAEModelClass = @"MAEModelClass";
 
     @try {
         return [self modelFromSeparatedStrings:separatedStrings error:error];
-    } @catch(NSException* exception) {
+    } @catch (NSException* exception) {
         if (exception.name == MAESeparatorChanged) {
-            Class class = exception.userInfo[MAEModelClass];
-            MAEArrayAdapter* otherAdapter = [[self.class alloc] initWithModelClass:class];
+            MAEArrayAdapter* otherAdapter = exception.userInfo[MAEAdapter];
             return [otherAdapter modelFromSeparatedStrings:separatedStrings error:error];
         }
         @throw exception;
@@ -258,7 +259,7 @@ static NSString* const MAEModelClass = @"MAEModelClass";
                     type = MAEStringTypeEnumerate;
                     break;
             }
-            [result addObject:[[[MAESeparatedString alloc] initWithValue:transformedString type:type] toString]];
+            [result addObject:[[[MAESeparatedString alloc] initWithCharacters:transformedString type:type] toString]];
         }
     }
     return result;
@@ -414,7 +415,7 @@ static NSString* const MAEModelClass = @"MAEModelClass";
             if (otherAdapter.separator != self.separator) {
                 NSException* exception = [[NSException alloc] initWithName:MAESeparatorChanged
                                                                     reason:nil
-                                                                  userInfo:@{MAEModelClass : class}];
+                                                                  userInfo:@{ MAEAdapter : otherAdapter }];
                 @throw exception;
             }
             return [otherAdapter modelFromSeparatedStrings:separatedStrings error:error];
@@ -492,17 +493,17 @@ static NSString* const MAEModelClass = @"MAEModelClass";
                 if (!validate(f, s)) {
                     return nil;
                 }
-                [arr addObject:s.v];
+                [arr addObject:s.characters];
             }
             value = arr;
         } else {
             s = [sEnum nextObject];
-            NSAssert(s, @"");
+            NSAssert(s, @"Incorrect number of elements in separatedString");
 
             if (!validate(f, s)) {
                 return nil;
             }
-            value = s.v;
+            value = s.characters;
         }
 
         value = transform(f.propertyName, value);

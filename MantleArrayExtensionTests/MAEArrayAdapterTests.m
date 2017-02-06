@@ -125,30 +125,40 @@ QuickSpecBegin(MAEArrayAdapterTests)
             __block NSError* error = nil;
 
             mock = OCMClassMock(MAETModel5.class);
-            OCMExpect([mock classForParsingArray:[OCMArg checkWithBlock:^BOOL(id arg) {
-                // NOTE: MAETModel5's separator is ' '.
-                expect(arg).to(equal(@[ [[MAESeparatedString alloc] initWithValue:@"a" type:MAEStringTypeEnumerate],
-                                        [[MAESeparatedString alloc] initWithValue:@"|" type:MAEStringTypeEnumerate],
-                                        [[MAESeparatedString alloc] initWithValue:@"b," type:MAEStringTypeEnumerate],
-                                        [[MAESeparatedString alloc] initWithValue:@"c," type:MAEStringTypeEnumerate],
-                                        [[MAESeparatedString alloc] initWithValue:@"d" type:MAEStringTypeEnumerate]]));
-                return YES;
-            }]]).andForwardToRealObject();
+            id checkBlock =
+                [OCMArg checkWithBlock:^BOOL(id arg) {
+                    // NOTE: MAETModel5's separator is ' '.
+                    expect(arg).to(equal(@[ [[MAESeparatedString alloc] initWithCharacters:@"a" type:MAEStringTypeEnumerate],
+                                            [[MAESeparatedString alloc] initWithCharacters:@"|"
+                                                                                      type:MAEStringTypeEnumerate],
+                                            [[MAESeparatedString alloc] initWithCharacters:@"b,"
+                                                                                      type:MAEStringTypeEnumerate],
+                                            [[MAESeparatedString alloc] initWithCharacters:@"c,"
+                                                                                      type:MAEStringTypeEnumerate],
+                                            [[MAESeparatedString alloc] initWithCharacters:@"d"
+                                                                                      type:MAEStringTypeEnumerate] ]));
+                    return YES;
+                }];
+            OCMExpect([mock classForParsingArray:checkBlock]).andForwardToRealObject();
 
             // NOTE: It is specify to use MAETModel4 in MAETModel5
-            expect(model = [MAEArrayAdapter modelOfClass:MAETModel5.class fromString:@"a | b, c, d" error:&error]).notTo(beNil());
+            expect(model = [MAEArrayAdapter modelOfClass:MAETModel5.class fromString:@"a | b, c, d" error:&error])
+                .notTo(beNil());
             expect(model.requireString).to(equal(@"a"));
             expect(error).to(beNil());
 
             OCMVerify(mock);
 
-            OCMExpect([mock classForParsingArray:[OCMArg checkWithBlock:^BOOL(id arg) {
-                expect(arg).to(equal(@[ [[MAESeparatedString alloc] initWithValue:@"a" type:MAEStringTypeEnumerate],
-                                        [[MAESeparatedString alloc] initWithValue:@"b, c, d" type:MAEStringTypeEnumerate] ]));
+            checkBlock = [OCMArg checkWithBlock:^BOOL(id arg) {
+                expect(arg).to(equal(@[ [[MAESeparatedString alloc] initWithCharacters:@"a"
+                                                                                  type:MAEStringTypeEnumerate],
+                                        [[MAESeparatedString alloc] initWithCharacters:@"b, c, d"
+                                                                                  type:MAEStringTypeEnumerate] ]));
                 return YES;
-            }]]).andForwardToRealObject();
+            }];
+            OCMExpect([mock classForParsingArray:checkBlock]).andForwardToRealObject();
 
-            expect(model = [MAEArrayAdapter modelOfClass:MAETModel5.class fromArray:@[@"a", @"b, c, d"] error:&error]).notTo(beNil());
+            expect(model = [MAEArrayAdapter modelOfClass:MAETModel5.class fromArray:@[ @"a", @"b, c, d" ] error:&error]).notTo(beNil());
             expect(model.requireString).to(equal(@"a"));
             expect(error).to(beNil());
 
@@ -163,7 +173,7 @@ QuickSpecBegin(MAEArrayAdapterTests)
             OCMStub([mock classForParsingArray:OCMOCK_ANY]).andReturn(MAETModel5.class);
 
             expect(model = [MAEArrayAdapter modelOfClass:MAETModel5.class fromString:@"a | b, c, d" error:&error]).notTo(beNil());
-            expect(model.variadicArray).to(equal(@[@"a", @"|", @"b,", @"c,", @"d"]));
+            expect(model.variadicArray).to(equal(@[ @"a", @"|", @"b,", @"c,", @"d" ]));
             expect(error).to(beNil());
         });
     });

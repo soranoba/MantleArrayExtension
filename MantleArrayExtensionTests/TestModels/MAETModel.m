@@ -101,7 +101,7 @@
 
 + (NSArray* _Nonnull)formatByPropertyKey
 {
-    return @[MAEOptional(MAEVariadic(@"variadicArray"))];
+    return @[ MAEOptional(MAEVariadic(@"variadicArray")) ];
 }
 
 + (unichar)separator
