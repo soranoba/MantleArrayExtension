@@ -16,23 +16,24 @@ typedef NS_ENUM(NSUInteger, MAEStringType) {
 
 @interface MAESeparatedString : NSObject
 
-@property (nonatomic, nonnull, copy, readonly) NSString* v;
+@property (nonatomic, nonnull, copy, readonly) NSString* characters;
 @property (nonatomic, assign, readonly) MAEStringType type;
 
 #pragma mark - Lifecycle
 
 /**
- * Create an instance
+ * Specify a type and create an instance.
+ * If you want to create an instance with quoted-string, the characters MUST be removed prefix and suffix double-quoted.
  *
- * @param v      A string processed double-quote.
- * @param type   A string type.
+ * @param characters A string without quoted.
+ * @param type       A string type.
  * @return An instance
  */
-- (instancetype _Nonnull)initWithValue:(NSString* _Nonnull)v
-                                  type:(MAEStringType)type;
+- (instancetype _Nonnull)initWithCharacters:(NSString* _Nonnull)characters
+                                       type:(MAEStringType)type;
 
 /**
- * Create an instance from string
+ * Create an instance after judging whether the string is quoted-string.
  *
  * @param string  A string
  * @return An instance

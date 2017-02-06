@@ -94,3 +94,24 @@
 }
 
 @end
+
+@implementation MAETModel5
+
+#pragma mark - MAEArraySerializing
+
++ (NSArray* _Nonnull)formatByPropertyKey
+{
+    return @[ MAEOptional(MAEVariadic(@"variadicArray")) ];
+}
+
++ (unichar)separator
+{
+    return ' ';
+}
+
++ (Class _Nullable)classForParsingArray:(NSArray<MAESeparatedString*>* _Nonnull)array
+{
+    return MAETModel4.class;
+}
+
+@end

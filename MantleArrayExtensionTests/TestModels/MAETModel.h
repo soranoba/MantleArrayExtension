@@ -41,3 +41,9 @@
 @property (nonatomic, nullable, strong) MAETModel3* model3;
 
 @end
+
+@interface MAETModel5 : MTLModel <MAEArraySerializing>
+
+@property (nonatomic, nullable, copy) NSArray<NSString*>* variadicArray;
+
+@end
