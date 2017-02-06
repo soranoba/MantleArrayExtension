@@ -14,6 +14,7 @@ typedef NS_ENUM(NSUInteger, MAEErrorCode) {
     MAEErrorNotQuoted,
     MAEErrorNotEnum,
     MAEErrorTransform,
+    MAEErrorNoConversionTarget,
 };
 
 extern NSString* const MAEErrorDomain;

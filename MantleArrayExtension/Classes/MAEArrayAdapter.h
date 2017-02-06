@@ -8,6 +8,7 @@
 
 #import "MAEErrorCode.h"
 #import "MAEFragment.h"
+#import "MAESeparatedString.h"
 #import <Foundation/Foundation.h>
 #import <Mantle/MTLModel.h>
 
@@ -75,7 +76,7 @@
  * @param array An array that will be parsed.
  * @return a MAEArraySerializing class
  */
-+ (Class _Nullable)classForParsingArray:(NSArray<NSString*>* _Nonnull)array;
++ (Class _Nullable)classForParsingArray:(NSArray<MAESeparatedString*>* _Nonnull)array;
 
 @end
 

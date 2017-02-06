@@ -51,6 +51,8 @@ NSString* _Nonnull const MAEErrorDomain = @"MAEErrorDomain";
             return @"Enumerate-string is expected, but it differs";
         case MAEErrorTransform:
             return @"The result of transform is incorrect";
+        case MAEErrorNoConversionTarget:
+            return @"No conversion target. (classForParsingArray: returns nil)";
         default:
             return @"Unknown error";
     }

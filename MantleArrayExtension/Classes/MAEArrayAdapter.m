@@ -16,10 +16,12 @@
 #import <objc/runtime.h>
 
 static unichar const MAEDefaultSeparator = ' ';
+static NSString* const MAESeparatorChanged = @"MAESeparatorChanged";
+static NSString* const MAEModelClass = @"MAEModelClass";
 
 @interface MAEArrayAdapter ()
 
-@property (nonatomic, nonnull, strong) Class<MAEArraySerializing> modelClass;
+@property (nonatomic, nonnull, strong) Class modelClass;
 /// A cached copy of the return value of +formatByPropertyKey
 @property (nonatomic, nonnull, copy) NSArray<MAEFragment*>* formatByPropertyKey;
 /// A cached copy of the return value of +separator
@@ -139,8 +141,18 @@ static unichar const MAEDefaultSeparator = ' ';
         SET_ERROR(error, MAEErrorInputNil, @"Input string is nil");
         return nil;
     }
-    return [self modelFromSeparatedStrings:[self separateString:string]
-                                     error:error];
+
+    @try {
+        return [self modelFromSeparatedStrings:[self separateString:string]
+                                         error:error];
+    } @catch(NSException* exception) {
+        if (exception.name == MAESeparatorChanged) {
+            Class class = exception.userInfo[MAEModelClass];
+            MAEArrayAdapter* otherAdapter = [[self.class alloc] initWithModelClass:class];
+            return [otherAdapter modelFromString:string error:error];
+        }
+        @throw exception;
+    }
 }
 
 - (id<MAEArraySerializing> _Nullable)modelFromArray:(NSArray<NSString*>* _Nullable)array
@@ -155,7 +167,17 @@ static unichar const MAEDefaultSeparator = ' ';
     for (NSString* s in array) {
         [separatedStrings addObject:[[MAESeparatedString alloc] initWithString:s]];
     }
-    return [self modelFromSeparatedStrings:separatedStrings error:error];
+
+    @try {
+        return [self modelFromSeparatedStrings:separatedStrings error:error];
+    } @catch(NSException* exception) {
+        if (exception.name == MAESeparatorChanged) {
+            Class class = exception.userInfo[MAEModelClass];
+            MAEArrayAdapter* otherAdapter = [[self.class alloc] initWithModelClass:class];
+            return [otherAdapter modelFromSeparatedStrings:separatedStrings error:error];
+        }
+        @throw exception;
+    }
 }
 
 - (NSString* _Nullable)stringFromModel:(id<MAEArraySerializing> _Nullable)model
@@ -374,6 +396,31 @@ static unichar const MAEDefaultSeparator = ' ';
 - (id<MAEArraySerializing> _Nullable)modelFromSeparatedStrings:(NSArray<MAESeparatedString*>* _Nonnull)separatedStrings
                                                          error:(NSError* _Nullable* _Nullable)error
 {
+    if ([self.modelClass respondsToSelector:@selector(classForParsingArray:)]) {
+        Class class = [self.modelClass classForParsingArray:separatedStrings];
+        if (class == nil) {
+            SET_ERROR(error, MAEErrorNoConversionTarget,
+                      ([NSString stringWithFormat:@"%@ # classForParsingArray returns nil", self.modelClass]));
+            return nil;
+        }
+
+        if (class != self.modelClass) {
+            NSAssert([class conformsToProtocol:@protocol(MAEArraySerializing)],
+                     ([NSString stringWithFormat:@"classForParsingArray MUST return MAEArraySerializing MTLModel class. but got %@", class]));
+
+            MAEArrayAdapter* otherAdapter = [[self.class alloc] initWithModelClass:class];
+
+            // NOTE: If separator is different, it will start over from separate process again.
+            if (otherAdapter.separator != self.separator) {
+                NSException* exception = [[NSException alloc] initWithName:MAESeparatorChanged
+                                                                    reason:nil
+                                                                  userInfo:@{MAEModelClass : class}];
+                @throw exception;
+            }
+            return [otherAdapter modelFromSeparatedStrings:separatedStrings error:error];
+        }
+    }
+
     NSArray<MAEFragment*>* fragments = [self.class chooseFormatByPropertyKey:self.formatByPropertyKey
                                                                    withCount:separatedStrings.count];
     if (!fragments) {
