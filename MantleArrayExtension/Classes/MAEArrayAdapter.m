@@ -473,6 +473,8 @@ static NSString* const MAEAdapter = @"MAEAdapter";
                 if (!success) {
                     return nil;
                 }
+            } else {
+                value = [transformer transformedValue:value];
             }
         }
         return value;
