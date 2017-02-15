@@ -267,6 +267,44 @@ static NSString* const MAEAdapter = @"MAEAdapter";
 
 #pragma mark Transformer
 
++ (NSValueTransformer* _Nonnull)variadicArrayTransformerWithModelClass:(Class _Nonnull)modelClass
+{
+    return [MTLValueTransformer
+        transformerUsingForwardBlock:
+            ^id _Nullable(id _Nullable value, BOOL* _Nonnull success, NSError* _Nullable* _Nullable error) {
+                if (!value) {
+                    return nil;
+                }
+
+                if (![value isKindOfClass:NSArray.class]) {
+                    SET_ERROR(error, MAEErrorBadArguemt,
+                              @"arrayTransformerWithModelClass only support to convert from between NSArray and MTLModel");
+                    *success = NO;
+                    return nil;
+                }
+                id model = [self modelOfClass:modelClass fromArray:value error:error];
+                *success = model != nil;
+                return model;
+            }
+        reverseBlock:^id _Nullable(id _Nullable value, BOOL* _Nonnull success, NSError* _Nullable* _Nullable error) {
+            if (!value) {
+                return nil;
+            }
+
+            if (!([value isKindOfClass:MTLModel.class] &&
+                  [value conformsToProtocol:@protocol(MAEArraySerializing)])) {
+                SET_ERROR(error, MAEErrorBadArguemt,
+                          @"arrayTransformerWithModelClass only support MAEArraySerializing MTLModel");
+                *success = NO;
+                return nil;
+            }
+
+            NSArray* array = [self arrayFromModel:value error:error];
+            *success = array != nil;
+            return array;
+        }];
+}
+
 + (NSValueTransformer* _Nonnull)arrayTransformerWithModelClass:(Class _Nonnull)modelClass
 {
     return [MTLValueTransformer

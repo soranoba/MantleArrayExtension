@@ -86,6 +86,7 @@ Model MUST inherit [MTLModel](https://github.com/Mantle/Mantle#mtlmodel) and con
 You can use serializer for MAEArraySerializing object.
 
 - `MAEArrayAdapter # arrayTransformerWithModelClass:`
+- `MAEArrayAdapter # variadicArrayTransformerWithModelClass:`
 
 For MAEArraySerializing property, it is used by default, so you do not need to specify it.
 
