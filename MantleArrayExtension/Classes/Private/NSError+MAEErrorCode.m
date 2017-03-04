@@ -33,7 +33,7 @@ NSString* _Nonnull const MAEErrorDomain = @"MAEErrorDomain";
 /**
  * Return a LocalizedDescription.
  *
- * @param code
+ * @param code   An error code
  * @return A description string
  */
 + (NSString* _Nonnull)mae_description:(MAEErrorCode)code

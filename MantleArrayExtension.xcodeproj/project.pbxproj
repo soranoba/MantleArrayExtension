@@ -7,109 +7,228 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		70B3EE55314D835554FE9C0C /* Pods_MantleArrayExtensionTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A4F308B402447A74AE9767A /* Pods_MantleArrayExtensionTests.framework */; };
-		A456FC601E3DA2BA002EA7B0 /* MAEArrayAdapterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A456FC5F1E3DA2BA002EA7B0 /* MAEArrayAdapterTests.m */; };
-		A456FC651E3DA35C002EA7B0 /* MAETModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A456FC641E3DA35C002EA7B0 /* MAETModel.m */; };
-		A456FC6B1E3DC589002EA7B0 /* MAESeparatedStringTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A456FC6A1E3DC589002EA7B0 /* MAESeparatedStringTests.m */; };
-		A456FC6D1E3E0A31002EA7B0 /* MAEFragmentTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A456FC6C1E3E0A31002EA7B0 /* MAEFragmentTests.m */; };
+		A40611521E6AB9210074F00D /* MantleArrayExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = A40611501E6AB9210074F00D /* MantleArrayExtension.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A406115D1E6AB99F0074F00D /* MAEArrayAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = A40611561E6AB99F0074F00D /* MAEArrayAdapter.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A406115E1E6AB99F0074F00D /* MAEArrayAdapter.m in Sources */ = {isa = PBXBuildFile; fileRef = A40611571E6AB99F0074F00D /* MAEArrayAdapter.m */; };
+		A406115F1E6AB99F0074F00D /* MAEErrorCode.h in Headers */ = {isa = PBXBuildFile; fileRef = A40611581E6AB99F0074F00D /* MAEErrorCode.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A40611601E6AB99F0074F00D /* MAEFragment.h in Headers */ = {isa = PBXBuildFile; fileRef = A40611591E6AB99F0074F00D /* MAEFragment.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A40611611E6AB99F0074F00D /* MAEFragment.m in Sources */ = {isa = PBXBuildFile; fileRef = A406115A1E6AB99F0074F00D /* MAEFragment.m */; };
+		A40611621E6AB99F0074F00D /* MAESeparatedString.h in Headers */ = {isa = PBXBuildFile; fileRef = A406115B1E6AB99F0074F00D /* MAESeparatedString.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A40611631E6AB99F0074F00D /* MAESeparatedString.m in Sources */ = {isa = PBXBuildFile; fileRef = A406115C1E6AB99F0074F00D /* MAESeparatedString.m */; };
+		A40611671E6AB9AF0074F00D /* NSError+MAEErrorCode.h in Headers */ = {isa = PBXBuildFile; fileRef = A40611651E6AB9AF0074F00D /* NSError+MAEErrorCode.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A40611681E6AB9AF0074F00D /* NSError+MAEErrorCode.m in Sources */ = {isa = PBXBuildFile; fileRef = A40611661E6AB9AF0074F00D /* NSError+MAEErrorCode.m */; };
+		A406116B1E6ABACC0074F00D /* Mantle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A406116A1E6ABACC0074F00D /* Mantle.framework */; };
+		A40611751E6ABC2C0074F00D /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A40611741E6ABC2C0074F00D /* Foundation.framework */; };
+		A40611A81E6AC4E30074F00D /* MAEArrayAdapterTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A40611A41E6AC4E30074F00D /* MAEArrayAdapterTests.m */; };
+		A40611A91E6AC4E30074F00D /* MAEFragmentTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A40611A51E6AC4E30074F00D /* MAEFragmentTests.m */; };
+		A40611AA1E6AC4E30074F00D /* MAESeparatedStringTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A40611A61E6AC4E30074F00D /* MAESeparatedStringTests.m */; };
+		A40611AE1E6AC4F20074F00D /* MAETModel.m in Sources */ = {isa = PBXBuildFile; fileRef = A40611AD1E6AC4F20074F00D /* MAETModel.m */; };
+		A40611AF1E6AC51B0074F00D /* Mantle.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A406116A1E6ABACC0074F00D /* Mantle.framework */; };
+		A40611B01E6AC51B0074F00D /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A406116E1E6ABB110074F00D /* Nimble.framework */; };
+		A40611B11E6AC51B0074F00D /* OCMock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A406116F1E6ABB110074F00D /* OCMock.framework */; };
+		A40611B21E6AC51B0074F00D /* Quick.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A40611701E6ABB110074F00D /* Quick.framework */; };
+		A40611B71E6BECD10074F00D /* Mantle.framework in Resources */ = {isa = PBXBuildFile; fileRef = A40611B61E6BECD10074F00D /* Mantle.framework */; };
+		A40611BB1E6BECE10074F00D /* Nimble.framework in Resources */ = {isa = PBXBuildFile; fileRef = A40611B81E6BECE10074F00D /* Nimble.framework */; };
+		A40611BC1E6BECE10074F00D /* OCMock.framework in Resources */ = {isa = PBXBuildFile; fileRef = A40611B91E6BECE10074F00D /* OCMock.framework */; };
+		A40611BD1E6BECE10074F00D /* Quick.framework in Resources */ = {isa = PBXBuildFile; fileRef = A40611BA1E6BECE10074F00D /* Quick.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		A40611B41E6BEC860074F00D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A456FC351E3A528D002EA7B0 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = A406114D1E6AB9210074F00D;
+			remoteInfo = MantleArrayExtension;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
-		0A4F308B402447A74AE9767A /* Pods_MantleArrayExtensionTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MantleArrayExtensionTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		8ED6D9B35B13FDBCE0B2AF7C /* Pods-MantleArrayExtensionTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MantleArrayExtensionTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MantleArrayExtensionTests/Pods-MantleArrayExtensionTests.debug.xcconfig"; sourceTree = "<group>"; };
-		A456FC4D1E3A5375002EA7B0 /* MantleArrayExtensionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MantleArrayExtensionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		A456FC511E3A5375002EA7B0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A456FC5F1E3DA2BA002EA7B0 /* MAEArrayAdapterTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAEArrayAdapterTests.m; sourceTree = "<group>"; };
-		A456FC611E3DA2CD002EA7B0 /* MantleArrayExtension-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MantleArrayExtension-Prefix.pch"; sourceTree = "<group>"; };
-		A456FC631E3DA35C002EA7B0 /* MAETModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MAETModel.h; sourceTree = "<group>"; };
-		A456FC641E3DA35C002EA7B0 /* MAETModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAETModel.m; sourceTree = "<group>"; };
-		A456FC6A1E3DC589002EA7B0 /* MAESeparatedStringTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAESeparatedStringTests.m; sourceTree = "<group>"; };
-		A456FC6C1E3E0A31002EA7B0 /* MAEFragmentTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAEFragmentTests.m; sourceTree = "<group>"; };
-		E4D1EFE56F28CCF5700D7E54 /* Pods-MantleArrayExtensionTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MantleArrayExtensionTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-MantleArrayExtensionTests/Pods-MantleArrayExtensionTests.release.xcconfig"; sourceTree = "<group>"; };
+		A406114E1E6AB9210074F00D /* MantleArrayExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MantleArrayExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A40611501E6AB9210074F00D /* MantleArrayExtension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MantleArrayExtension.h; sourceTree = "<group>"; };
+		A40611511E6AB9210074F00D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A40611561E6AB99F0074F00D /* MAEArrayAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MAEArrayAdapter.h; path = Classes/MAEArrayAdapter.h; sourceTree = "<group>"; };
+		A40611571E6AB99F0074F00D /* MAEArrayAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MAEArrayAdapter.m; path = Classes/MAEArrayAdapter.m; sourceTree = "<group>"; };
+		A40611581E6AB99F0074F00D /* MAEErrorCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MAEErrorCode.h; path = Classes/MAEErrorCode.h; sourceTree = "<group>"; };
+		A40611591E6AB99F0074F00D /* MAEFragment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MAEFragment.h; path = Classes/MAEFragment.h; sourceTree = "<group>"; };
+		A406115A1E6AB99F0074F00D /* MAEFragment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MAEFragment.m; path = Classes/MAEFragment.m; sourceTree = "<group>"; };
+		A406115B1E6AB99F0074F00D /* MAESeparatedString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MAESeparatedString.h; path = Classes/MAESeparatedString.h; sourceTree = "<group>"; };
+		A406115C1E6AB99F0074F00D /* MAESeparatedString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MAESeparatedString.m; path = Classes/MAESeparatedString.m; sourceTree = "<group>"; };
+		A40611651E6AB9AF0074F00D /* NSError+MAEErrorCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSError+MAEErrorCode.h"; path = "Classes/Private/NSError+MAEErrorCode.h"; sourceTree = "<group>"; };
+		A40611661E6AB9AF0074F00D /* NSError+MAEErrorCode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSError+MAEErrorCode.m"; path = "Classes/Private/NSError+MAEErrorCode.m"; sourceTree = "<group>"; };
+		A406116A1E6ABACC0074F00D /* Mantle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Mantle.framework; path = Carthage/Build/iOS/Mantle.framework; sourceTree = "<group>"; };
+		A406116E1E6ABB110074F00D /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nimble.framework; path = Carthage/Build/iOS/Nimble.framework; sourceTree = "<group>"; };
+		A406116F1E6ABB110074F00D /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = Carthage/Build/iOS/OCMock.framework; sourceTree = "<group>"; };
+		A40611701E6ABB110074F00D /* Quick.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quick.framework; path = Carthage/Build/iOS/Quick.framework; sourceTree = "<group>"; };
+		A40611741E6ABC2C0074F00D /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		A40611991E6AC4AC0074F00D /* MantleArrayExtensionTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MantleArrayExtensionTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A406119D1E6AC4AC0074F00D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A40611A41E6AC4E30074F00D /* MAEArrayAdapterTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAEArrayAdapterTests.m; sourceTree = "<group>"; };
+		A40611A51E6AC4E30074F00D /* MAEFragmentTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAEFragmentTests.m; sourceTree = "<group>"; };
+		A40611A61E6AC4E30074F00D /* MAESeparatedStringTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAESeparatedStringTests.m; sourceTree = "<group>"; };
+		A40611A71E6AC4E30074F00D /* MantleArrayExtension-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MantleArrayExtension-Prefix.pch"; sourceTree = "<group>"; };
+		A40611AC1E6AC4F20074F00D /* MAETModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MAETModel.h; path = TestModels/MAETModel.h; sourceTree = "<group>"; };
+		A40611AD1E6AC4F20074F00D /* MAETModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MAETModel.m; path = TestModels/MAETModel.m; sourceTree = "<group>"; };
+		A40611B61E6BECD10074F00D /* Mantle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Mantle.framework; path = Carthage/Build/iOS/Mantle.framework; sourceTree = "<group>"; };
+		A40611B81E6BECE10074F00D /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nimble.framework; path = Carthage/Build/iOS/Nimble.framework; sourceTree = "<group>"; };
+		A40611B91E6BECE10074F00D /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = Carthage/Build/iOS/OCMock.framework; sourceTree = "<group>"; };
+		A40611BA1E6BECE10074F00D /* Quick.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quick.framework; path = Carthage/Build/iOS/Quick.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		A456FC4A1E3A5375002EA7B0 /* Frameworks */ = {
+		A406114A1E6AB9210074F00D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				70B3EE55314D835554FE9C0C /* Pods_MantleArrayExtensionTests.framework in Frameworks */,
+				A40611751E6ABC2C0074F00D /* Foundation.framework in Frameworks */,
+				A406116B1E6ABACC0074F00D /* Mantle.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A40611961E6AC4AC0074F00D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A40611AF1E6AC51B0074F00D /* Mantle.framework in Frameworks */,
+				A40611B01E6AC51B0074F00D /* Nimble.framework in Frameworks */,
+				A40611B11E6AC51B0074F00D /* OCMock.framework in Frameworks */,
+				A40611B21E6AC51B0074F00D /* Quick.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		12105E5A6875B38B5DD0E40B /* Frameworks */ = {
+		A406114F1E6AB9210074F00D /* MantleArrayExtension */ = {
 			isa = PBXGroup;
 			children = (
-				0A4F308B402447A74AE9767A /* Pods_MantleArrayExtensionTests.framework */,
+				A40611561E6AB99F0074F00D /* MAEArrayAdapter.h */,
+				A40611571E6AB99F0074F00D /* MAEArrayAdapter.m */,
+				A40611581E6AB99F0074F00D /* MAEErrorCode.h */,
+				A40611591E6AB99F0074F00D /* MAEFragment.h */,
+				A406115A1E6AB99F0074F00D /* MAEFragment.m */,
+				A406115B1E6AB99F0074F00D /* MAESeparatedString.h */,
+				A406115C1E6AB99F0074F00D /* MAESeparatedString.m */,
+				A40611501E6AB9210074F00D /* MantleArrayExtension.h */,
+				A40611641E6AB9A20074F00D /* Private */,
+				A40611511E6AB9210074F00D /* Info.plist */,
+			);
+			path = MantleArrayExtension;
+			sourceTree = "<group>";
+		};
+		A40611641E6AB9A20074F00D /* Private */ = {
+			isa = PBXGroup;
+			children = (
+				A40611651E6AB9AF0074F00D /* NSError+MAEErrorCode.h */,
+				A40611661E6AB9AF0074F00D /* NSError+MAEErrorCode.m */,
+			);
+			name = Private;
+			sourceTree = "<group>";
+		};
+		A40611691E6ABACC0074F00D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A40611741E6ABC2C0074F00D /* Foundation.framework */,
+				A406116E1E6ABB110074F00D /* Nimble.framework */,
+				A406116F1E6ABB110074F00D /* OCMock.framework */,
+				A40611701E6ABB110074F00D /* Quick.framework */,
+				A406116A1E6ABACC0074F00D /* Mantle.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		4E8B85E66E042922879361B4 /* Pods */ = {
+		A406119A1E6AC4AC0074F00D /* MantleArrayExtensionTests */ = {
 			isa = PBXGroup;
 			children = (
-				8ED6D9B35B13FDBCE0B2AF7C /* Pods-MantleArrayExtensionTests.debug.xcconfig */,
-				E4D1EFE56F28CCF5700D7E54 /* Pods-MantleArrayExtensionTests.release.xcconfig */,
+				A40611AB1E6AC4E60074F00D /* TestModels */,
+				A40611A41E6AC4E30074F00D /* MAEArrayAdapterTests.m */,
+				A40611A51E6AC4E30074F00D /* MAEFragmentTests.m */,
+				A40611A61E6AC4E30074F00D /* MAESeparatedStringTests.m */,
+				A40611A71E6AC4E30074F00D /* MantleArrayExtension-Prefix.pch */,
+				A406119D1E6AC4AC0074F00D /* Info.plist */,
 			);
-			name = Pods;
+			path = MantleArrayExtensionTests;
+			sourceTree = "<group>";
+		};
+		A40611AB1E6AC4E60074F00D /* TestModels */ = {
+			isa = PBXGroup;
+			children = (
+				A40611AC1E6AC4F20074F00D /* MAETModel.h */,
+				A40611AD1E6AC4F20074F00D /* MAETModel.m */,
+			);
+			name = TestModels;
 			sourceTree = "<group>";
 		};
 		A456FC341E3A528D002EA7B0 = {
 			isa = PBXGroup;
 			children = (
-				12105E5A6875B38B5DD0E40B /* Frameworks */,
-				A456FC4E1E3A5375002EA7B0 /* MantleArrayExtensionTests */,
-				4E8B85E66E042922879361B4 /* Pods */,
-				A456FC4D1E3A5375002EA7B0 /* MantleArrayExtensionTests.xctest */,
+				A40611B81E6BECE10074F00D /* Nimble.framework */,
+				A40611B91E6BECE10074F00D /* OCMock.framework */,
+				A40611BA1E6BECE10074F00D /* Quick.framework */,
+				A40611B61E6BECD10074F00D /* Mantle.framework */,
+				A406114E1E6AB9210074F00D /* MantleArrayExtension.framework */,
+				A406114F1E6AB9210074F00D /* MantleArrayExtension */,
+				A406119A1E6AC4AC0074F00D /* MantleArrayExtensionTests */,
+				A40611691E6ABACC0074F00D /* Frameworks */,
+				A40611991E6AC4AC0074F00D /* MantleArrayExtensionTests.xctest */,
 			);
-			sourceTree = "<group>";
-		};
-		A456FC4E1E3A5375002EA7B0 /* MantleArrayExtensionTests */ = {
-			isa = PBXGroup;
-			children = (
-				A456FC621E3DA337002EA7B0 /* TestModels */,
-				A456FC511E3A5375002EA7B0 /* Info.plist */,
-				A456FC5F1E3DA2BA002EA7B0 /* MAEArrayAdapterTests.m */,
-				A456FC6C1E3E0A31002EA7B0 /* MAEFragmentTests.m */,
-				A456FC6A1E3DC589002EA7B0 /* MAESeparatedStringTests.m */,
-				A456FC611E3DA2CD002EA7B0 /* MantleArrayExtension-Prefix.pch */,
-			);
-			path = MantleArrayExtensionTests;
-			sourceTree = "<group>";
-		};
-		A456FC621E3DA337002EA7B0 /* TestModels */ = {
-			isa = PBXGroup;
-			children = (
-				A456FC631E3DA35C002EA7B0 /* MAETModel.h */,
-				A456FC641E3DA35C002EA7B0 /* MAETModel.m */,
-			);
-			path = TestModels;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		A406114B1E6AB9210074F00D /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A406115D1E6AB99F0074F00D /* MAEArrayAdapter.h in Headers */,
+				A40611521E6AB9210074F00D /* MantleArrayExtension.h in Headers */,
+				A40611621E6AB99F0074F00D /* MAESeparatedString.h in Headers */,
+				A40611601E6AB99F0074F00D /* MAEFragment.h in Headers */,
+				A406115F1E6AB99F0074F00D /* MAEErrorCode.h in Headers */,
+				A40611671E6AB9AF0074F00D /* NSError+MAEErrorCode.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
-		A456FC4C1E3A5375002EA7B0 /* MantleArrayExtensionTests */ = {
+		A406114D1E6AB9210074F00D /* MantleArrayExtension */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A456FC541E3A5375002EA7B0 /* Build configuration list for PBXNativeTarget "MantleArrayExtensionTests" */;
+			buildConfigurationList = A40611531E6AB9210074F00D /* Build configuration list for PBXNativeTarget "MantleArrayExtension" */;
 			buildPhases = (
-				545FFCF1EFC6C61D21D8C3BF /* [CP] Check Pods Manifest.lock */,
-				A456FC491E3A5375002EA7B0 /* Sources */,
-				A456FC4A1E3A5375002EA7B0 /* Frameworks */,
-				A456FC4B1E3A5375002EA7B0 /* Resources */,
-				7427108A547DCF081C73A10D /* [CP] Embed Pods Frameworks */,
-				662372991E39E3FCFCEAC2BC /* [CP] Copy Pods Resources */,
+				A40611491E6AB9210074F00D /* Sources */,
+				A406114A1E6AB9210074F00D /* Frameworks */,
+				A406114B1E6AB9210074F00D /* Headers */,
+				A406114C1E6AB9210074F00D /* Resources */,
+				A40611761E6ABC4E0074F00D /* ShellScript */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
+			name = MantleArrayExtension;
+			productName = MantleArrayExtension;
+			productReference = A406114E1E6AB9210074F00D /* MantleArrayExtension.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		A40611981E6AC4AC0074F00D /* MantleArrayExtensionTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A40611A11E6AC4AC0074F00D /* Build configuration list for PBXNativeTarget "MantleArrayExtensionTests" */;
+			buildPhases = (
+				A40611951E6AC4AC0074F00D /* Sources */,
+				A40611961E6AC4AC0074F00D /* Frameworks */,
+				A40611971E6AC4AC0074F00D /* Resources */,
+				A40611B31E6AC5360074F00D /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A40611B51E6BEC860074F00D /* PBXTargetDependency */,
+			);
 			name = MantleArrayExtensionTests;
 			productName = MantleArrayExtensionTests;
-			productReference = A456FC4D1E3A5375002EA7B0 /* MantleArrayExtensionTests.xctest */;
+			productReference = A40611991E6AC4AC0074F00D /* MantleArrayExtensionTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -121,7 +240,12 @@
 				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = "Hinagiku Soranoba";
 				TargetAttributes = {
-					A456FC4C1E3A5375002EA7B0 = {
+					A406114D1E6AB9210074F00D = {
+						CreatedOnToolsVersion = 8.2.1;
+						DevelopmentTeam = Q67BJ4H5A7;
+						ProvisioningStyle = Automatic;
+					};
+					A40611981E6AC4AC0074F00D = {
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = Q67BJ4H5A7;
 						ProvisioningStyle = Automatic;
@@ -140,84 +264,191 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A456FC4C1E3A5375002EA7B0 /* MantleArrayExtensionTests */,
+				A406114D1E6AB9210074F00D /* MantleArrayExtension */,
+				A40611981E6AC4AC0074F00D /* MantleArrayExtensionTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		A456FC4B1E3A5375002EA7B0 /* Resources */ = {
+		A406114C1E6AB9210074F00D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A40611971E6AC4AC0074F00D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A40611BB1E6BECE10074F00D /* Nimble.framework in Resources */,
+				A40611BC1E6BECE10074F00D /* OCMock.framework in Resources */,
+				A40611BD1E6BECE10074F00D /* Quick.framework in Resources */,
+				A40611B71E6BECD10074F00D /* Mantle.framework in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		545FFCF1EFC6C61D21D8C3BF /* [CP] Check Pods Manifest.lock */ = {
+		A40611761E6ABC4E0074F00D /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/Mantle.framework",
 			);
-			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
+			shellScript = "/usr/local/bin/carthage copy-frameworks";
 		};
-		662372991E39E3FCFCEAC2BC /* [CP] Copy Pods Resources */ = {
+		A40611B31E6AC5360074F00D /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/Quick.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Nimble.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/Mantle.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/OCMock.framework",
 			);
-			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MantleArrayExtensionTests/Pods-MantleArrayExtensionTests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		7427108A547DCF081C73A10D /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MantleArrayExtensionTests/Pods-MantleArrayExtensionTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
+			shellScript = "/usr/local/bin/carthage copy-frameworks";
 		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		A456FC491E3A5375002EA7B0 /* Sources */ = {
+		A40611491E6AB9210074F00D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A456FC651E3DA35C002EA7B0 /* MAETModel.m in Sources */,
-				A456FC601E3DA2BA002EA7B0 /* MAEArrayAdapterTests.m in Sources */,
-				A456FC6B1E3DC589002EA7B0 /* MAESeparatedStringTests.m in Sources */,
-				A456FC6D1E3E0A31002EA7B0 /* MAEFragmentTests.m in Sources */,
+				A406115E1E6AB99F0074F00D /* MAEArrayAdapter.m in Sources */,
+				A40611611E6AB99F0074F00D /* MAEFragment.m in Sources */,
+				A40611631E6AB99F0074F00D /* MAESeparatedString.m in Sources */,
+				A40611681E6AB9AF0074F00D /* NSError+MAEErrorCode.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A40611951E6AC4AC0074F00D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A40611A81E6AC4E30074F00D /* MAEArrayAdapterTests.m in Sources */,
+				A40611A91E6AC4E30074F00D /* MAEFragmentTests.m in Sources */,
+				A40611AE1E6AC4F20074F00D /* MAETModel.m in Sources */,
+				A40611AA1E6AC4E30074F00D /* MAESeparatedStringTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		A40611B51E6BEC860074F00D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = A406114D1E6AB9210074F00D /* MantleArrayExtension */;
+			targetProxy = A40611B41E6BEC860074F00D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		A40611541E6AB9210074F00D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = Q67BJ4H5A7;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				INFOPLIST_FILE = MantleArrayExtension/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = net.soranoba.MantleArrayExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		A40611551E6AB9210074F00D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = Q67BJ4H5A7;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				INFOPLIST_FILE = MantleArrayExtension/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = net.soranoba.MantleArrayExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		A40611A21E6AC4AC0074F00D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				DEVELOPMENT_TEAM = Q67BJ4H5A7;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				GCC_PREFIX_HEADER = "MantleArrayExtensionTests/MantleArrayExtension-Prefix.pch";
+				INFOPLIST_FILE = MantleArrayExtensionTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = net.soranoba.MantleArrayExtensionTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		A40611A31E6AC4AC0074F00D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				DEVELOPMENT_TEAM = Q67BJ4H5A7;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
+				GCC_PREFIX_HEADER = "MantleArrayExtensionTests/MantleArrayExtension-Prefix.pch";
+				INFOPLIST_FILE = MantleArrayExtensionTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = net.soranoba.MantleArrayExtensionTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		A456FC441E3A528D002EA7B0 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -258,7 +489,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -299,60 +530,39 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
-		A456FC521E3A5375002EA7B0 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8ED6D9B35B13FDBCE0B2AF7C /* Pods-MantleArrayExtensionTests.debug.xcconfig */;
-			buildSettings = {
-				DEVELOPMENT_TEAM = Q67BJ4H5A7;
-				GCC_PREFIX_HEADER = "MantleArrayExtensionTests/MantleArrayExtension-Prefix.pch";
-				HEADER_SEARCH_PATHS = MantleArrayExtension/Classes/Private;
-				INFOPLIST_FILE = MantleArrayExtensionTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = net.soranoba.MantleArrayExtensionTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		A456FC531E3A5375002EA7B0 /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = E4D1EFE56F28CCF5700D7E54 /* Pods-MantleArrayExtensionTests.release.xcconfig */;
-			buildSettings = {
-				DEVELOPMENT_TEAM = Q67BJ4H5A7;
-				GCC_PREFIX_HEADER = "MantleArrayExtensionTests/MantleArrayExtension-Prefix.pch";
-				HEADER_SEARCH_PATHS = MantleArrayExtension/Classes/Private;
-				INFOPLIST_FILE = MantleArrayExtensionTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = net.soranoba.MantleArrayExtensionTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		A40611531E6AB9210074F00D /* Build configuration list for PBXNativeTarget "MantleArrayExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A40611541E6AB9210074F00D /* Debug */,
+				A40611551E6AB9210074F00D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A40611A11E6AC4AC0074F00D /* Build configuration list for PBXNativeTarget "MantleArrayExtensionTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A40611A21E6AC4AC0074F00D /* Debug */,
+				A40611A31E6AC4AC0074F00D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		A456FC381E3A528D002EA7B0 /* Build configuration list for PBXProject "MantleArrayExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				A456FC441E3A528D002EA7B0 /* Debug */,
 				A456FC451E3A528D002EA7B0 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		A456FC541E3A5375002EA7B0 /* Build configuration list for PBXNativeTarget "MantleArrayExtensionTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				A456FC521E3A5375002EA7B0 /* Debug */,
-				A456FC531E3A5375002EA7B0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

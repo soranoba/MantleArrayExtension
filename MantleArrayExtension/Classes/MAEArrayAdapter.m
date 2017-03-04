@@ -10,7 +10,6 @@
 #import "MAESeparatedString.h"
 #import "NSError+MAEErrorCode.h"
 #import <Mantle/EXTRuntimeExtensions.h>
-#import <Mantle/MTLReflection.h>
 #import <Mantle/MTLValueTransformer.h>
 #import <Mantle/NSValueTransformer+MTLPredefinedTransformerAdditions.h>
 #import <objc/runtime.h>
@@ -698,7 +697,7 @@ static NSString* const MAEAdapter = @"MAEAdapter";
 
     NSMutableDictionary* result = [NSMutableDictionary dictionary];
     for (NSString* propertyKey in [modelClass propertyKeys]) {
-        SEL selector = MTLSelectorWithKeyPattern(propertyKey, "ArrayTransformer");
+        SEL selector = NSSelectorFromString([propertyKey stringByAppendingString:@"ArrayTransformer"]);
         if ([modelClass respondsToSelector:selector]) {
             IMP imp = [modelClass methodForSelector:selector];
             result[propertyKey] = ((NSValueTransformer * (*)(id, SEL))imp)(modelClass, selector);

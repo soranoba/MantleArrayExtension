@@ -6,6 +6,8 @@
 //  Copyright © 2017年 Hinagiku Soranoba. All rights reserved.
 //
 
+#import <Foundation/Foundation.h>
+
 typedef NS_ENUM(NSUInteger, MAEErrorCode) {
     MAEErrorUnknown,
     MAEErrorBadArguemt,

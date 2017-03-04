@@ -14,21 +14,21 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "A23EFC4EEF402294A6498E66F3A8F9CF"
+               BlueprintIdentifier = "A406114D1E6AB9210074F00D"
                BuildableName = "MantleArrayExtension.framework"
                BlueprintName = "MantleArrayExtension"
-               ReferencedContainer = "container:Pods/Pods.xcodeproj">
+               ReferencedContainer = "container:MantleArrayExtension.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
          <BuildActionEntry
             buildForTesting = "YES"
-            buildForRunning = "YES"
+            buildForRunning = "NO"
             buildForProfiling = "NO"
             buildForArchiving = "NO"
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "A456FC4C1E3A5375002EA7B0"
+               BlueprintIdentifier = "A40611981E6AC4AC0074F00D"
                BuildableName = "MantleArrayExtensionTests.xctest"
                BlueprintName = "MantleArrayExtensionTests"
                ReferencedContainer = "container:MantleArrayExtension.xcodeproj">
@@ -46,7 +46,7 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "A456FC4C1E3A5375002EA7B0"
+               BlueprintIdentifier = "A40611981E6AC4AC0074F00D"
                BuildableName = "MantleArrayExtensionTests.xctest"
                BlueprintName = "MantleArrayExtensionTests"
                ReferencedContainer = "container:MantleArrayExtension.xcodeproj">
@@ -56,10 +56,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "A23EFC4EEF402294A6498E66F3A8F9CF"
+            BlueprintIdentifier = "A406114D1E6AB9210074F00D"
             BuildableName = "MantleArrayExtension.framework"
             BlueprintName = "MantleArrayExtension"
-            ReferencedContainer = "container:Pods/Pods.xcodeproj">
+            ReferencedContainer = "container:MantleArrayExtension.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -78,10 +78,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "A23EFC4EEF402294A6498E66F3A8F9CF"
+            BlueprintIdentifier = "A406114D1E6AB9210074F00D"
             BuildableName = "MantleArrayExtension.framework"
             BlueprintName = "MantleArrayExtension"
-            ReferencedContainer = "container:Pods/Pods.xcodeproj">
+            ReferencedContainer = "container:MantleArrayExtension.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -96,10 +96,10 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "A23EFC4EEF402294A6498E66F3A8F9CF"
+            BlueprintIdentifier = "A406114D1E6AB9210074F00D"
             BuildableName = "MantleArrayExtension.framework"
             BlueprintName = "MantleArrayExtension"
-            ReferencedContainer = "container:Pods/Pods.xcodeproj">
+            ReferencedContainer = "container:MantleArrayExtension.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>
