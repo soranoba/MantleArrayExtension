@@ -20,3 +20,4 @@ FOUNDATION_EXPORT const unsigned char MantleArrayExtensionVersionString[];
 #import <MantleArrayExtension/MAEErrorCode.h>
 #import <MantleArrayExtension/MAEFragment.h>
 #import <MantleArrayExtension/MAESeparatedString.h>
+#import <MantleArrayExtension/NSArray+MAESeparatedString.h>

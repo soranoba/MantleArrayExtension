@@ -8,15 +8,13 @@
 
 #import "MAEArrayAdapter.h"
 #import "MAESeparatedString.h"
+#import "NSArray+MAESeparatedString.h"
 #import "NSError+MAEErrorCode.h"
 #import <Mantle/EXTRuntimeExtensions.h>
 #import <Mantle/NSValueTransformer+MTLPredefinedTransformerAdditions.h>
 #import <objc/runtime.h>
 
 static unichar const MAEDefaultSeparator = ' ';
-
-/// It is a Key to use for non-local exits (NSException)
-static NSString* const MAESeparatorChanged = @"MAESeparatorChanged";
 
 static NSString* const MAEAdapter = @"MAEAdapter";
 
@@ -30,8 +28,7 @@ static NSString* const MAEAdapter = @"MAEAdapter";
 /// A cached copy of the return value of +propertyKeys
 @property (nonatomic, nonnull, copy) NSSet<NSString*>* propertyKeys;
 /// A cached copy of the return value of -valueTransforersForModelClass:
-@property (nonatomic, nonnull, copy)
-    NSDictionary* valueTransformersByPropertyKey;
+@property (nonatomic, nonnull, copy) NSDictionary* valueTransformersByPropertyKey;
 /// A cached copy of the return value of +ignoreEdgeBlank
 @property (nonatomic, assign) BOOL ignoreEdgeBlank;
 
@@ -146,16 +143,8 @@ static NSString* const MAEAdapter = @"MAEAdapter";
         return nil;
     }
 
-    @try {
-        return [self modelFromSeparatedStrings:[self separateString:string]
-                                         error:error];
-    } @catch (NSException* exception) {
-        if (exception.name == MAESeparatorChanged) {
-            MAEArrayAdapter* otherAdapter = exception.userInfo[MAEAdapter];
-            return [otherAdapter modelFromString:string error:error];
-        }
-        @throw exception;
-    }
+    return [self modelFromSeparatedStrings:[self separateString:string]
+                                     error:error];
 }
 
 - (id<MAEArraySerializing> _Nullable)modelFromArray:(NSArray<NSString*>* _Nullable)array
@@ -172,15 +161,7 @@ static NSString* const MAEAdapter = @"MAEAdapter";
         [separatedStrings addObject:[[MAESeparatedString alloc] initWithOriginalCharacters:s ignoreEdgeBlank:NO]];
     }
 
-    @try {
-        return [self modelFromSeparatedStrings:separatedStrings error:error];
-    } @catch (NSException* exception) {
-        if (exception.name == MAESeparatorChanged) {
-            MAEArrayAdapter* otherAdapter = exception.userInfo[MAEAdapter];
-            return [otherAdapter modelFromSeparatedStrings:separatedStrings error:error];
-        }
-        @throw exception;
-    }
+    return [self modelFromSeparatedStrings:separatedStrings error:error];
 }
 
 - (NSString* _Nullable)stringFromModel:(id<MAEArraySerializing> _Nullable)model
@@ -241,8 +222,7 @@ static NSString* const MAEAdapter = @"MAEAdapter";
             if (![transformedString isKindOfClass:NSString.class]) {
                 SET_ERROR(error, MAEErrorTransform,
                           @{ NSLocalizedFailureReasonErrorKey :
-                                 [NSString stringWithFormat:@"The result of reverseTransform MUST be NSString or NSArray, but got %@",
-                                                            [value class]] });
+                                 format(@"The result of reverseTransform MUST be NSString or NSArray, but got %@", [value class]) });
                 return nil;
             }
 
@@ -286,22 +266,20 @@ static NSString* const MAEAdapter = @"MAEAdapter";
         if (class == nil) {
             SET_ERROR(error, MAEErrorNoConversionTarget,
                       @{ NSLocalizedFailureReasonErrorKey :
-                             [NSString stringWithFormat:@"%@ # classForParsingArray returns nil", self.modelClass] });
+                             format(@"%@ # classForParsingArray returns nil", self.modelClass) });
             return nil;
         }
 
         if (class != self.modelClass) {
             NSAssert([class conformsToProtocol:@protocol(MAEArraySerializing)],
-                     ([NSString stringWithFormat:@"classForParsingArray MUST return MAEArraySerializing MTLModel class. but got %@", class]));
+                     @"classForParsingArray MUST return MAEArraySerializing MTLModel class. but got %@", class);
 
             MAEArrayAdapter* otherAdapter = [[self.class alloc] initWithModelClass:class];
 
             // NOTE: If separator is different, it will start over from separate process again.
             if (otherAdapter.separator != self.separator) {
-                NSException* exception = [[NSException alloc] initWithName:MAESeparatorChanged
-                                                                    reason:nil
-                                                                  userInfo:@{ MAEAdapter : otherAdapter }];
-                @throw exception;
+                NSString* mergeString = [separatedStrings mae_componentsJoinedBySeparatedString:self.separator];
+                return [otherAdapter modelFromString:mergeString error:error];
             }
             return [otherAdapter modelFromSeparatedStrings:separatedStrings error:error];
         }
@@ -323,7 +301,7 @@ static NSString* const MAEAdapter = @"MAEAdapter";
                       if (s.type != MAEStringTypeDoubleQuoted) {
                           SET_ERROR(error, MAEErrorNotQuoted,
                                     @{ NSLocalizedFailureReasonErrorKey :
-                                           [NSString stringWithFormat:@"%@ expected double-quoted-string", f.propertyName] });
+                                           format(@"%@ expected double-quoted-string", f.propertyName) });
                           return NO;
                       }
                       break;
@@ -331,7 +309,7 @@ static NSString* const MAEAdapter = @"MAEAdapter";
                       if (s.type != MAEStringTypeSingleQuoted) {
                           SET_ERROR(error, MAEErrorNotEnum,
                                     @{ NSLocalizedFailureReasonErrorKey :
-                                           [NSString stringWithFormat:@"%@ expected single-quoted-string", f.propertyName] });
+                                           format(@"%@ expected single-quoted-string", f.propertyName) });
                           return NO;
                       }
                       break;
@@ -339,7 +317,7 @@ static NSString* const MAEAdapter = @"MAEAdapter";
                       if (s.type != MAEStringTypeEnumerate) {
                           SET_ERROR(error, MAEErrorNotEnum,
                                     @{ NSLocalizedFailureReasonErrorKey :
-                                           [NSString stringWithFormat:@"%@ expected enumerate-string", f.propertyName] });
+                                           format(@"%@ expected enumerate-string", f.propertyName) });
                           return NO;
                       }
                       break;

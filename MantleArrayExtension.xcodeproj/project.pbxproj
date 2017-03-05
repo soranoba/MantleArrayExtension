@@ -33,6 +33,9 @@
 		A40611BD1E6BECE10074F00D /* Quick.framework in Resources */ = {isa = PBXBuildFile; fileRef = A40611BA1E6BECE10074F00D /* Quick.framework */; };
 		A40611BF1E6BF23A0074F00D /* MAEArrayAdapter+Transformers.m in Sources */ = {isa = PBXBuildFile; fileRef = A40611BE1E6BF23A0074F00D /* MAEArrayAdapter+Transformers.m */; };
 		A40611C11E6BF4330074F00D /* MAEArrayAdapter+TransformersTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A40611C01E6BF4330074F00D /* MAEArrayAdapter+TransformersTests.m */; };
+		A40611C41E6C4E8E0074F00D /* NSArray+MAESeparatedString.h in Headers */ = {isa = PBXBuildFile; fileRef = A40611C21E6C4E8E0074F00D /* NSArray+MAESeparatedString.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A40611C51E6C4E8E0074F00D /* NSArray+MAESeparatedString.m in Sources */ = {isa = PBXBuildFile; fileRef = A40611C31E6C4E8E0074F00D /* NSArray+MAESeparatedString.m */; };
+		A40611C71E6C5A6C0074F00D /* NSArray+MAESeparatedStringTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A40611C61E6C5A6C0074F00D /* NSArray+MAESeparatedStringTests.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,6 +80,9 @@
 		A40611BA1E6BECE10074F00D /* Quick.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quick.framework; path = Carthage/Build/iOS/Quick.framework; sourceTree = "<group>"; };
 		A40611BE1E6BF23A0074F00D /* MAEArrayAdapter+Transformers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "MAEArrayAdapter+Transformers.m"; path = "Classes/MAEArrayAdapter+Transformers.m"; sourceTree = "<group>"; };
 		A40611C01E6BF4330074F00D /* MAEArrayAdapter+TransformersTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MAEArrayAdapter+TransformersTests.m"; sourceTree = "<group>"; };
+		A40611C21E6C4E8E0074F00D /* NSArray+MAESeparatedString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+MAESeparatedString.h"; path = "Classes/NSArray+MAESeparatedString.h"; sourceTree = "<group>"; };
+		A40611C31E6C4E8E0074F00D /* NSArray+MAESeparatedString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+MAESeparatedString.m"; path = "Classes/NSArray+MAESeparatedString.m"; sourceTree = "<group>"; };
+		A40611C61E6C5A6C0074F00D /* NSArray+MAESeparatedStringTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+MAESeparatedStringTests.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,6 +120,8 @@
 				A406115A1E6AB99F0074F00D /* MAEFragment.m */,
 				A406115B1E6AB99F0074F00D /* MAESeparatedString.h */,
 				A406115C1E6AB99F0074F00D /* MAESeparatedString.m */,
+				A40611C21E6C4E8E0074F00D /* NSArray+MAESeparatedString.h */,
+				A40611C31E6C4E8E0074F00D /* NSArray+MAESeparatedString.m */,
 				A40611501E6AB9210074F00D /* MantleArrayExtension.h */,
 				A40611641E6AB9A20074F00D /* Private */,
 				A40611511E6AB9210074F00D /* Info.plist */,
@@ -150,6 +158,7 @@
 				A40611C01E6BF4330074F00D /* MAEArrayAdapter+TransformersTests.m */,
 				A40611A51E6AC4E30074F00D /* MAEFragmentTests.m */,
 				A40611A61E6AC4E30074F00D /* MAESeparatedStringTests.m */,
+				A40611C61E6C5A6C0074F00D /* NSArray+MAESeparatedStringTests.m */,
 				A40611A71E6AC4E30074F00D /* MantleArrayExtension-Prefix.pch */,
 				A406119D1E6AC4AC0074F00D /* Info.plist */,
 			);
@@ -191,6 +200,7 @@
 				A40611521E6AB9210074F00D /* MantleArrayExtension.h in Headers */,
 				A40611621E6AB99F0074F00D /* MAESeparatedString.h in Headers */,
 				A40611601E6AB99F0074F00D /* MAEFragment.h in Headers */,
+				A40611C41E6C4E8E0074F00D /* NSArray+MAESeparatedString.h in Headers */,
 				A406115F1E6AB99F0074F00D /* MAEErrorCode.h in Headers */,
 				A40611671E6AB9AF0074F00D /* NSError+MAEErrorCode.h in Headers */,
 			);
@@ -341,6 +351,7 @@
 				A40611BF1E6BF23A0074F00D /* MAEArrayAdapter+Transformers.m in Sources */,
 				A40611631E6AB99F0074F00D /* MAESeparatedString.m in Sources */,
 				A40611681E6AB9AF0074F00D /* NSError+MAEErrorCode.m in Sources */,
+				A40611C51E6C4E8E0074F00D /* NSArray+MAESeparatedString.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -351,6 +362,7 @@
 				A40611A81E6AC4E30074F00D /* MAEArrayAdapterTests.m in Sources */,
 				A40611A91E6AC4E30074F00D /* MAEFragmentTests.m in Sources */,
 				A40611AE1E6AC4F20074F00D /* MAETModel.m in Sources */,
+				A40611C71E6C5A6C0074F00D /* NSArray+MAESeparatedStringTests.m in Sources */,
 				A40611AA1E6AC4E30074F00D /* MAESeparatedStringTests.m in Sources */,
 				A40611C11E6BF4330074F00D /* MAEArrayAdapter+TransformersTests.m in Sources */,
 			);

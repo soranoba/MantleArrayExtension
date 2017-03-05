@@ -153,15 +153,18 @@ QuickSpecBegin(MAEArrayAdapterTests)
             OCMVerify(mock);
 
             checkBlock = [OCMArg checkWithBlock:^BOOL(id arg) {
-                expect(arg).to(equal(@[ [[MAESeparatedString alloc] initWithCharacters:@"a"
+                expect(arg).to(equal(@[ [[MAESeparatedString alloc] initWithCharacters:@"a | b"
                                                                                   type:MAEStringTypeEnumerate],
-                                        [[MAESeparatedString alloc] initWithCharacters:@"b, c, d"
+                                        [[MAESeparatedString alloc] initWithCharacters:@"c"
+                                                                                  type:MAEStringTypeEnumerate],
+                                        [[MAESeparatedString alloc] initWithCharacters:@"d"
                                                                                   type:MAEStringTypeEnumerate] ]));
                 return YES;
             }];
             OCMExpect([mock classForParsingArray:checkBlock]).andForwardToRealObject();
 
-            expect(model = [MAEArrayAdapter modelOfClass:MAETModel5.class fromArray:@[ @"a", @"b, c, d" ] error:&error]).notTo(beNil());
+            expect(model = [MAEArrayAdapter modelOfClass:MAETModel5.class fromArray:@[ @"a | b", @"c", @"d" ] error:&error])
+                .notTo(beNil());
             expect(model.requireString).to(equal(@"a"));
             expect(error).to(beNil());
 
