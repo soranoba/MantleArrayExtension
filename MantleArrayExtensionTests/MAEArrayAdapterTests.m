@@ -10,12 +10,15 @@
 #import "MAESeparatedString.h"
 #import "MAETModel.h"
 #import <Foundation/Foundation.h>
+#import <Mantle/NSValueTransformer+MTLPredefinedTransformerAdditions.h>
 
 @interface MAEArrayAdapter ()
 - (instancetype _Nonnull)initWithModelClass:(Class _Nonnull)modelClass;
 - (NSArray<MAESeparatedString*>* _Nonnull)separateString:(NSString* _Nonnull)string;
 + (NSArray<MAEFragment*>* _Nullable)chooseFormatByPropertyKey:(NSArray<MAEFragment*>* _Nullable)fragments
                                                     withCount:(NSUInteger)count;
+
++ (NSDictionary* _Nonnull)valueTransformersForModelClass:(Class _Nonnull)modelClass;
 @end
 
 QuickSpecBegin(MAEArrayAdapterTests)
@@ -325,12 +328,12 @@ QuickSpecBegin(MAEArrayAdapterTests)
             expect([MAEArrayAdapter chooseFormatByPropertyKey:fragments withCount:fragments.count]).to(equal(fragments));
         });
 
-        it(@"returns nil, if elements less", ^{
+        it(@"returns nil, if count is too small", ^{
             NSArray<MAEFragment*>* fragments = @[ MAEQuoted(@"a"), MAEQuoted(@"b"), MAEQuoted(@"c") ];
             expect([MAEArrayAdapter chooseFormatByPropertyKey:fragments withCount:1]).to(beNil());
         });
 
-        it(@"can returns fragments, if there are optional fragments", ^{
+        it(@"can returns fragments, if count is less than number of fragments, but there are optional fragments", ^{
             NSArray<MAEFragment*>* fragments = @[ MAEQuoted(@"a"), MAEOptional(@"b"), MAEQuoted(@"c"), MAEOptional(@"d") ];
             __block NSArray<MAEFragment*>* gotFragments = nil;
             expect(gotFragments = [MAEArrayAdapter chooseFormatByPropertyKey:fragments withCount:2]).notTo(beNil());
@@ -352,7 +355,7 @@ QuickSpecBegin(MAEArrayAdapterTests)
             expect(gotFragments[3].propertyName).to(equal(@"d"));
         });
 
-        it(@"can returns fragments, if there is variadic fragment", ^{
+        it(@"can returns fragments, if count is less than number of fragments and there is variadic fragment", ^{
             NSArray<MAEFragment*>* fragments = @[ MAEQuoted(@"a"), MAEVariadic(@"b") ];
             __block NSArray<MAEFragment*>* gotFragments = nil;
             expect(gotFragments = [MAEArrayAdapter chooseFormatByPropertyKey:fragments withCount:2]).notTo(beNil());
@@ -412,6 +415,78 @@ QuickSpecBegin(MAEArrayAdapterTests)
             model.f = -2.5f;
             model.d = 1.797693;
             expect([transformer reverseTransformedValue:model]).to(equal(@[ @"true", @"5348765123", @"-1389477961", @"-2.5", @"1.797693" ]));
+        });
+    });
+
+    describe(@"valueTransformersForModelClass:", ^{
+        __block id mock;
+
+        afterEach(^{
+            [mock stopMocking];
+        });
+
+        it(@"use the result, if arrayTransformerForKey: is defined", ^{
+            expect([MAETModel4 respondsToSelector:NSSelectorFromString(@"requireStringArrayTransformer")]).to(equal(NO));
+            mock = OCMClassMock(MAETModel4.class);
+
+            OCMStub([mock arrayTransformerForKey:
+                              [OCMArg checkWithBlock:^BOOL(NSString* _Nonnull key) {
+                                  return [key isEqualToString:@"requireString"];
+                              }]])
+                .andReturn([NSValueTransformer mtl_valueMappingTransformerWithDictionary:@{ @"1" : @"!!mock!!" }]);
+
+            NSDictionary* transformers = [MAEArrayAdapter valueTransformersForModelClass:MAETModel4.class];
+            expect([transformers[@"requireString"] transformedValue:@"1"]).to(equal(@"!!mock!!"));
+        });
+
+        it(@"use the transformer, if <key>ArayTransformer is defined", ^{
+            mock = OCMClassMock(MAETModel4.class);
+
+            OCMStub([mock model3ArrayTransformer])
+                .andReturn([NSValueTransformer mtl_valueMappingTransformerWithDictionary:@{ @"2" : @"!!mock!!" }]);
+
+            NSDictionary* transformers = [MAEArrayAdapter valueTransformersForModelClass:MAETModel4.class];
+            expect([transformers[@"model3"] transformedValue:@"2"]).to(equal(@"!!mock!!"));
+        });
+
+        it(@"choose <key>ArayTransformer in preference to arayTransformerForKey:", ^{
+            mock = OCMClassMock(MAETModel4.class);
+
+            OCMStub([mock model3ArrayTransformer])
+                .andReturn([NSValueTransformer mtl_valueMappingTransformerWithDictionary:@{ @"3" : @"model3ArrayTransformer" }]);
+
+            OCMStub([mock arrayTransformerForKey:
+                              [OCMArg checkWithBlock:^BOOL(NSString* _Nonnull key) {
+                                  return [key isEqualToString:@"model3"];
+                              }]])
+                .andReturn([NSValueTransformer mtl_valueMappingTransformerWithDictionary:@{ @"3" : @"ArrayTransformerForKey:" }]);
+
+            NSDictionary* transformers = [MAEArrayAdapter valueTransformersForModelClass:MAETModel4.class];
+            expect([transformers[@"model3"] transformedValue:@"3"]).to(equal(@"model3ArrayTransformer"));
+        });
+
+        it(@"does not choose arayTransformerForKey:, if <key>ArayTransformer returns nil", ^{
+            mock = OCMClassMock(MAETModel4.class);
+
+            OCMStub([mock model3ArrayTransformer]).andReturn(nil);
+
+            OCMStub([mock arrayTransformerForKey:
+                              [OCMArg checkWithBlock:^BOOL(NSString* _Nonnull key) {
+                                  return [key isEqualToString:@"model3"];
+                              }]])
+                .andReturn([NSValueTransformer mtl_valueMappingTransformerWithDictionary:@{ @"4" : @"arayTransformerForKey:" }]);
+
+            NSDictionary* transformers = [MAEArrayAdapter valueTransformersForModelClass:MAETModel4.class];
+            expect([transformers[@"model3"] transformedValue:@"4"]).to(beNil());
+        });
+
+        it(@"choose defaultTransformer, if <key>ArayTransformer is not defined and arayTransformerForKey: returns nil", ^{
+            expect([MAETModel1 respondsToSelector:NSSelectorFromString(@"bArrayTransformer")]).to(equal(NO));
+            expect([MAETModel1 respondsToSelector:@selector(arrayTransformerForKey:)]).to(equal(YES));
+            expect([MAETModel1 arrayTransformerForKey:@"b"]).to(beNil());
+
+            NSDictionary* transformers = [MAEArrayAdapter valueTransformersForModelClass:MAETModel1.class];
+            expect([transformers[@"b"] transformedValue:@"true"]).to(equal(@YES));
         });
     });
 }

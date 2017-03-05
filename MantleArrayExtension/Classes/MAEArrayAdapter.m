@@ -86,7 +86,7 @@ static NSString* const MAEAdapter = @"MAEAdapter";
         }
         self.formatByPropertyKey = formatByPropertyKey;
 
-        self.valueTransformersByPropertyKey = [self.class valueTransformeresForModelClass:modelClass];
+        self.valueTransformersByPropertyKey = [self.class valueTransformersForModelClass:modelClass];
     }
     return self;
 }
@@ -501,8 +501,7 @@ static NSString* const MAEAdapter = @"MAEAdapter";
  * @param fragments The fragments that contains optional elements
  * @param count     The count of separated string. It is not fragments.count.
  * @return If it does not correspond to the count, it returns nil.
- *         Otherwise, it returns fragments with unnecessary optional elements
- * removed for the count elements.
+ *         Otherwise, it returns fragments with unnecessary optional elements removed for the count elements.
  */
 + (NSArray<MAEFragment*>* _Nullable)chooseFormatByPropertyKey:(NSArray<MAEFragment*>* _Nullable)fragments
                                                     withCount:(NSUInteger)count
@@ -512,22 +511,21 @@ static NSString* const MAEAdapter = @"MAEAdapter";
     } else if (fragments.count < count) {
         if ([fragments lastObject].variadic) {
             return fragments;
-        } else {
-            return nil;
         }
-    }
+    } else { // fragments.count > count
+        BOOL hasRequirementsVariadic = NO;
+        NSMutableArray<MAEFragment*>* filteredFragments = [fragments mutableCopy];
+        for (MAEFragment* fragment in fragments.reverseObjectEnumerator) {
+            if (fragment.optional) {
+                [filteredFragments removeObject:fragment];
+            } else if (fragment.variadic) {
+                NSAssert(hasRequirementsVariadic == NO, @"Variadic is allowed only one, but there are multiple variadic");
+                hasRequirementsVariadic = YES;
+            }
 
-    BOOL hasVariadic = NO;
-    NSMutableArray<MAEFragment*>* filteredFragments = [fragments mutableCopy];
-    for (MAEFragment* fragment in fragments.reverseObjectEnumerator) {
-        if (fragment.optional) {
-            [filteredFragments removeObject:fragment];
-        } else if (fragment.variadic) {
-            hasVariadic = YES;
-        }
-
-        if (filteredFragments.count - (int)hasVariadic == count) {
-            return filteredFragments;
+            if (filteredFragments.count - (int)hasRequirementsVariadic == count) {
+                return filteredFragments;
+            }
         }
     }
     return nil;
@@ -538,10 +536,10 @@ static NSString* const MAEAdapter = @"MAEAdapter";
  *
  * It also solve the default transformer.
  *
- * @param modelClass A modelClass that conforms to MAEArraySerializing
+ * @param modelClass   A modelClass that conforms to MAEArraySerializing
  * @return transformers
  */
-+ (NSDictionary* _Nonnull)valueTransformeresForModelClass:(Class _Nonnull)modelClass
++ (NSDictionary* _Nonnull)valueTransformersForModelClass:(Class _Nonnull)modelClass
 {
     NSParameterAssert(modelClass != nil);
     NSParameterAssert([modelClass conformsToProtocol:@protocol(MAEArraySerializing)]);

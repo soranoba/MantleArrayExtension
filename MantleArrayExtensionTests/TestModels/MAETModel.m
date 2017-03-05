@@ -27,6 +27,11 @@
     return NO;
 }
 
++ (NSValueTransformer* _Nullable)arrayTransformerForKey:(NSString* _Nonnull)key
+{
+    return nil;
+}
+
 @end
 
 @implementation MAETModel2
@@ -91,6 +96,16 @@
 + (BOOL)ignoreEdgeBlank
 {
     return YES;
+}
+
++ (NSValueTransformer* _Nullable)model3ArrayTransformer
+{
+    return [MAEArrayAdapter arrayTransformerWithModelClass:MAETModel3.class];
+}
+
++ (NSValueTransformer* _Nullable)arrayTransformerForKey:(NSString* _Nonnull)key
+{
+    return nil;
 }
 
 @end

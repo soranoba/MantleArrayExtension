@@ -40,6 +40,9 @@
 @property (nonatomic, nullable, copy) NSString* requireString;
 @property (nonatomic, nullable, strong) MAETModel3* model3;
 
++ (NSValueTransformer* _Nullable)model3ArrayTransformer;
++ (NSValueTransformer* _Nullable)arrayTransformerForKey:(NSString* _Nonnull)key;
+
 @end
 
 @interface MAETModel5 : MTLModel <MAEArraySerializing>
