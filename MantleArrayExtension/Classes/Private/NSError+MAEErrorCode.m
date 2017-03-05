@@ -9,6 +9,7 @@
 #import "NSError+MAEErrorCode.h"
 
 NSString* _Nonnull const MAEErrorDomain = @"MAEErrorDomain";
+NSString* _Nonnull const MAEErrorInputDataKey = @"MAEErrorInputDataKey";
 
 @implementation NSError (MAEErrorCode)
 
@@ -21,10 +22,13 @@ NSString* _Nonnull const MAEErrorDomain = @"MAEErrorDomain";
 }
 
 + (instancetype _Nonnull)mae_errorWithMAEErrorCode:(MAEErrorCode)code
-                                            reason:(NSString* _Nonnull)reason
+                                          userInfo:(NSDictionary* _Nullable)userInfo
 {
-    NSDictionary* userInfo = @{ NSLocalizedDescriptionKey : [self mae_description:code],
-                                NSLocalizedFailureReasonErrorKey : reason };
+    if (userInfo) {
+        NSMutableDictionary* mutableUserInfo = [userInfo mutableCopy];
+        mutableUserInfo[NSLocalizedDescriptionKey] = [self mae_description:code];
+        userInfo = mutableUserInfo;
+    }
     return [NSError errorWithDomain:MAEErrorDomain code:code userInfo:userInfo];
 }
 
@@ -53,6 +57,9 @@ NSString* _Nonnull const MAEErrorDomain = @"MAEErrorDomain";
             return @"The result of transform is incorrect";
         case MAEErrorNoConversionTarget:
             return @"No conversion target. (classForParsingArray: returns nil)";
+
+        case MAEErrorInvalidInputData:
+            return @"Transformation failed, because input data is invalid";
         default:
             return @"Unknown error";
     }

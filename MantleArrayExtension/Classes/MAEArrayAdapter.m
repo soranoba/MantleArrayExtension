@@ -10,7 +10,6 @@
 #import "MAESeparatedString.h"
 #import "NSError+MAEErrorCode.h"
 #import <Mantle/EXTRuntimeExtensions.h>
-#import <Mantle/MTLValueTransformer.h>
 #import <Mantle/NSValueTransformer+MTLPredefinedTransformerAdditions.h>
 #import <objc/runtime.h>
 
@@ -118,7 +117,8 @@ static NSString* const MAEAdapter = @"MAEAdapter";
                                           error:(NSError* _Nullable* _Nullable)error
 {
     if (!model) {
-        SET_ERROR(error, MAEErrorInputNil, @"The model instance is nil");
+        SET_ERROR(error, MAEErrorInputNil,
+                  @{ NSLocalizedFailureReasonErrorKey : @"The model instance is nil" });
         return nil;
     }
     MAEArrayAdapter* adapter = [[self alloc] initWithModelClass:[model class]];
@@ -129,7 +129,8 @@ static NSString* const MAEAdapter = @"MAEAdapter";
                                  error:(NSError* _Nullable* _Nullable)error
 {
     if (!model) {
-        SET_ERROR(error, MAEErrorInputNil, @"The model instance is nil");
+        SET_ERROR(error, MAEErrorInputNil,
+                  @{ NSLocalizedFailureReasonErrorKey : @"The model instance is nil" });
         return nil;
     }
     MAEArrayAdapter* adapter = [[self alloc] initWithModelClass:[model class]];
@@ -140,7 +141,8 @@ static NSString* const MAEAdapter = @"MAEAdapter";
                                                error:(NSError* _Nullable* _Nullable)error
 {
     if (!string) {
-        SET_ERROR(error, MAEErrorInputNil, @"Input string is nil");
+        SET_ERROR(error, MAEErrorInputNil,
+                  @{ NSLocalizedFailureReasonErrorKey : @"Input string is nil" });
         return nil;
     }
 
@@ -160,7 +162,8 @@ static NSString* const MAEAdapter = @"MAEAdapter";
                                               error:(NSError* _Nullable* _Nullable)error
 {
     if (!array) {
-        SET_ERROR(error, MAEErrorInputNil, @"Input array is nil");
+        SET_ERROR(error, MAEErrorInputNil,
+                  @{ NSLocalizedFailureReasonErrorKey : @"Input array is nil" });
         return nil;
     }
 
@@ -195,7 +198,8 @@ static NSString* const MAEAdapter = @"MAEAdapter";
                                           error:(NSError* _Nullable* _Nullable)error
 {
     if (!model) {
-        SET_ERROR(error, MAEErrorInputNil, @"Input model is nil");
+        SET_ERROR(error, MAEErrorInputNil,
+                  @{ NSLocalizedFailureReasonErrorKey : @"Input model is nil" });
         return nil;
     }
 
@@ -236,8 +240,9 @@ static NSString* const MAEAdapter = @"MAEAdapter";
         for (NSString* transformedString in value) {
             if (![transformedString isKindOfClass:NSString.class]) {
                 SET_ERROR(error, MAEErrorTransform,
-                          [NSString stringWithFormat:@"The result of reverseTransform MUST be NSString or NSArray, but got %@",
-                                                     [value class]]);
+                          @{ NSLocalizedFailureReasonErrorKey :
+                                 [NSString stringWithFormat:@"The result of reverseTransform MUST be NSString or NSArray, but got %@",
+                                                            [value class]] });
                 return nil;
             }
 
@@ -264,164 +269,6 @@ static NSString* const MAEAdapter = @"MAEAdapter";
     return result;
 }
 
-#pragma mark Transformer
-
-+ (NSValueTransformer* _Nonnull)variadicArrayTransformerWithModelClass:(Class _Nonnull)modelClass
-{
-    return [MTLValueTransformer
-        transformerUsingForwardBlock:
-            ^id _Nullable(id _Nullable value, BOOL* _Nonnull success, NSError* _Nullable* _Nullable error) {
-                if (!value) {
-                    return nil;
-                }
-
-                if (![value isKindOfClass:NSArray.class]) {
-                    SET_ERROR(error, MAEErrorBadArguemt,
-                              @"arrayTransformerWithModelClass only support to convert from between NSArray and MTLModel");
-                    *success = NO;
-                    return nil;
-                }
-                id model = [self modelOfClass:modelClass fromArray:value error:error];
-                *success = model != nil;
-                return model;
-            }
-        reverseBlock:^id _Nullable(id _Nullable value, BOOL* _Nonnull success, NSError* _Nullable* _Nullable error) {
-            if (!value) {
-                return nil;
-            }
-
-            if (!([value isKindOfClass:MTLModel.class] &&
-                  [value conformsToProtocol:@protocol(MAEArraySerializing)])) {
-                SET_ERROR(error, MAEErrorBadArguemt,
-                          @"arrayTransformerWithModelClass only support MAEArraySerializing MTLModel");
-                *success = NO;
-                return nil;
-            }
-
-            NSArray* array = [self arrayFromModel:value error:error];
-            *success = array != nil;
-            return array;
-        }];
-}
-
-+ (NSValueTransformer* _Nonnull)arrayTransformerWithModelClass:(Class _Nonnull)modelClass
-{
-    return [MTLValueTransformer
-        transformerUsingForwardBlock:
-            ^id _Nullable(id _Nullable value, BOOL* _Nonnull success, NSError* _Nullable* _Nullable error) {
-                if (!value) {
-                    return nil;
-                }
-
-                if (![value isKindOfClass:NSString.class]) {
-                    SET_ERROR(error, MAEErrorBadArguemt,
-                              @"arrayTransformerWithModelClass only support to convert between string and MTLModel");
-                    *success = NO;
-                    return nil;
-                }
-                id model = [self modelOfClass:modelClass fromString:value error:error];
-                *success = model != nil;
-                return model;
-            }
-        reverseBlock:^id _Nullable(id _Nullable value, BOOL* _Nonnull success, NSError* _Nullable* _Nullable error) {
-            if (!value) {
-                return nil;
-            }
-
-            if (!([value isKindOfClass:MTLModel.class] &&
-                  [value conformsToProtocol:@protocol(MAEArraySerializing)])) {
-                SET_ERROR(error, MAEErrorBadArguemt,
-                          @"arrayTransformerWithModelClass only support MAEArraySerializing MTLModel");
-                *success = NO;
-                return nil;
-            }
-
-            NSString* str = [self stringFromModel:value error:error];
-            *success = str != nil;
-            return str;
-        }];
-}
-
-+ (NSValueTransformer* _Nonnull)numberStringTransformer
-{
-    return [MTLValueTransformer
-        transformerUsingForwardBlock:
-            ^id _Nullable(id _Nullable value, BOOL* _Nonnull success, NSError* _Nullable* _Nullable error) {
-                NSValueTransformer<MTLTransformerErrorHandling>* transformer
-                    = [NSValueTransformer mtl_transformerWithFormatter:[NSNumberFormatter new]
-                                                        forObjectClass:NSNumber.class];
-                return [transformer transformedValue:value success:success error:error];
-            }
-        reverseBlock:^id _Nullable(id _Nullable value, BOOL* _Nonnull success, NSError* _Nullable* _Nullable error) {
-            if (!value) {
-                return nil;
-            }
-            if (![value isKindOfClass:NSNumber.class]) {
-                SET_ERROR(error, MAEErrorBadArguemt,
-                          [NSString stringWithFormat:@"Input data expected NSNumber, but got %@", [value class]]);
-                *success = NO;
-                return nil;
-            }
-            *success = YES;
-            return [(NSNumber*)value stringValue];
-        }];
-}
-
-+ (NSValueTransformer* _Nonnull)boolStringTransformer
-{
-    return [MTLValueTransformer
-        transformerUsingForwardBlock:
-            ^NSNumber* _Nullable(id _Nullable str, BOOL* _Nonnull success, NSError* _Nullable* _Nullable error) {
-
-                if (!str) {
-                    return nil;
-                }
-                if (![str isKindOfClass:NSString.class]) {
-                    SET_ERROR(error, MAEErrorBadArguemt,
-                              [NSString stringWithFormat:@"Input data expected a numeric string, but got %@.", [str class]]);
-                    *success = NO;
-                    return nil;
-                }
-
-                *success = YES;
-                return [NSNumber numberWithBool:[str boolValue]];
-            }
-        reverseBlock:^NSString* _Nullable(id _Nullable value, BOOL* _Nonnull success, NSError* _Nullable* _Nullable error) {
-            if (!value) {
-                return nil;
-            }
-            if (![value isKindOfClass:NSNumber.class]) {
-                SET_ERROR(error, MAEErrorBadArguemt,
-                          [NSString stringWithFormat:@"Input data expected NSNumber, but got %@", [value class]]);
-                *success = NO;
-                return nil;
-            }
-            *success = YES;
-            return [(NSNumber*)value integerValue] ? @"true" : @"false";
-        }];
-}
-
-/**
- * It returns transformer for converting between NSString and ObjCType
- *
- * @param type An ObjCType
- * @return If the type does not support, it returns nil. Otherwise, it returns transfomer.
- */
-+ (NSValueTransformer* _Nullable)stringTransformerObjCType:
-        (const char* _Nonnull)type
-{
-    if (strcmp(type, @encode(NSUInteger)) == 0
-        || strcmp(type, @encode(NSInteger)) == 0
-        || strcmp(type, @encode(NSNumber)) == 0
-        || strcmp(type, @encode(float)) == 0
-        || strcmp(type, @encode(double)) == 0) {
-        return [self numberStringTransformer];
-    } else if (strcmp(type, @encode(BOOL)) == 0) {
-        return [self boolStringTransformer];
-    }
-    return nil;
-}
-
 #pragma mark - Private Methods
 
 /**
@@ -438,7 +285,8 @@ static NSString* const MAEAdapter = @"MAEAdapter";
         Class class = [self.modelClass classForParsingArray:separatedStrings];
         if (class == nil) {
             SET_ERROR(error, MAEErrorNoConversionTarget,
-                      ([NSString stringWithFormat:@"%@ # classForParsingArray returns nil", self.modelClass]));
+                      @{ NSLocalizedFailureReasonErrorKey :
+                             [NSString stringWithFormat:@"%@ # classForParsingArray returns nil", self.modelClass] });
             return nil;
         }
 
@@ -463,7 +311,7 @@ static NSString* const MAEAdapter = @"MAEAdapter";
                                                                    withCount:separatedStrings.count];
     if (!fragments) {
         SET_ERROR(error, MAEErrorInvalidCount,
-                  @"Number of separated strings and format does not match");
+                  @{ NSLocalizedFailureReasonErrorKey : @"Number of separated strings and format does not match" });
         return nil;
     }
 
@@ -474,21 +322,24 @@ static NSString* const MAEAdapter = @"MAEAdapter";
                   case MAEFragmentDoubleQuotedString:
                       if (s.type != MAEStringTypeDoubleQuoted) {
                           SET_ERROR(error, MAEErrorNotQuoted,
-                                    [NSString stringWithFormat:@"%@ expected double-quoted-string", f.propertyName]);
+                                    @{ NSLocalizedFailureReasonErrorKey :
+                                           [NSString stringWithFormat:@"%@ expected double-quoted-string", f.propertyName] });
                           return NO;
                       }
                       break;
                   case MAEFragmentSingleQuotedString:
                       if (s.type != MAEStringTypeSingleQuoted) {
                           SET_ERROR(error, MAEErrorNotEnum,
-                                    [NSString stringWithFormat:@"%@ expected single-quoted-string", f.propertyName]);
+                                    @{ NSLocalizedFailureReasonErrorKey :
+                                           [NSString stringWithFormat:@"%@ expected single-quoted-string", f.propertyName] });
                           return NO;
                       }
                       break;
                   case MAEFragmentEnumerateString:
                       if (s.type != MAEStringTypeEnumerate) {
                           SET_ERROR(error, MAEErrorNotEnum,
-                                    [NSString stringWithFormat:@"%@ expected enumerate-string", f.propertyName]);
+                                    @{ NSLocalizedFailureReasonErrorKey :
+                                           [NSString stringWithFormat:@"%@ expected enumerate-string", f.propertyName] });
                           return NO;
                       }
                       break;
@@ -720,18 +571,53 @@ static NSString* const MAEAdapter = @"MAEAdapter";
         mtl_propertyAttributes* attributes = mtl_copyPropertyAttributes(property);
         if (*(attributes->type) == *(@encode(id))) {
             Class klass = attributes->objectClass;
+
+            NSValueTransformer* transformer = nil;
             if ([klass conformsToProtocol:@protocol(MAEArraySerializing)]) {
-                result[propertyKey] = [self arrayTransformerWithModelClass:klass];
-            } else {
-                result[propertyKey] = [NSValueTransformer mtl_validatingTransformerForClass:(klass ?: NSObject.class)];
+                transformer = [self arrayTransformerWithModelClass:klass];
+            } else if ([klass isSubclassOfClass:NSNumber.class]) {
+                transformer = [self numberTransformer];
             }
+
+            if (!transformer) {
+                transformer = [NSValueTransformer mtl_validatingTransformerForClass:(klass ?: NSObject.class)];
+            }
+            result[propertyKey] = transformer;
         } else {
-            result[propertyKey] = [self stringTransformerObjCType:attributes->type]
+            result[propertyKey] = [self stringTransformerForObjCType:attributes->type]
                 ?: [NSValueTransformer mtl_validatingTransformerForClass:NSValue.class];
         }
         free(attributes);
     }
     return result;
+}
+
+/**
+ * It returns a transformer for converting between NSString and ObjCType.
+ *
+ * @param objCType   An ObjCType
+ * @return If the type does not support, it returns nil. Otherwise, it returns a transfomer.
+ */
++ (NSValueTransformer* _Nullable)stringTransformerForObjCType:(const char* _Nonnull)objCType
+{
+    NSParameterAssert(objCType != nil);
+
+    if (strcmp(objCType, @encode(int)) == 0
+        || strcmp(objCType, @encode(short)) == 0
+        || strcmp(objCType, @encode(long)) == 0
+        || strcmp(objCType, @encode(long long)) == 0
+        || strcmp(objCType, @encode(unsigned short)) == 0
+        || strcmp(objCType, @encode(unsigned long)) == 0
+        || strcmp(objCType, @encode(unsigned long long)) == 0
+        || strcmp(objCType, @encode(float)) == 0
+        || strcmp(objCType, @encode(double)) == 0) {
+        return [self.class numberTransformer];
+    }
+    if (strcmp(objCType, @encode(BOOL)) == 0) {
+        return [self.class boolTransformer];
+    }
+
+    return nil;
 }
 
 @end

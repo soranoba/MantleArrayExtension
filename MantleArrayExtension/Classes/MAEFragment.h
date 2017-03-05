@@ -80,7 +80,7 @@ MAEFragment* _Nonnull MAEVariadic(id _Nonnull);
 /**
  * Create an instance
  *
- * @param propertyName A property name
+ * @param propertyName   A property name
  * @return An instance
  */
 - (instancetype _Nonnull)initWithPropertyName:(NSString* _Nonnull)propertyName;

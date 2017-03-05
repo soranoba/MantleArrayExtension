@@ -17,6 +17,12 @@ typedef NS_ENUM(NSUInteger, MAEErrorCode) {
     MAEErrorNotEnum,
     MAEErrorTransform,
     MAEErrorNoConversionTarget,
+
+    /// There was an input data that is different from the expected type.
+    MAEErrorInvalidInputData,
 };
 
+/// The domain for errors originating from MantleArrayExtension
 extern NSString* const MAEErrorDomain;
+/// A key that stores the input data that caused the error
+extern NSString* const MAEErrorInputDataKey;

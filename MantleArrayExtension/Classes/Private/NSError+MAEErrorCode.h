@@ -9,6 +9,8 @@
 #import "MAEErrorCode.h"
 #import <Foundation/Foundation.h>
 
+#define format(...) ([NSString stringWithFormat:__VA_ARGS__])
+
 @interface NSError (MAEErrorCode)
 
 #pragma mark - Lifecycle
@@ -24,18 +26,18 @@
 /**
  * Create NSError with error code and reason
  *
- * @param code   Error code
- * @param reason Error reason
+ * @param code      Error code
+ * @param userInfo  An userInfo excluding LocalizedDescription. LocalizedDescription will be added automatically.
  * @return instance
  */
 + (instancetype _Nonnull)mae_errorWithMAEErrorCode:(MAEErrorCode)code
-                                            reason:(NSString* _Nonnull)reason;
+                                          userInfo:(NSDictionary* _Nullable)userInfo;
 
 @end
 
-static inline void SET_ERROR(NSError* _Nullable* _Nullable error, MAEErrorCode code, NSString* _Nonnull reason)
+static inline void SET_ERROR(NSError* _Nullable* _Nullable error, MAEErrorCode code, NSDictionary* _Nullable userInfo)
 {
     if (error) {
-        *error = [NSError mae_errorWithMAEErrorCode:code reason:reason];
+        *error = [NSError mae_errorWithMAEErrorCode:code userInfo:userInfo];
     }
 }

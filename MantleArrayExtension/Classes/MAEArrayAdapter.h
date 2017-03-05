@@ -11,6 +11,7 @@
 #import "MAESeparatedString.h"
 #import <Foundation/Foundation.h>
 #import <Mantle/MTLModel.h>
+#import <Mantle/MTLTransformerErrorHandling.h>
 
 @protocol MAEArraySerializing <MTLModel>
 
@@ -128,7 +129,9 @@
 + (NSString* _Nullable)stringFromModel:(id<MAEArraySerializing> _Nullable)model
                                  error:(NSError* _Nullable* _Nullable)error;
 
-#pragma mark Transformer
+@end
+
+@interface MAEArrayAdapter (Transformers)
 
 /**
  * It returns a transformer for converting MAEArraySerializing modelClass and NSArray.
@@ -137,7 +140,8 @@
  * @param modelClass A modelClass that conforms MAEArraySerializing
  * @return A transformer
  */
-+ (NSValueTransformer* _Nonnull)variadicArrayTransformerWithModelClass:(Class _Nonnull)modelClass;
++ (NSValueTransformer<MTLTransformerErrorHandling>* _Nonnull)
+    variadicArrayTransformerWithModelClass:(Class _Nonnull)modelClass;
 
 /**
  * It returns a transformer for converting MAEArraySerializing modelClass and NSString.
@@ -145,20 +149,30 @@
  * @param modelClass A modelClass that conforms MAEArraySerializing
  * @return A transformer
  */
-+ (NSValueTransformer* _Nonnull)arrayTransformerWithModelClass:(Class _Nonnull)modelClass;
++ (NSValueTransformer<MTLTransformerErrorHandling>* _Nonnull)
+    arrayTransformerWithModelClass:(Class _Nonnull)modelClass;
 
 /**
  * It returns transformer for converting between number and NSString.
  *
  * @return A transformer
  */
-+ (NSValueTransformer* _Nonnull)numberStringTransformer;
++ (NSValueTransformer<MTLTransformerErrorHandling>* _Nonnull)numberTransformer;
 
 /**
  * It returns transformer for converting between bool and NSString.
  *
  * @return A transformer
  */
-+ (NSValueTransformer* _Nonnull)boolStringTransformer;
++ (NSValueTransformer<MTLTransformerErrorHandling>* _Nonnull)boolTransformer;
+
+@end
+
+@interface MAEArrayAdapter (Deprecated)
+
++ (NSValueTransformer<MTLTransformerErrorHandling>* _Nonnull)numberStringTransformer
+    __attribute__((unavailable("Replaced by numberTransformer")));
++ (NSValueTransformer<MTLTransformerErrorHandling>* _Nonnull)boolStringTransformer
+    __attribute__((unavailable("Replaced by boolTransformer")));
 
 @end

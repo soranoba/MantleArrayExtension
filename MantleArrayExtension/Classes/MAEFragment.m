@@ -23,7 +23,8 @@ static inline MAEFragment* _Nonnull makeFragment(id _Nonnull v)
     if ([v isKindOfClass:MAEFragment.class]) {
         fragment = v;
     } else {
-        NSCAssert([v isKindOfClass:NSString.class], @"It only allow NSString and MAEFramgnet");
+        NSCAssert([v isKindOfClass:NSString.class],
+                  @"It only allow NSString and MAEFramgnet, but got %@", [v class]);
         fragment = [[MAEFragment alloc] initWithPropertyName:v];
     }
     return fragment;

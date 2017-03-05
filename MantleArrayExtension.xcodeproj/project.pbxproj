@@ -31,6 +31,8 @@
 		A40611BB1E6BECE10074F00D /* Nimble.framework in Resources */ = {isa = PBXBuildFile; fileRef = A40611B81E6BECE10074F00D /* Nimble.framework */; };
 		A40611BC1E6BECE10074F00D /* OCMock.framework in Resources */ = {isa = PBXBuildFile; fileRef = A40611B91E6BECE10074F00D /* OCMock.framework */; };
 		A40611BD1E6BECE10074F00D /* Quick.framework in Resources */ = {isa = PBXBuildFile; fileRef = A40611BA1E6BECE10074F00D /* Quick.framework */; };
+		A40611BF1E6BF23A0074F00D /* MAEArrayAdapter+Transformers.m in Sources */ = {isa = PBXBuildFile; fileRef = A40611BE1E6BF23A0074F00D /* MAEArrayAdapter+Transformers.m */; };
+		A40611C11E6BF4330074F00D /* MAEArrayAdapter+TransformersTests.m in Sources */ = {isa = PBXBuildFile; fileRef = A40611C01E6BF4330074F00D /* MAEArrayAdapter+TransformersTests.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -73,6 +75,8 @@
 		A40611B81E6BECE10074F00D /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nimble.framework; path = Carthage/Build/iOS/Nimble.framework; sourceTree = "<group>"; };
 		A40611B91E6BECE10074F00D /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = Carthage/Build/iOS/OCMock.framework; sourceTree = "<group>"; };
 		A40611BA1E6BECE10074F00D /* Quick.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quick.framework; path = Carthage/Build/iOS/Quick.framework; sourceTree = "<group>"; };
+		A40611BE1E6BF23A0074F00D /* MAEArrayAdapter+Transformers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "MAEArrayAdapter+Transformers.m"; path = "Classes/MAEArrayAdapter+Transformers.m"; sourceTree = "<group>"; };
+		A40611C01E6BF4330074F00D /* MAEArrayAdapter+TransformersTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MAEArrayAdapter+TransformersTests.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,6 +108,7 @@
 			children = (
 				A40611561E6AB99F0074F00D /* MAEArrayAdapter.h */,
 				A40611571E6AB99F0074F00D /* MAEArrayAdapter.m */,
+				A40611BE1E6BF23A0074F00D /* MAEArrayAdapter+Transformers.m */,
 				A40611581E6AB99F0074F00D /* MAEErrorCode.h */,
 				A40611591E6AB99F0074F00D /* MAEFragment.h */,
 				A406115A1E6AB99F0074F00D /* MAEFragment.m */,
@@ -142,6 +147,7 @@
 			children = (
 				A40611AB1E6AC4E60074F00D /* TestModels */,
 				A40611A41E6AC4E30074F00D /* MAEArrayAdapterTests.m */,
+				A40611C01E6BF4330074F00D /* MAEArrayAdapter+TransformersTests.m */,
 				A40611A51E6AC4E30074F00D /* MAEFragmentTests.m */,
 				A40611A61E6AC4E30074F00D /* MAESeparatedStringTests.m */,
 				A40611A71E6AC4E30074F00D /* MantleArrayExtension-Prefix.pch */,
@@ -332,6 +338,7 @@
 			files = (
 				A406115E1E6AB99F0074F00D /* MAEArrayAdapter.m in Sources */,
 				A40611611E6AB99F0074F00D /* MAEFragment.m in Sources */,
+				A40611BF1E6BF23A0074F00D /* MAEArrayAdapter+Transformers.m in Sources */,
 				A40611631E6AB99F0074F00D /* MAESeparatedString.m in Sources */,
 				A40611681E6AB9AF0074F00D /* NSError+MAEErrorCode.m in Sources */,
 			);
@@ -345,6 +352,7 @@
 				A40611A91E6AC4E30074F00D /* MAEFragmentTests.m in Sources */,
 				A40611AE1E6AC4F20074F00D /* MAETModel.m in Sources */,
 				A40611AA1E6AC4E30074F00D /* MAESeparatedStringTests.m in Sources */,
+				A40611C11E6BF4330074F00D /* MAEArrayAdapter+TransformersTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
