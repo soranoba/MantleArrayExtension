@@ -169,7 +169,7 @@ static NSString* const MAEAdapter = @"MAEAdapter";
 
     NSMutableArray<MAESeparatedString*>* separatedStrings = [NSMutableArray arrayWithCapacity:array.count];
     for (NSString* s in array) {
-        [separatedStrings addObject:[[MAESeparatedString alloc] initWithString:s]];
+        [separatedStrings addObject:[[MAESeparatedString alloc] initWithOriginalCharacters:s ignoreEdgeBlank:NO]];
     }
 
     @try {
@@ -263,7 +263,7 @@ static NSString* const MAEAdapter = @"MAEAdapter";
                     type = MAEStringTypeEnumerate;
                     break;
             }
-            [result addObject:[[[MAESeparatedString alloc] initWithCharacters:transformedString type:type] toString]];
+            [result addObject:[MAESeparatedString stringFromCharacters:transformedString withType:type]];
         }
     }
     return result;
@@ -420,71 +420,42 @@ static NSString* const MAEAdapter = @"MAEAdapter";
     chars[string.length] = '\0';
 
     unichar* p = chars;
-    __block unichar *start = nil, *end = nil;
+    unichar *start = nil, *end = nil;
     BOOL doubleQuoted = NO, singleQuoted = NO;
     NSMutableArray<MAESeparatedString*>* separatedStrings =
         [NSMutableArray arrayWithCapacity:self.formatByPropertyKey.count];
 
     void (^append)(unichar* _Nullable, unichar* _Nullable) = ^void(unichar* _Nullable start, unichar* _Nullable end) {
-        NSString* str;
-        if (start && end) {
-            if ((start > chars)
-                && ((*(start - 1) == '"' && *end == '"') || (*(start - 1) == '\'' && *end == '\''))) {
-                start -= 1;
-                end += 1;
-            }
-            str = [NSString stringWithCharacters:start length:end - start];
-        } else {
-            str = [NSString string];
-        }
-        [separatedStrings addObject:[[MAESeparatedString alloc] initWithString:str]];
+        NSString* str = (start <= end) ? [NSString stringWithCharacters:start length:end - start + 1] : @"";
+        [separatedStrings addObject:[[MAESeparatedString alloc] initWithOriginalCharacters:str
+                                                                           ignoreEdgeBlank:self.ignoreEdgeBlank]];
     };
 
-    for (; *p != '\0'; p++) {
+    for (start = p; *p != '\0'; p++) {
         if (*p == '\\') {
-            if (++p == '\0') {
+            if (*(++p) == '\0') {
                 break;
             }
         } else if (!singleQuoted && !doubleQuoted && *p == self.separator) {
-            if (*p == ' ' && !start) {
-                if (!self.ignoreEdgeBlank) {
-                    append(nil, nil);
-                }
+            if (*p == ' ' && self.ignoreEdgeBlank && *(p + 1) == ' ') {
+                // NOP
             } else {
-                append(start, (end ?: p));
-                start = end = nil;
+                end = p - 1;
+                append(start, end);
+                start = p + 1;
+                end = nil;
             }
         } else if (!singleQuoted && *p == '"') {
-            if (doubleQuoted) {
-                end = p;
-            }
             doubleQuoted = !doubleQuoted;
         } else if (!doubleQuoted && *p == '\'') {
-            if (singleQuoted) {
-                end = p;
-            }
             singleQuoted = !singleQuoted;
-        } else if (doubleQuoted || singleQuoted) {
-            if (!start) {
-                start = p;
-            }
-            continue;
-        } else if (*p == ' ') {
-            if (start && self.ignoreEdgeBlank) {
-                end = p;
-            } else if (!start && !self.ignoreEdgeBlank) {
-                start = p;
-            }
-        } else if (!start) {
-            start = p;
-        } else {
-            end = nil;
         }
     }
+    end = p - 1;
 
-    if (start) {
+    if (*start != '\0') {
         if (!doubleQuoted && !singleQuoted) {
-            append(start, (end ?: p));
+            append(start, end);
         } else {
             // NOTE: unclosed-quoted
             separatedStrings = nil;

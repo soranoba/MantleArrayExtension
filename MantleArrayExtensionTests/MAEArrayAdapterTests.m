@@ -272,6 +272,7 @@ QuickSpecBegin(MAEArrayAdapterTests)
             MAEArrayAdapter* adapter = [[MAEArrayAdapter alloc] initWithModelClass:MAETModel2.class];
             expect([adapter separateString:@"'a\\' b' c"]).to(equal(@[ @"'a\\' b'", @"c" ]));
             expect([adapter separateString:@"\"a\\\" b\"  c"]).to(equal(@[ @"\"a\\\" b\"", @"c" ]));
+            expect([adapter separateString:@"a b c\\"]).to(equal(@[ @"a", @"b", @"c\\" ]));
         });
 
         it(@"returns nil, if it contains unclosed-quote", ^{
@@ -293,6 +294,15 @@ QuickSpecBegin(MAEArrayAdapterTests)
             expect([adapter separateString:@"a  b  c"]).to(equal(@[ @"a", @"", @"b", @"", @"c" ]));
         });
 
+        it(@"returns list that does not contain empty string, if there contain two consecutive blanks and ignoreEdgeBlank is YES and separator is a space", ^{
+            mock = OCMClassMock(MAETModel2.class);
+            OCMStub([mock ignoreEdgeBlank]).andReturn(YES);
+            OCMStub([mock separator]).andReturn(' ');
+
+            MAEArrayAdapter* adapter = [[MAEArrayAdapter alloc] initWithModelClass:MAETModel2.class];
+            expect([adapter separateString:@"a  b  c"]).to(equal(@[ @"a", @"b", @"c" ]));
+        });
+
         it(@"can use separator other than space", ^{
             mock = OCMClassMock(MAETModel2.class);
             OCMStub([mock ignoreEdgeBlank]).andReturn(YES);
@@ -302,15 +312,14 @@ QuickSpecBegin(MAEArrayAdapterTests)
             expect([adapter separateString:@"a, b, c"]).to(equal(@[ @"a", @"b", @"c" ]));
         });
 
-        it(@"returns list of string that contain space, if ignoreEdgeBlank is NO",
-           ^{
-               mock = OCMClassMock(MAETModel2.class);
-               OCMStub([mock ignoreEdgeBlank]).andReturn(NO);
-               OCMStub([mock separator]).andReturn(',');
+        it(@"returns list of string that contain space, if ignoreEdgeBlank is NO", ^{
+            mock = OCMClassMock(MAETModel2.class);
+            OCMStub([mock ignoreEdgeBlank]).andReturn(NO);
+            OCMStub([mock separator]).andReturn(',');
 
-               MAEArrayAdapter* adapter = [[MAEArrayAdapter alloc] initWithModelClass:MAETModel2.class];
-               expect([adapter separateString:@"a, b, c"]).to(equal(@[ @"a", @" b", @" c" ]));
-           });
+            MAEArrayAdapter* adapter = [[MAEArrayAdapter alloc] initWithModelClass:MAETModel2.class];
+            expect([adapter separateString:@"a, b, c"]).to(equal(@[ @"a", @" b", @" c" ]));
+        });
 
         it(@"can included space without using quote, if separator is not space", ^{
             mock = OCMClassMock(MAETModel2.class);
