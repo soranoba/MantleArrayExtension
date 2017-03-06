@@ -43,8 +43,6 @@ NSString* _Nonnull const MAEErrorInputDataKey = @"MAEErrorInputDataKey";
 + (NSString* _Nonnull)mae_description:(MAEErrorCode)code
 {
     switch (code) {
-        case MAEErrorBadArguemt:
-            return @"Invalid argument";
         case MAEErrorInputNil:
             return @"Input is nil";
         case MAEErrorInvalidCount:

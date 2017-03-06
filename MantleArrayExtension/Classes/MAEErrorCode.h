@@ -10,7 +10,6 @@
 
 typedef NS_ENUM(NSUInteger, MAEErrorCode) {
     MAEErrorUnknown,
-    MAEErrorBadArguemt,
     MAEErrorInputNil,
     MAEErrorInvalidCount,
     MAEErrorNotQuoted,
@@ -20,6 +19,8 @@ typedef NS_ENUM(NSUInteger, MAEErrorCode) {
 
     /// There was an input data that is different from the expected type.
     MAEErrorInvalidInputData,
+
+    MAEErrorBadArguemt __attribute__((unavailable("Replaced by MAEErrorInvalidInputData"))),
 };
 
 /// The domain for errors originating from MantleArrayExtension

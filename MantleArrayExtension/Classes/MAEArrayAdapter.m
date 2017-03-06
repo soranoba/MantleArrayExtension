@@ -158,7 +158,11 @@ static NSString* const MAEAdapter = @"MAEAdapter";
 
     NSMutableArray<MAESeparatedString*>* separatedStrings = [NSMutableArray arrayWithCapacity:array.count];
     for (NSString* s in array) {
-        [separatedStrings addObject:[[MAESeparatedString alloc] initWithOriginalCharacters:s ignoreEdgeBlank:NO]];
+        if ([s isKindOfClass:MAESeparatedString.class]) {
+            [separatedStrings addObject:(MAESeparatedString*)s];
+        } else {
+            [separatedStrings addObject:[[MAESeparatedString alloc] initWithOriginalCharacters:s ignoreEdgeBlank:NO]];
+        }
     }
 
     return [self modelFromSeparatedStrings:separatedStrings error:error];
@@ -361,7 +365,7 @@ static NSString* const MAEAdapter = @"MAEAdapter";
                 if (!validate(f, s)) {
                     return nil;
                 }
-                [arr addObject:s.characters];
+                [arr addObject:s];
             }
             value = arr;
         } else {
@@ -371,7 +375,7 @@ static NSString* const MAEAdapter = @"MAEAdapter";
             if (!validate(f, s)) {
                 return nil;
             }
-            value = s.characters;
+            value = s;
         }
 
         value = transform(f.propertyName, value);

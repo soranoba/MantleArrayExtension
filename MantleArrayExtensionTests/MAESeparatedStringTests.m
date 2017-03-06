@@ -85,7 +85,7 @@ QuickSpecBegin(MAESeparatedStringTests)
 
         it(@"returns NO, if instances can not be compared", ^{
             MAESeparatedString* s1 = [[MAESeparatedString alloc] initWithOriginalCharacters:@"hoge" ignoreEdgeBlank:YES];
-            expect([s1 isEqualToSeparatedString:(id)@1]).to(equal(NO));
+            expect([s1 isEqualToSeparatedString:(id) @1]).to(equal(NO));
         });
     });
 

@@ -407,29 +407,6 @@ QuickSpecBegin(MAEArrayAdapterTests)
         });
     });
 
-    describe(@"variadicArrayTransformerWithModelClass:", ^{
-        NSValueTransformer* transformer = [MAEArrayAdapter variadicArrayTransformerWithModelClass:MAETModel1.class];
-
-        it(@"can convert from array to model", ^{
-            MAETModel1* model = [transformer transformedValue:@[ @"true", @"5348765123", @"-1389477961", @"-2.5", @"1.797693" ]];
-            expect(model.b).to(equal(YES));
-            expect(model.ui).to(equal(5348765123));
-            expect(model.i).to(equal(-1389477961));
-            expect(model.f).to(equal(-2.5f));
-            expect(model.d).to(equal(1.797693));
-        });
-
-        it(@"can convert from model to array", ^{
-            MAETModel1* model = [MAETModel1 new];
-            model.b = YES;
-            model.ui = 5348765123;
-            model.i = -1389477961;
-            model.f = -2.5f;
-            model.d = 1.797693;
-            expect([transformer reverseTransformedValue:model]).to(equal(@[ @"true", @"5348765123", @"-1389477961", @"-2.5", @"1.797693" ]));
-        });
-    });
-
     describe(@"valueTransformersForModelClass:", ^{
         __block id mock;
 

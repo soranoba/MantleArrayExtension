@@ -135,7 +135,7 @@
 
 /**
  * It returns a transformer for converting MAEArraySerializing modelClass and NSArray.
- * It can be used to define another model a part defined by MAEVariadic. However, validation such as Quoted and Enum is broken now.
+ * It can be used to define another model a part defined by MAEVariadic.
  *
  * @param modelClass A modelClass that conforms MAEArraySerializing
  * @return A transformer

@@ -20,3 +20,4 @@
 - Improved accuracy of numberTransformer.
 - Fixed an overflow that was happened if last character is backslash.
 - Fixed a bug when it used escaped single-quote in single-quote.
+- Fixed the type validation (e.g. Enum and Quoted) of `variadicArrayTransformerWithModelClass:`.

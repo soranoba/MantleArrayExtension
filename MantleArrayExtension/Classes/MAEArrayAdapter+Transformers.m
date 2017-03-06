@@ -18,15 +18,17 @@
 {
     return [MTLValueTransformer
         transformerUsingForwardBlock:
-            ^id _Nullable(id _Nullable value, BOOL* _Nonnull success, NSError* _Nullable* _Nullable error) {
+            ^id _Nullable(NSArray* _Nullable value, BOOL* _Nonnull success, NSError* _Nullable* _Nullable error) {
                 if (!value) {
+                    *success = YES;
                     return nil;
                 }
 
                 if (![value isKindOfClass:NSArray.class]) {
-                    SET_ERROR(error, MAEErrorBadArguemt,
+                    SET_ERROR(error, MAEErrorInvalidInputData,
                               @{ NSLocalizedFailureReasonErrorKey :
-                                     @"arrayTransformerWithModelClass only support to convert from between NSArray and MTLModel" });
+                                     format(@"arrayTransformerWithModelClass only support NSArray, but got %@", value.class),
+                                 MAEErrorInputDataKey : value });
                     *success = NO;
                     return nil;
                 }
@@ -34,24 +36,29 @@
                 *success = model != nil;
                 return model;
             }
-        reverseBlock:^id _Nullable(id _Nullable value, BOOL* _Nonnull success, NSError* _Nullable* _Nullable error) {
-            if (!value) {
-                return nil;
-            }
+        reverseBlock:
+            ^NSArray* _Nullable(MTLModel<MAEArraySerializing>* _Nullable value, BOOL* _Nonnull success,
+                                NSError* _Nullable* _Nullable error) {
+                if (!value) {
+                    *success = YES;
+                    return nil;
+                }
 
-            if (!([value isKindOfClass:MTLModel.class] &&
-                  [value conformsToProtocol:@protocol(MAEArraySerializing)])) {
-                SET_ERROR(error, MAEErrorBadArguemt,
-                          @{ NSLocalizedFailureReasonErrorKey :
-                                 @"arrayTransformerWithModelClass only support MAEArraySerializing MTLModel" });
-                *success = NO;
-                return nil;
-            }
+                if (!([value isKindOfClass:MTLModel.class] &&
+                      [value conformsToProtocol:@protocol(MAEArraySerializing)])) {
+                    SET_ERROR(error, MAEErrorInvalidInputData,
+                              @{ NSLocalizedFailureReasonErrorKey :
+                                     format(@"arrayTransformerWithModelClass only support MAEArraySerializing MTLModel, but got %@",
+                                            value.class),
+                                 MAEErrorInputDataKey : value });
+                    *success = NO;
+                    return nil;
+                }
 
-            NSArray* array = [self arrayFromModel:value error:error];
-            *success = array != nil;
-            return array;
-        }];
+                NSArray* array = [self arrayFromModel:value error:error];
+                *success = array != nil;
+                return array;
+            }];
 }
 
 + (NSValueTransformer<MTLTransformerErrorHandling>* _Nonnull)
@@ -59,15 +66,17 @@
 {
     return [MTLValueTransformer
         transformerUsingForwardBlock:
-            ^id _Nullable(id _Nullable value, BOOL* _Nonnull success, NSError* _Nullable* _Nullable error) {
+            ^id _Nullable(NSString* _Nullable value, BOOL* _Nonnull success, NSError* _Nullable* _Nullable error) {
                 if (!value) {
+                    *success = YES;
                     return nil;
                 }
 
                 if (![value isKindOfClass:NSString.class]) {
-                    SET_ERROR(error, MAEErrorBadArguemt,
+                    SET_ERROR(error, MAEErrorInvalidInputData,
                               @{ NSLocalizedFailureReasonErrorKey :
-                                     @"arrayTransformerWithModelClass only support to convert between string and MTLModel" });
+                                     format(@"arrayTransformerWithModelClass only support NSString, but got %@", value.class),
+                                 MAEErrorInputDataKey : value });
                     *success = NO;
                     return nil;
                 }
@@ -75,24 +84,29 @@
                 *success = model != nil;
                 return model;
             }
-        reverseBlock:^id _Nullable(id _Nullable value, BOOL* _Nonnull success, NSError* _Nullable* _Nullable error) {
-            if (!value) {
-                return nil;
-            }
+        reverseBlock:
+            ^NSString* _Nullable(MTLModel<MAEArraySerializing>* _Nullable value, BOOL* _Nonnull success,
+                                 NSError* _Nullable* _Nullable error) {
+                if (!value) {
+                    *success = YES;
+                    return nil;
+                }
 
-            if (!([value isKindOfClass:MTLModel.class] &&
-                  [value conformsToProtocol:@protocol(MAEArraySerializing)])) {
-                SET_ERROR(error, MAEErrorBadArguemt,
-                          @{ NSLocalizedFailureReasonErrorKey :
-                                 @"arrayTransformerWithModelClass only support MAEArraySerializing MTLModel" });
-                *success = NO;
-                return nil;
-            }
+                if (!([value isKindOfClass:MTLModel.class] &&
+                      [value conformsToProtocol:@protocol(MAEArraySerializing)])) {
+                    SET_ERROR(error, MAEErrorInvalidInputData,
+                              @{ NSLocalizedFailureReasonErrorKey :
+                                     format(@"arrayTransformerWithModelClass only support MAEArraySerializing MTLModel, but got %@",
+                                            value.class),
+                                 MAEErrorInputDataKey : value });
+                    *success = NO;
+                    return nil;
+                }
 
-            NSString* str = [self stringFromModel:value error:error];
-            *success = str != nil;
-            return str;
-        }];
+                NSString* str = [self stringFromModel:value error:error];
+                *success = str != nil;
+                return str;
+            }];
 }
 
 + (NSValueTransformer<MTLTransformerErrorHandling>* _Nonnull)numberTransformer
