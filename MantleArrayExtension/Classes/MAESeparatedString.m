@@ -7,6 +7,7 @@
 //
 
 #import "MAESeparatedString.h"
+#import <objc/runtime.h>
 
 @interface MAESeparatedString ()
 @property (nonatomic, nonnull, copy, readwrite) NSString* originalCharacters;
@@ -53,7 +54,7 @@
             self.type = MAEStringTypeDoubleQuoted;
         } else if (characters.length >= 2 && [characters hasPrefix:@"'"] & [characters hasSuffix:@"'"]) {
             characters = [characters substringWithRange:NSMakeRange(1, characters.length - 2)];
-            characters = [characters stringByReplacingOccurrencesOfString:@"\'" withString:@"'"];
+            characters = [characters stringByReplacingOccurrencesOfString:@"\\'" withString:@"'"];
             self.type = MAEStringTypeSingleQuoted;
         } else {
             self.type = MAEStringTypeEnumerate;
@@ -86,22 +87,29 @@
     }
 }
 
-#pragma mark - NSObject (Override)
-
-- (BOOL)isEqual:(id _Nullable)object
+- (BOOL)isEqualToSeparatedString:(NSString* _Nonnull)otherString
 {
-    if ([object isKindOfClass:NSString.class]) {
-        return [self isEqual:[[self.class alloc] initWithOriginalCharacters:object ignoreEdgeBlank:NO]];
-    } else if ([object isKindOfClass:MAESeparatedString.class]) {
-        MAESeparatedString* other = object;
-        return self.type == other.type && [self.characters isEqualToString:other.characters];
+    if ([otherString isKindOfClass:MAESeparatedString.class]) {
+        MAESeparatedString* otherSeparatedString = (id)otherString;
+        return self.type == otherSeparatedString.type
+            && [self.characters isEqualToString:otherSeparatedString.characters];
+    } else if ([otherString isKindOfClass:NSString.class]) {
+        return [self isEqualToSeparatedString:[[self.class alloc] initWithOriginalCharacters:otherString
+                                                                             ignoreEdgeBlank:NO]];
     }
     return NO;
 }
 
-- (NSString* _Nonnull)description
+#pragma mark - NSString (Override)
+
+- (NSUInteger)length
 {
-    return [self.class stringFromCharacters:self.characters withType:self.type];
+    return self.characters.length;
+}
+
+- (unichar)characterAtIndex:(NSUInteger)index
+{
+    return [self.characters characterAtIndex:index];
 }
 
 @end

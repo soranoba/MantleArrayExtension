@@ -17,7 +17,7 @@ typedef NS_ENUM(NSUInteger, MAEStringType) {
 /**
  * The class represent one of characters separated by separator.
  */
-@interface MAESeparatedString : NSObject
+@interface MAESeparatedString : NSString
 
 /// The original characters sometimes contains some spaces and quotes.
 @property (nonatomic, nonnull, copy, readonly) NSString* originalCharacters;
@@ -60,6 +60,15 @@ typedef NS_ENUM(NSUInteger, MAEStringType) {
  */
 + (NSString* _Nonnull)stringFromCharacters:(NSString* _Nonnull)characters
                                   withType:(MAEStringType)type;
+
+/**
+ * It returns whether type and characters match.
+ * If originalCharacters is only different (that is, the number of prefix and suffix space is different), it returns YES.
+ *
+ * @param otherString  A string to be compared.
+ * @return It returns YES, if it regard that as the same. Otherwise, it returns NO.
+ */
+- (BOOL)isEqualToSeparatedString:(NSString* _Nonnull)otherString;
 
 @end
 

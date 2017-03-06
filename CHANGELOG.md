@@ -3,7 +3,9 @@
 ### Major changes
 
 - Some method name changed. Please fix your code according to compile error.
-- Content handled by MAESeparatedString changed.
+- MAESeparatedString has been reborn.
+ - It become subclass of NSString.
+ - Return value of `description` and `isEqual:` has been changed.
 
 ### Additional functions
 
@@ -17,3 +19,4 @@
 
 - Improved accuracy of numberTransformer.
 - Fixed an overflow that was happened if last character is backslash.
+- Fixed a bug when it used escaped single-quote in single-quote.

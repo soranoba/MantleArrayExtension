@@ -263,8 +263,8 @@ QuickSpecBegin(MAEArrayAdapterTests)
             OCMStub([mock separator]).andReturn(' ');
 
             MAEArrayAdapter* adapter = [[MAEArrayAdapter alloc] initWithModelClass:MAETModel2.class];
-            expect([adapter separateString:@"'a\" b' c"]).to(equal(@[ @"'a\" b'", @"c" ]));
-            expect([adapter separateString:@"\"a' b\"  c"]).to(equal(@[ @"\"a' b\"", @"c" ]));
+            expect([adapter separateString:@"'a\" b' c"]).to(equal(@[ @"a\" b", @"c" ]));
+            expect([adapter separateString:@"\"a' b\"  c"]).to(equal(@[ @"a' b", @"c" ]));
         });
 
         it(@"can handle backslash", ^{
@@ -273,8 +273,8 @@ QuickSpecBegin(MAEArrayAdapterTests)
             OCMStub([mock separator]).andReturn(' ');
 
             MAEArrayAdapter* adapter = [[MAEArrayAdapter alloc] initWithModelClass:MAETModel2.class];
-            expect([adapter separateString:@"'a\\' b' c"]).to(equal(@[ @"'a\\' b'", @"c" ]));
-            expect([adapter separateString:@"\"a\\\" b\"  c"]).to(equal(@[ @"\"a\\\" b\"", @"c" ]));
+            expect([adapter separateString:@"'a\\' b' c"]).to(equal(@[ @"a' b", @"c" ]));
+            expect([adapter separateString:@"\"a\\\" b\"  c"]).to(equal(@[ @"a\" b", @"c" ]));
             expect([adapter separateString:@"a b c\\"]).to(equal(@[ @"a", @"b", @"c\\" ]));
         });
 
