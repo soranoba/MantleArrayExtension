@@ -1,5 +1,6 @@
 # MantleArrayExtension
-[![CI Status](http://img.shields.io/travis/soranoba/MantleArrayExtension.svg?style=flat)](https://travis-ci.org/soranoba/MantleArrayExtension)
+[![Build Status](https://travis-ci.org/soranoba/MantleArrayExtension.svg?branch=master)](https://travis-ci.org/soranoba/MantleArrayExtension)
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Version](https://img.shields.io/cocoapods/v/MantleArrayExtension.svg?style=flat)](http://cocoapods.org/pods/MantleArrayExtension)
 [![License](https://img.shields.io/cocoapods/l/MantleArrayExtension.svg?style=flat)](http://cocoapods.org/pods/MantleArrayExtension)
 [![Platform](https://img.shields.io/cocoapods/p/MantleArrayExtension.svg?style=flat)](http://cocoapods.org/pods/MantleArrayExtension)

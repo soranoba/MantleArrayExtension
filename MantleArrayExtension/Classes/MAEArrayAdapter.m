@@ -16,8 +16,6 @@
 
 static unichar const MAEDefaultSeparator = ' ';
 
-static NSString* const MAEAdapter = @"MAEAdapter";
-
 @interface MAEArrayAdapter ()
 
 @property (nonatomic, nonnull, strong) Class modelClass;

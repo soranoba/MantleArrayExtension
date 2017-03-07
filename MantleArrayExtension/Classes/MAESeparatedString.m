@@ -7,7 +7,6 @@
 //
 
 #import "MAESeparatedString.h"
-#import <objc/runtime.h>
 
 @interface MAESeparatedString ()
 @property (nonatomic, nonnull, copy, readwrite) NSString* originalCharacters;
