@@ -38,7 +38,7 @@ static unichar const MAEDefaultSeparator = ' ';
 
 - (instancetype _Nullable)init
 {
-    NSAssert(NO, @"%@ MUST be initialized with designed initializer", self.class);
+    NSAssert(NO, @"%@ MUST be initialized with designated initializer", self.class);
     return nil;
 }
 
@@ -523,7 +523,7 @@ static unichar const MAEDefaultSeparator = ' ';
 
             NSValueTransformer* transformer = nil;
             if ([klass conformsToProtocol:@protocol(MAEArraySerializing)]) {
-                transformer = [self arrayTransformerWithModelClass:klass];
+                transformer = [self stringTransformerWithArrayModelClass:klass];
             } else if ([klass isSubclassOfClass:NSNumber.class]) {
                 transformer = [self numberTransformer];
             }

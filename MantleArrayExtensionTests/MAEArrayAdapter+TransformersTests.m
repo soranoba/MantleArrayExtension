@@ -17,9 +17,9 @@ static inline MAESeparatedString* separatedString(NSString* string)
 
 QuickSpecBegin(MAEArrayAdapter_TransformersTests)
 {
-    describe(@"variadicArrayTransformerWithModelClass:", ^{
+    describe(@"variadicTransformerWithArrayModelClass:", ^{
         NSValueTransformer<MTLTransformerErrorHandling>* transformer
-            = [MAEArrayAdapter variadicArrayTransformerWithModelClass:MAETModel1.class];
+            = [MAEArrayAdapter variadicTransformerWithArrayModelClass:MAETModel1.class];
 
         it(@"can convert from array to model", ^{
             MAETModel1* model
@@ -129,9 +129,9 @@ QuickSpecBegin(MAEArrayAdapter_TransformersTests)
         });
     });
 
-    describe(@"arrayTransformerWithModelClass:", ^{
+    describe(@"stringTransformerWithArrayModelClass:", ^{
         NSValueTransformer<MTLTransformerErrorHandling>* transformer
-            = [MAEArrayAdapter arrayTransformerWithModelClass:MAETModel1.class];
+            = [MAEArrayAdapter stringTransformerWithArrayModelClass:MAETModel1.class];
 
         it(@"can convert between model and string", ^{
             MAETModel1* model = [transformer transformedValue:@"true,5348765123,-1389477961,-2.5,1.797693"];

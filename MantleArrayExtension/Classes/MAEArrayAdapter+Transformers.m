@@ -14,7 +14,7 @@
 @implementation MAEArrayAdapter (Transformers)
 
 + (NSValueTransformer<MTLTransformerErrorHandling>* _Nonnull)
-    variadicArrayTransformerWithModelClass:(Class _Nonnull)modelClass
+    variadicTransformerWithArrayModelClass:(Class _Nonnull)modelClass
 {
     return [MTLValueTransformer
         transformerUsingForwardBlock:
@@ -27,7 +27,7 @@
                 if (![value isKindOfClass:NSArray.class]) {
                     SET_ERROR(error, MAEErrorInvalidInputData,
                               @{ NSLocalizedFailureReasonErrorKey :
-                                     format(@"arrayTransformerWithModelClass only support NSArray, but got %@", value.class),
+                                     format(@"%s only support NSArray, but got %@", __FUNCTION__, value.class),
                                  MAEErrorInputDataKey : value });
                     *success = NO;
                     return nil;
@@ -48,8 +48,8 @@
                       [value conformsToProtocol:@protocol(MAEArraySerializing)])) {
                     SET_ERROR(error, MAEErrorInvalidInputData,
                               @{ NSLocalizedFailureReasonErrorKey :
-                                     format(@"arrayTransformerWithModelClass only support MAEArraySerializing MTLModel, but got %@",
-                                            value.class),
+                                     format(@"%s only support MAEArraySerializing MTLModel, but got %@",
+                                            __FUNCTION__, value.class),
                                  MAEErrorInputDataKey : value });
                     *success = NO;
                     return nil;
@@ -62,7 +62,7 @@
 }
 
 + (NSValueTransformer<MTLTransformerErrorHandling>* _Nonnull)
-    arrayTransformerWithModelClass:(Class _Nonnull)modelClass
+    stringTransformerWithArrayModelClass:(Class _Nonnull)modelClass
 {
     return [MTLValueTransformer
         transformerUsingForwardBlock:
@@ -75,7 +75,7 @@
                 if (![value isKindOfClass:NSString.class]) {
                     SET_ERROR(error, MAEErrorInvalidInputData,
                               @{ NSLocalizedFailureReasonErrorKey :
-                                     format(@"arrayTransformerWithModelClass only support NSString, but got %@", value.class),
+                                     format(@"%s only support NSString, but got %@", __FUNCTION__, value.class),
                                  MAEErrorInputDataKey : value });
                     *success = NO;
                     return nil;
@@ -96,8 +96,8 @@
                       [value conformsToProtocol:@protocol(MAEArraySerializing)])) {
                     SET_ERROR(error, MAEErrorInvalidInputData,
                               @{ NSLocalizedFailureReasonErrorKey :
-                                     format(@"arrayTransformerWithModelClass only support MAEArraySerializing MTLModel, but got %@",
-                                            value.class),
+                                     format(@"%s only support MAEArraySerializing MTLModel, but got %@",
+                                            __FUNCTION__, value.class),
                                  MAEErrorInputDataKey : value });
                     *success = NO;
                     return nil;

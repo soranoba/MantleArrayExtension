@@ -39,7 +39,7 @@
  *      (Conversely, if optional is set, nil is set when there is no value)
  *
  * Nested model:
- *    - You MUST be sure to specify different separator for parent and child.
+ *    - You MUST be sure to specify different separator for parent and child except when using variadic.
  *
  */
 + (NSArray* _Nonnull)formatByPropertyKey;
@@ -84,7 +84,6 @@
 @interface MAEArrayAdapter : NSObject
 
 #pragma mark - Public Methods
-#pragma mark Conversion between Array and Model
 
 /**
  * Convert to model from string
@@ -141,7 +140,7 @@
  * @return A transformer
  */
 + (NSValueTransformer<MTLTransformerErrorHandling>* _Nonnull)
-    variadicArrayTransformerWithModelClass:(Class _Nonnull)modelClass;
+    variadicTransformerWithArrayModelClass:(Class _Nonnull)modelClass;
 
 /**
  * It returns a transformer for converting MAEArraySerializing modelClass and NSString.
@@ -150,7 +149,7 @@
  * @return A transformer
  */
 + (NSValueTransformer<MTLTransformerErrorHandling>* _Nonnull)
-    arrayTransformerWithModelClass:(Class _Nonnull)modelClass;
+    stringTransformerWithArrayModelClass:(Class _Nonnull)modelClass;
 
 /**
  * It returns transformer for converting between number and NSString.
@@ -174,5 +173,10 @@
     __attribute__((unavailable("Replaced by numberTransformer")));
 + (NSValueTransformer<MTLTransformerErrorHandling>* _Nonnull)boolStringTransformer
     __attribute__((unavailable("Replaced by boolTransformer")));
-
++ (NSValueTransformer<MTLTransformerErrorHandling>* _Nonnull)
+    arrayTransformerWithModelClass:(Class _Nonnull)modelClass
+    __attribute__((unavailable("Replaced by stringTransformerWithArrayModelClass:")));
++ (NSValueTransformer<MTLTransformerErrorHandling>* _Nonnull)
+    variadicArrayTransformerWithModelClass:(Class _Nonnull)modelClass
+    __attribute__((unavailable("Replaced by variadicTransformerWithArrayModelClass:")));
 @end

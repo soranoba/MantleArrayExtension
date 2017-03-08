@@ -100,7 +100,7 @@
 
 + (NSValueTransformer* _Nullable)model3ArrayTransformer
 {
-    return [MAEArrayAdapter arrayTransformerWithModelClass:MAETModel3.class];
+    return [MAEArrayAdapter stringTransformerWithArrayModelClass:MAETModel3.class];
 }
 
 + (NSValueTransformer* _Nullable)arrayTransformerForKey:(NSString* _Nonnull)key
