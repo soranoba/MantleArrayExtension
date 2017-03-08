@@ -65,20 +65,24 @@ static unichar const MAEDefaultSeparator = ' ';
         NSMutableArray* formatByPropertyKey = [NSMutableArray array];
         BOOL foundVariadic = NO;
         for (id fragment in [modelClass formatByPropertyKey]) {
-            if ([fragment isKindOfClass:NSString.class]) {
-                [formatByPropertyKey addObject:[[MAEFragment alloc] initWithPropertyName:fragment]];
-            } else if (foundVariadic) {
+            if (foundVariadic) {
                 NSAssert(NO, @"Variadic MUST be the last");
                 break;
+            } else if ([fragment isKindOfClass:NSString.class]) {
+                NSAssert([self.propertyKeys containsObject:fragment],
+                         @"Not found a property named %@", fragment);
+                [formatByPropertyKey addObject:[[MAEFragment alloc] initWithPropertyName:fragment]];
             } else {
                 NSAssert([fragment isKindOfClass:MAEFragment.class],
                          @"formatByPropertyKey only support NSString and MAEFragment, but got %@", [fragment class]);
                 foundVariadic |= [fragment isVariadic];
-                if ([self.propertyKeys containsObject:[fragment propertyName]]) {
-                    [formatByPropertyKey addObject:fragment];
-                }
+                NSAssert([self.propertyKeys containsObject:[fragment propertyName]],
+                         @"Not found a property named %@", [fragment propertyName]);
+                [formatByPropertyKey addObject:fragment];
             }
         }
+        NSAssert([NSSet setWithArray:formatByPropertyKey].count == formatByPropertyKey.count,
+                 @"The same property key is used more than once");
         self.formatByPropertyKey = formatByPropertyKey;
 
         self.valueTransformersByPropertyKey = [self.class valueTransformersForModelClass:modelClass];

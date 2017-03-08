@@ -23,6 +23,40 @@
 
 QuickSpecBegin(MAEArrayAdapterTests)
 {
+    describe(@"Initializer validation", ^{
+        __block id mock = nil;
+
+        beforeEach(^{
+            mock = OCMClassMock(MAETModel1.class);
+        });
+
+        afterEach(^{
+            [mock stopMocking];
+        });
+
+        it(@"throw exception, if formatByPropertyKey include properties that is not found in model", ^{
+            OCMStub([mock formatByPropertyKey]).andReturn((@[ @"notFound", @"a" ]));
+            expect([[MAEArrayAdapter alloc] initWithModelClass:MAETModel1.class]).to(raiseException());
+        });
+        it(@"throw exception, if return value is invalid format", ^{
+            OCMStub([mock formatByPropertyKey]).andReturn((@[ @"a", @[ @1 ] ]));
+            expect([[MAEArrayAdapter alloc] initWithModelClass:MAETModel1.class]).to(raiseException());
+        });
+        it(@"throw exception, if same propertyKey used in formatByPropertyKey", ^{
+            OCMStub([mock formatByPropertyKey]).andReturn((@[ @"b", @"b" ]));
+            expect([[MAEArrayAdapter alloc] initWithModelClass:MAETModel1.class]).to(raiseException());
+        });
+        it(@"throw exception, if fragments exist after the variadic fragment", ^{
+            OCMStub([mock formatByPropertyKey]).andReturn((@[MAEVariadic(@"i"), @"b"]));
+            expect([[MAEArrayAdapter alloc] initWithModelClass:MAETModel1.class]).to(raiseException());
+        });
+        it(@"formatByPropertyKey is valid", ^{
+            OCMStub([mock formatByPropertyKey])
+                .andReturn((@[ @"b", MAEQuoted(@"ui"), MAESingleQuoted(@"i"), MAEOptional(@"f"), MAEOptional(MAEQuoted(@"d")) ]));
+            expect([[MAEArrayAdapter alloc] initWithModelClass:MAETModel1.class]).notTo(equal(nil));
+        });
+    });
+
     describe(@"modelOfClass:fromString:error:", ^{
         __block id mock = nil;
 
