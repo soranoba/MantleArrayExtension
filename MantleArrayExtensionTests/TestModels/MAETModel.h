@@ -16,6 +16,7 @@
 @property (nonatomic, assign) NSInteger i;
 @property (nonatomic, assign) float f;
 @property (nonatomic, assign) double d;
+@property (nonatomic, nullable, strong) NSNumber* n;
 
 @end
 
@@ -48,5 +49,15 @@
 @interface MAETModel5 : MTLModel <MAEArraySerializing>
 
 @property (nonatomic, nullable, copy) NSArray<NSString*>* variadicArray;
+
+@end
+
+@interface MAETModel6 : MTLModel <MAEArraySerializing>
+
+@property (nonatomic, nullable, strong) NSURL* url;
+@property (nonatomic, assign) BOOL boolean;
+@property (nonatomic, nullable, copy) NSString* empty;
+
++ (NSValueTransformer* _Nonnull)booleanArrayTransformer;
 
 @end

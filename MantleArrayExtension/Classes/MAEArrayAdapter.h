@@ -115,8 +115,8 @@
  * @param error If it return nil, error information is saved here.
  * @return If conversion is success, it returns an array. Otherwise, it returns nil.
  */
-+ (NSArray<NSString*>* _Nullable)arrayFromModel:(id<MAEArraySerializing> _Nullable)model
-                                          error:(NSError* _Nullable* _Nullable)error;
++ (NSArray<MAESeparatedString*>* _Nullable)arrayFromModel:(id<MAEArraySerializing> _Nullable)model
+                                                    error:(NSError* _Nullable* _Nullable)error;
 
 /**
  * Convert to string from model
@@ -126,6 +126,30 @@
  * @return If conversion is success, it returns a string. Otherwise, it returns nil.
  */
 + (NSString* _Nullable)stringFromModel:(id<MAEArraySerializing> _Nullable)model
+                                 error:(NSError* _Nullable* _Nullable)error;
+
+/**
+ * @see modelOfClass:fromString:error:
+ */
+- (id<MAEArraySerializing> _Nullable)modelFromString:(NSString* _Nullable)string
+                                               error:(NSError* _Nullable* _Nullable)error;
+
+/**
+ * @see modelOfClass:fromArray:error:
+ */
+- (id<MAEArraySerializing> _Nullable)modelFromArray:(NSArray<NSString*>* _Nullable)array
+                                              error:(NSError* _Nullable* _Nullable)error;
+
+/**
+ * @see arrayFromModel:error:
+ */
+- (NSArray<MAESeparatedString*>* _Nullable)arrayFromModel:(id<MAEArraySerializing> _Nullable)model
+                                                    error:(NSError* _Nullable* _Nullable)error;
+
+/**
+ * @see stringFromModel:error:
+ */
+- (NSString* _Nullable)stringFromModel:(id<MAEArraySerializing> _Nullable)model
                                  error:(NSError* _Nullable* _Nullable)error;
 
 @end

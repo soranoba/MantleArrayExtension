@@ -110,8 +110,8 @@ static unichar const MAEDefaultSeparator = ' ';
     return [adapter modelFromArray:array error:error];
 }
 
-+ (NSArray<NSString*>* _Nullable)arrayFromModel:(id<MAEArraySerializing> _Nullable)model
-                                          error:(NSError* _Nullable* _Nullable)error
++ (NSArray<MAESeparatedString*>* _Nullable)arrayFromModel:(id<MAEArraySerializing> _Nullable)model
+                                                    error:(NSError* _Nullable* _Nullable)error
 {
     if (!model) {
         SET_ERROR(error, MAEErrorNilInputData,
@@ -133,6 +133,8 @@ static unichar const MAEDefaultSeparator = ' ';
     MAEArrayAdapter* adapter = [[self alloc] initWithModelClass:[model class]];
     return [adapter stringFromModel:model error:error];
 }
+
+#pragma mark Instance Methods
 
 - (id<MAEArraySerializing> _Nullable)modelFromString:(NSString* _Nullable)string
                                                error:(NSError* _Nullable* _Nullable)error
@@ -171,16 +173,15 @@ static unichar const MAEDefaultSeparator = ' ';
 - (NSString* _Nullable)stringFromModel:(id<MAEArraySerializing> _Nullable)model
                                  error:(NSError* _Nullable* _Nullable)error
 {
-    NSArray<NSString*>* array = [self arrayFromModel:model error:error];
+    NSArray<MAESeparatedString*>* array = [self arrayFromModel:model error:error];
     if (!array) {
         return nil;
     }
-    unichar c = self.separator;
-    return [array componentsJoinedByString:[NSString stringWithCharacters:&c length:1]];
+    return [array mae_componentsJoinedBySeparatedString:self.separator];
 }
 
-- (NSArray<NSString*>* _Nullable)arrayFromModel:(id<MAEArraySerializing> _Nullable)model
-                                          error:(NSError* _Nullable* _Nullable)error
+- (NSArray<MAESeparatedString*>* _Nullable)arrayFromModel:(id<MAEArraySerializing> _Nullable)model
+                                                    error:(NSError* _Nullable* _Nullable)error
 {
     if (!model) {
         SET_ERROR(error, MAEErrorNilInputData,
@@ -192,7 +193,7 @@ static unichar const MAEDefaultSeparator = ' ';
         return [self.class arrayFromModel:model error:error];
     }
 
-    NSMutableArray<NSString*>* result = [NSMutableArray array];
+    NSMutableArray<MAESeparatedString*>* result = [NSMutableArray array];
     NSDictionary* dictionaryValue = [model.dictionaryValue dictionaryWithValuesForKeys:self.propertyKeys.allObjects];
     for (MAEFragment* fragment in self.formatByPropertyKey) {
         id value = dictionaryValue[fragment.propertyName];
@@ -239,7 +240,7 @@ static unichar const MAEDefaultSeparator = ' ';
                     type = MAEStringTypeSingleQuoted;
                     break;
                 case MAEFragmentMaybeQuotedString:
-                    type = [transformedString rangeOfString:@" "].location == NSNotFound
+                    type = ([transformedString rangeOfString:@" "].location == NSNotFound && transformedString.length > 0)
                         ? MAEStringTypeEnumerate
                         : MAEStringTypeDoubleQuoted;
                     break;
@@ -247,7 +248,7 @@ static unichar const MAEDefaultSeparator = ' ';
                     type = MAEStringTypeEnumerate;
                     break;
             }
-            [result addObject:[MAESeparatedString stringFromCharacters:transformedString withType:type]];
+            [result addObject:[[MAESeparatedString alloc] initWithCharacters:transformedString type:type]];
         }
     }
     return result;
