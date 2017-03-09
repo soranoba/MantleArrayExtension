@@ -92,8 +92,6 @@ static unichar const MAEDefaultSeparator = ' ';
 
 #pragma mark - Public Methods
 
-#pragma mark Convertion between model to string or array
-
 + (id<MAEArraySerializing> _Nullable)modelOfClass:(Class _Nonnull)modelClass
                                        fromString:(NSString* _Nullable)string
                                             error:(NSError* _Nullable* _Nullable)error
@@ -116,7 +114,7 @@ static unichar const MAEDefaultSeparator = ' ';
                                           error:(NSError* _Nullable* _Nullable)error
 {
     if (!model) {
-        SET_ERROR(error, MAEErrorInputNil,
+        SET_ERROR(error, MAEErrorNilInputData,
                   @{ NSLocalizedFailureReasonErrorKey : @"The model instance is nil" });
         return nil;
     }
@@ -128,7 +126,7 @@ static unichar const MAEDefaultSeparator = ' ';
                                  error:(NSError* _Nullable* _Nullable)error
 {
     if (!model) {
-        SET_ERROR(error, MAEErrorInputNil,
+        SET_ERROR(error, MAEErrorNilInputData,
                   @{ NSLocalizedFailureReasonErrorKey : @"The model instance is nil" });
         return nil;
     }
@@ -140,7 +138,7 @@ static unichar const MAEDefaultSeparator = ' ';
                                                error:(NSError* _Nullable* _Nullable)error
 {
     if (!string) {
-        SET_ERROR(error, MAEErrorInputNil,
+        SET_ERROR(error, MAEErrorNilInputData,
                   @{ NSLocalizedFailureReasonErrorKey : @"Input string is nil" });
         return nil;
     }
@@ -153,7 +151,7 @@ static unichar const MAEDefaultSeparator = ' ';
                                               error:(NSError* _Nullable* _Nullable)error
 {
     if (!array) {
-        SET_ERROR(error, MAEErrorInputNil,
+        SET_ERROR(error, MAEErrorNilInputData,
                   @{ NSLocalizedFailureReasonErrorKey : @"Input array is nil" });
         return nil;
     }
@@ -185,7 +183,7 @@ static unichar const MAEDefaultSeparator = ' ';
                                           error:(NSError* _Nullable* _Nullable)error
 {
     if (!model) {
-        SET_ERROR(error, MAEErrorInputNil,
+        SET_ERROR(error, MAEErrorNilInputData,
                   @{ NSLocalizedFailureReasonErrorKey : @"Input model is nil" });
         return nil;
     }
@@ -216,7 +214,7 @@ static unichar const MAEDefaultSeparator = ' ';
             }
         }
 
-        if (value == NSNull.null) {
+        if (!value || value == NSNull.null) {
             value = @"";
         }
 
@@ -226,7 +224,7 @@ static unichar const MAEDefaultSeparator = ' ';
 
         for (NSString* transformedString in value) {
             if (![transformedString isKindOfClass:NSString.class]) {
-                SET_ERROR(error, MAEErrorTransform,
+                SET_ERROR(error, MAEErrorInvalidInputData,
                           @{ NSLocalizedFailureReasonErrorKey :
                                  format(@"The result of reverseTransform MUST be NSString or NSArray, but got %@", [value class]) });
                 return nil;
@@ -267,6 +265,8 @@ static unichar const MAEDefaultSeparator = ' ';
 - (id<MAEArraySerializing> _Nullable)modelFromSeparatedStrings:(NSArray<MAESeparatedString*>* _Nonnull)separatedStrings
                                                          error:(NSError* _Nullable* _Nullable)error
 {
+    NSParameterAssert(separatedStrings != nil);
+
     if ([self.modelClass respondsToSelector:@selector(classForParsingArray:)]) {
         Class class = [self.modelClass classForParsingArray:separatedStrings];
         if (class == nil) {
@@ -294,49 +294,40 @@ static unichar const MAEDefaultSeparator = ' ';
     NSArray<MAEFragment*>* fragments = [self.class chooseFormatByPropertyKey:self.formatByPropertyKey
                                                                    withCount:separatedStrings.count];
     if (!fragments) {
-        SET_ERROR(error, MAEErrorInvalidCount,
-                  @{ NSLocalizedFailureReasonErrorKey : @"Number of separated strings and format does not match" });
+        SET_ERROR(error, MAEErrorNotMatchFragmentCount,
+                  @{ NSLocalizedFailureReasonErrorKey :
+                         format(@"Expected format is %@, but got fragment count is %@",
+                                self.formatByPropertyKey, @(separatedStrings.count)) });
         return nil;
     }
 
-    BOOL (^validate)
-    (MAEFragment * _Nonnull, MAESeparatedString * _Nonnull)
-        = ^BOOL(MAEFragment* _Nonnull f, MAESeparatedString* _Nonnull s) {
-              switch (f.type) {
-                  case MAEFragmentDoubleQuotedString:
-                      if (s.type != MAEStringTypeDoubleQuoted) {
-                          SET_ERROR(error, MAEErrorNotQuoted,
-                                    @{ NSLocalizedFailureReasonErrorKey :
-                                           format(@"%@ expected double-quoted-string", f.propertyName) });
-                          return NO;
-                      }
-                      break;
-                  case MAEFragmentSingleQuotedString:
-                      if (s.type != MAEStringTypeSingleQuoted) {
-                          SET_ERROR(error, MAEErrorNotEnum,
-                                    @{ NSLocalizedFailureReasonErrorKey :
-                                           format(@"%@ expected single-quoted-string", f.propertyName) });
-                          return NO;
-                      }
-                      break;
-                  case MAEFragmentEnumerateString:
-                      if (s.type != MAEStringTypeEnumerate) {
-                          SET_ERROR(error, MAEErrorNotEnum,
-                                    @{ NSLocalizedFailureReasonErrorKey :
-                                           format(@"%@ expected enumerate-string", f.propertyName) });
-                          return NO;
-                      }
-                      break;
-                  default:
-                      break;
-              }
-              return YES;
-          };
+    NSMutableDictionary* dictionaryValue = [NSMutableDictionary dictionaryWithCapacity:fragments.count];
+    NSEnumerator* sEnum = separatedStrings.objectEnumerator;
 
-    id _Nullable (^transform)(NSString* _Nonnull, id _Nonnull)
-        = ^id _Nullable(NSString* _Nonnull propertyName, id _Nonnull value)
-    {
-        NSValueTransformer* transformer = self.valueTransformersByPropertyKey[propertyName];
+    MAESeparatedString* s;
+    for (MAEFragment* fragment in fragments) {
+        id value;
+
+        if (fragment.isVariadic) {
+            NSMutableArray* arr = [NSMutableArray array];
+            while ((s = [sEnum nextObject])) {
+                if (![self.class validateOfSeparatedString:s withExpectedFragment:fragment error:error]) {
+                    return nil;
+                }
+                [arr addObject:s];
+            }
+            value = arr;
+        } else {
+            s = [sEnum nextObject];
+            NSAssert(s, @"Incorrect number of elements in separatedString");
+
+            if (![self.class validateOfSeparatedString:s withExpectedFragment:fragment error:error]) {
+                return nil;
+            }
+            value = s;
+        }
+
+        NSValueTransformer* transformer = self.valueTransformersByPropertyKey[fragment.propertyName];
         if (transformer) {
             if ([transformer respondsToSelector:@selector(transformedValue:success:error:)]) {
                 id<MTLTransformerErrorHandling> errorHandlingTransformer = (id)transformer;
@@ -349,45 +340,54 @@ static unichar const MAEDefaultSeparator = ' ';
                 value = [transformer transformedValue:value];
             }
         }
-        return value;
-    };
 
-    NSMutableDictionary* dictionaryValue = [NSMutableDictionary dictionaryWithCapacity:fragments.count];
-    NSEnumerator* fEnum = fragments.objectEnumerator;
-    NSEnumerator* sEnum = separatedStrings.objectEnumerator;
-
-    MAEFragment* f;
-    MAESeparatedString* s;
-    while ((f = [fEnum nextObject])) {
-        id value;
-
-        if (f.isVariadic) {
-            NSMutableArray* arr = [NSMutableArray array];
-            while ((s = [sEnum nextObject])) {
-                if (!validate(f, s)) {
-                    return nil;
-                }
-                [arr addObject:s];
-            }
-            value = arr;
-        } else {
-            s = [sEnum nextObject];
-            NSAssert(s, @"Incorrect number of elements in separatedString");
-
-            if (!validate(f, s)) {
-                return nil;
-            }
-            value = s;
-        }
-
-        value = transform(f.propertyName, value);
-        if (!value) {
-            return nil;
-        }
-        dictionaryValue[f.propertyName] = value;
+        dictionaryValue[fragment.propertyName] = value;
     }
     id model = [self.modelClass modelWithDictionary:dictionaryValue error:error];
     return [model validate:error] ? model : nil;
+}
+
+/**
+ * Validate that separated string matches the form of fragment
+ *
+ * @param separatedString  A SeparatedString to be validated.
+ * @param fragment         A fragment to be expected.
+ * @param error            If it return nil, error information is saved here
+ * @return If it is valid, it returns YES. Otherwise, it returns NO.
+ */
++ (BOOL)validateOfSeparatedString:(MAESeparatedString* _Nonnull)separatedString
+             withExpectedFragment:(MAEFragment* _Nonnull)fragment
+                            error:(NSError* _Nullable* _Nullable)error
+{
+    NSParameterAssert(separatedString != nil && fragment != nil);
+
+    NSString* expectedType = nil;
+    switch (fragment.type) {
+        case MAEFragmentDoubleQuotedString:
+            if (separatedString.type != MAEStringTypeDoubleQuoted) {
+                expectedType = @"double quoted string";
+            }
+            break;
+        case MAEFragmentSingleQuotedString:
+            if (separatedString.type != MAEStringTypeSingleQuoted) {
+                expectedType = @"single quoted string";
+            }
+            break;
+        case MAEFragmentEnumerateString:
+            if (separatedString.type != MAEStringTypeEnumerate) {
+                expectedType = @"enumerate string";
+            }
+            break;
+        default:
+            break;
+    }
+    if (expectedType) {
+        SET_ERROR(error, MAEErrorNotMatchFragmentType,
+                  @{ NSLocalizedFailureReasonErrorKey :
+                         format(@"%@ expected %@", fragment.propertyName, expectedType) });
+        return NO;
+    }
+    return YES;
 }
 
 /**
@@ -399,6 +399,8 @@ static unichar const MAEDefaultSeparator = ' ';
  */
 - (NSArray<MAESeparatedString*>* _Nullable)separateString:(NSString* _Nonnull)string
 {
+    NSParameterAssert(string != nil);
+
     unichar* chars = malloc(sizeof(unichar) * (string.length + 1));
     [string getCharacters:chars range:NSMakeRange(0, string.length)];
     chars[string.length] = '\0';
@@ -458,9 +460,11 @@ static unichar const MAEDefaultSeparator = ' ';
  * @return If it does not correspond to the count, it returns nil.
  *         Otherwise, it returns fragments with unnecessary optional elements removed for the count elements.
  */
-+ (NSArray<MAEFragment*>* _Nullable)chooseFormatByPropertyKey:(NSArray<MAEFragment*>* _Nullable)fragments
++ (NSArray<MAEFragment*>* _Nullable)chooseFormatByPropertyKey:(NSArray<MAEFragment*>* _Nonnull)fragments
                                                     withCount:(NSUInteger)count
 {
+    NSParameterAssert(fragments != nil);
+
     if (fragments.count == count) {
         return fragments;
     } else if (fragments.count < count) {

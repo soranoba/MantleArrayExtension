@@ -63,7 +63,7 @@ QuickSpecBegin(MAEArrayAdapter_TransformersTests)
             expect(success).to(equal(NO));
             expect(error).notTo(beNil());
             expect(error.domain).to(equal(MAEErrorDomain));
-            expect(error.code).to(equal(MAEErrorNotQuoted));
+            expect(error.code).to(equal(MAEErrorNotMatchFragmentType));
 
             success = NO;
             error = nil;

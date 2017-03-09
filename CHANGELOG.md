@@ -22,3 +22,4 @@
 - Fixed an overflow that was happened if last character is backslash.
 - Fixed a bug when it used escaped single-quote in single-quote.
 - Fixed the type validation (e.g. Enum and Quoted) of `variadicArrayTransformerWithModelClass:`.
+- Fixed that return value is nil and error information is also nil, when transformer returns nil.

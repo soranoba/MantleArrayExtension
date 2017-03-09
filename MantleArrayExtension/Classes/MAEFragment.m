@@ -69,9 +69,16 @@ extern MAEFragment* _Nonnull MAEVariadic(id _Nonnull v)
 
 #pragma mark - Lifecycle
 
+- (instancetype _Nullable)init
+{
+    NSAssert(NO, @"%@ MUST be initialized with designated initializer", self.class);
+    return nil;
+}
+
 - (instancetype _Nonnull)initWithPropertyName:(NSString* _Nonnull)propertyName
 {
     NSParameterAssert(propertyName != nil);
+
     if (self = [super init]) {
         self.propertyName = propertyName;
     }

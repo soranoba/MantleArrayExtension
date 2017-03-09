@@ -43,21 +43,16 @@ NSString* _Nonnull const MAEErrorInputDataKey = @"MAEErrorInputDataKey";
 + (NSString* _Nonnull)mae_description:(MAEErrorCode)code
 {
     switch (code) {
-        case MAEErrorInputNil:
-            return @"Input is nil";
-        case MAEErrorInvalidCount:
-            return @"It does not match the number specified by format";
-        case MAEErrorNotQuoted:
-            return @"Quoted-string is expected, but it differs";
-        case MAEErrorNotEnum:
-            return @"Enumerate-string is expected, but it differs";
-        case MAEErrorTransform:
-            return @"The result of transform is incorrect";
-        case MAEErrorNoConversionTarget:
-            return @"No conversion target. (classForParsingArray: returns nil)";
-
+        case MAEErrorNilInputData:
+            return @"Could not conversion, because nil was inputted";
         case MAEErrorInvalidInputData:
             return @"Transformation failed, because input data is invalid";
+        case MAEErrorNotMatchFragmentType:
+            return @"It does not match fragment type";
+        case MAEErrorNotMatchFragmentCount:
+            return @"The number of fragments is not allowed in format";
+        case MAEErrorNoConversionTarget:
+            return @"There is no target to convert";
         default:
             return @"Unknown error";
     }
