@@ -13,9 +13,6 @@
 - Support some primitive types and NSNumber with default transformer.
 - The validation of formatByPropertyKey has been enhanced.
 
-### Minor changes
-
-
 ### Bug fixes
 
 - Improved accuracy of numberTransformer.

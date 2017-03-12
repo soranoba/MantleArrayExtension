@@ -52,15 +52,15 @@
 		A406114E1E6AB9210074F00D /* MantleArrayExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MantleArrayExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A40611501E6AB9210074F00D /* MantleArrayExtension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MantleArrayExtension.h; sourceTree = "<group>"; };
 		A40611511E6AB9210074F00D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A40611561E6AB99F0074F00D /* MAEArrayAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MAEArrayAdapter.h; path = Classes/MAEArrayAdapter.h; sourceTree = "<group>"; };
-		A40611571E6AB99F0074F00D /* MAEArrayAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MAEArrayAdapter.m; path = Classes/MAEArrayAdapter.m; sourceTree = "<group>"; };
-		A40611581E6AB99F0074F00D /* MAEErrorCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MAEErrorCode.h; path = Classes/MAEErrorCode.h; sourceTree = "<group>"; };
-		A40611591E6AB99F0074F00D /* MAEFragment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MAEFragment.h; path = Classes/MAEFragment.h; sourceTree = "<group>"; };
-		A406115A1E6AB99F0074F00D /* MAEFragment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MAEFragment.m; path = Classes/MAEFragment.m; sourceTree = "<group>"; };
-		A406115B1E6AB99F0074F00D /* MAESeparatedString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MAESeparatedString.h; path = Classes/MAESeparatedString.h; sourceTree = "<group>"; };
-		A406115C1E6AB99F0074F00D /* MAESeparatedString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MAESeparatedString.m; path = Classes/MAESeparatedString.m; sourceTree = "<group>"; };
-		A40611651E6AB9AF0074F00D /* NSError+MAEErrorCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSError+MAEErrorCode.h"; path = "Classes/Private/NSError+MAEErrorCode.h"; sourceTree = "<group>"; };
-		A40611661E6AB9AF0074F00D /* NSError+MAEErrorCode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSError+MAEErrorCode.m"; path = "Classes/Private/NSError+MAEErrorCode.m"; sourceTree = "<group>"; };
+		A40611561E6AB99F0074F00D /* MAEArrayAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MAEArrayAdapter.h; path = MAEArrayAdapter.h; sourceTree = "<group>"; };
+		A40611571E6AB99F0074F00D /* MAEArrayAdapter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MAEArrayAdapter.m; path = MAEArrayAdapter.m; sourceTree = "<group>"; };
+		A40611581E6AB99F0074F00D /* MAEErrorCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MAEErrorCode.h; path = MAEErrorCode.h; sourceTree = "<group>"; };
+		A40611591E6AB99F0074F00D /* MAEFragment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MAEFragment.h; path = MAEFragment.h; sourceTree = "<group>"; };
+		A406115A1E6AB99F0074F00D /* MAEFragment.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MAEFragment.m; path = MAEFragment.m; sourceTree = "<group>"; };
+		A406115B1E6AB99F0074F00D /* MAESeparatedString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MAESeparatedString.h; path = MAESeparatedString.h; sourceTree = "<group>"; };
+		A406115C1E6AB99F0074F00D /* MAESeparatedString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MAESeparatedString.m; path = MAESeparatedString.m; sourceTree = "<group>"; };
+		A40611651E6AB9AF0074F00D /* NSError+MAEErrorCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSError+MAEErrorCode.h"; path = "NSError+MAEErrorCode.h"; sourceTree = "<group>"; };
+		A40611661E6AB9AF0074F00D /* NSError+MAEErrorCode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSError+MAEErrorCode.m"; path = "NSError+MAEErrorCode.m"; sourceTree = "<group>"; };
 		A406116A1E6ABACC0074F00D /* Mantle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Mantle.framework; path = Carthage/Build/iOS/Mantle.framework; sourceTree = "<group>"; };
 		A406116E1E6ABB110074F00D /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nimble.framework; path = Carthage/Build/iOS/Nimble.framework; sourceTree = "<group>"; };
 		A406116F1E6ABB110074F00D /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = Carthage/Build/iOS/OCMock.framework; sourceTree = "<group>"; };
@@ -72,16 +72,16 @@
 		A40611A51E6AC4E30074F00D /* MAEFragmentTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAEFragmentTests.m; sourceTree = "<group>"; };
 		A40611A61E6AC4E30074F00D /* MAESeparatedStringTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MAESeparatedStringTests.m; sourceTree = "<group>"; };
 		A40611A71E6AC4E30074F00D /* MantleArrayExtension-Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MantleArrayExtension-Prefix.pch"; sourceTree = "<group>"; };
-		A40611AC1E6AC4F20074F00D /* MAETModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MAETModel.h; path = TestModels/MAETModel.h; sourceTree = "<group>"; };
-		A40611AD1E6AC4F20074F00D /* MAETModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MAETModel.m; path = TestModels/MAETModel.m; sourceTree = "<group>"; };
+		A40611AC1E6AC4F20074F00D /* MAETModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MAETModel.h; path = MAETModel.h; sourceTree = "<group>"; };
+		A40611AD1E6AC4F20074F00D /* MAETModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MAETModel.m; path = MAETModel.m; sourceTree = "<group>"; };
 		A40611B61E6BECD10074F00D /* Mantle.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Mantle.framework; path = Carthage/Build/iOS/Mantle.framework; sourceTree = "<group>"; };
 		A40611B81E6BECE10074F00D /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nimble.framework; path = Carthage/Build/iOS/Nimble.framework; sourceTree = "<group>"; };
 		A40611B91E6BECE10074F00D /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = Carthage/Build/iOS/OCMock.framework; sourceTree = "<group>"; };
 		A40611BA1E6BECE10074F00D /* Quick.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quick.framework; path = Carthage/Build/iOS/Quick.framework; sourceTree = "<group>"; };
-		A40611BE1E6BF23A0074F00D /* MAEArrayAdapter+Transformers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "MAEArrayAdapter+Transformers.m"; path = "Classes/MAEArrayAdapter+Transformers.m"; sourceTree = "<group>"; };
+		A40611BE1E6BF23A0074F00D /* MAEArrayAdapter+Transformers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "MAEArrayAdapter+Transformers.m"; path = "MAEArrayAdapter+Transformers.m"; sourceTree = "<group>"; };
 		A40611C01E6BF4330074F00D /* MAEArrayAdapter+TransformersTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MAEArrayAdapter+TransformersTests.m"; sourceTree = "<group>"; };
-		A40611C21E6C4E8E0074F00D /* NSArray+MAESeparatedString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+MAESeparatedString.h"; path = "Classes/NSArray+MAESeparatedString.h"; sourceTree = "<group>"; };
-		A40611C31E6C4E8E0074F00D /* NSArray+MAESeparatedString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+MAESeparatedString.m"; path = "Classes/NSArray+MAESeparatedString.m"; sourceTree = "<group>"; };
+		A40611C21E6C4E8E0074F00D /* NSArray+MAESeparatedString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+MAESeparatedString.h"; path = "NSArray+MAESeparatedString.h"; sourceTree = "<group>"; };
+		A40611C31E6C4E8E0074F00D /* NSArray+MAESeparatedString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+MAESeparatedString.m"; path = "NSArray+MAESeparatedString.m"; sourceTree = "<group>"; };
 		A40611C61E6C5A6C0074F00D /* NSArray+MAESeparatedStringTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSArray+MAESeparatedStringTests.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -112,19 +112,9 @@
 		A406114F1E6AB9210074F00D /* MantleArrayExtension */ = {
 			isa = PBXGroup;
 			children = (
-				A40611561E6AB99F0074F00D /* MAEArrayAdapter.h */,
-				A40611571E6AB99F0074F00D /* MAEArrayAdapter.m */,
-				A40611BE1E6BF23A0074F00D /* MAEArrayAdapter+Transformers.m */,
-				A40611581E6AB99F0074F00D /* MAEErrorCode.h */,
-				A40611591E6AB99F0074F00D /* MAEFragment.h */,
-				A406115A1E6AB99F0074F00D /* MAEFragment.m */,
-				A406115B1E6AB99F0074F00D /* MAESeparatedString.h */,
-				A406115C1E6AB99F0074F00D /* MAESeparatedString.m */,
-				A40611C21E6C4E8E0074F00D /* NSArray+MAESeparatedString.h */,
-				A40611C31E6C4E8E0074F00D /* NSArray+MAESeparatedString.m */,
-				A40611501E6AB9210074F00D /* MantleArrayExtension.h */,
-				A40611641E6AB9A20074F00D /* Private */,
+				A40611C81E758B330074F00D /* Classes */,
 				A40611511E6AB9210074F00D /* Info.plist */,
+				A40611501E6AB9210074F00D /* MantleArrayExtension.h */,
 			);
 			path = MantleArrayExtension;
 			sourceTree = "<group>";
@@ -136,6 +126,7 @@
 				A40611661E6AB9AF0074F00D /* NSError+MAEErrorCode.m */,
 			);
 			name = Private;
+			path = Private;
 			sourceTree = "<group>";
 		};
 		A40611691E6ABACC0074F00D /* Frameworks */ = {
@@ -154,13 +145,13 @@
 			isa = PBXGroup;
 			children = (
 				A40611AB1E6AC4E60074F00D /* TestModels */,
-				A40611A41E6AC4E30074F00D /* MAEArrayAdapterTests.m */,
+				A406119D1E6AC4AC0074F00D /* Info.plist */,
 				A40611C01E6BF4330074F00D /* MAEArrayAdapter+TransformersTests.m */,
+				A40611A41E6AC4E30074F00D /* MAEArrayAdapterTests.m */,
 				A40611A51E6AC4E30074F00D /* MAEFragmentTests.m */,
 				A40611A61E6AC4E30074F00D /* MAESeparatedStringTests.m */,
-				A40611C61E6C5A6C0074F00D /* NSArray+MAESeparatedStringTests.m */,
 				A40611A71E6AC4E30074F00D /* MantleArrayExtension-Prefix.pch */,
-				A406119D1E6AC4AC0074F00D /* Info.plist */,
+				A40611C61E6C5A6C0074F00D /* NSArray+MAESeparatedStringTests.m */,
 			);
 			path = MantleArrayExtensionTests;
 			sourceTree = "<group>";
@@ -172,20 +163,40 @@
 				A40611AD1E6AC4F20074F00D /* MAETModel.m */,
 			);
 			name = TestModels;
+			path = TestModels;
+			sourceTree = "<group>";
+		};
+		A40611C81E758B330074F00D /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				A40611641E6AB9A20074F00D /* Private */,
+				A40611BE1E6BF23A0074F00D /* MAEArrayAdapter+Transformers.m */,
+				A40611561E6AB99F0074F00D /* MAEArrayAdapter.h */,
+				A40611571E6AB99F0074F00D /* MAEArrayAdapter.m */,
+				A40611581E6AB99F0074F00D /* MAEErrorCode.h */,
+				A40611591E6AB99F0074F00D /* MAEFragment.h */,
+				A406115A1E6AB99F0074F00D /* MAEFragment.m */,
+				A406115B1E6AB99F0074F00D /* MAESeparatedString.h */,
+				A406115C1E6AB99F0074F00D /* MAESeparatedString.m */,
+				A40611C21E6C4E8E0074F00D /* NSArray+MAESeparatedString.h */,
+				A40611C31E6C4E8E0074F00D /* NSArray+MAESeparatedString.m */,
+			);
+			name = Classes;
+			path = Classes;
 			sourceTree = "<group>";
 		};
 		A456FC341E3A528D002EA7B0 = {
 			isa = PBXGroup;
 			children = (
+				A40611691E6ABACC0074F00D /* Frameworks */,
+				A406114F1E6AB9210074F00D /* MantleArrayExtension */,
+				A406119A1E6AC4AC0074F00D /* MantleArrayExtensionTests */,
+				A40611B61E6BECD10074F00D /* Mantle.framework */,
+				A406114E1E6AB9210074F00D /* MantleArrayExtension.framework */,
+				A40611991E6AC4AC0074F00D /* MantleArrayExtensionTests.xctest */,
 				A40611B81E6BECE10074F00D /* Nimble.framework */,
 				A40611B91E6BECE10074F00D /* OCMock.framework */,
 				A40611BA1E6BECE10074F00D /* Quick.framework */,
-				A40611B61E6BECD10074F00D /* Mantle.framework */,
-				A406114E1E6AB9210074F00D /* MantleArrayExtension.framework */,
-				A406114F1E6AB9210074F00D /* MantleArrayExtension */,
-				A406119A1E6AC4AC0074F00D /* MantleArrayExtensionTests */,
-				A40611691E6ABACC0074F00D /* Frameworks */,
-				A40611991E6AC4AC0074F00D /* MantleArrayExtensionTests.xctest */,
 			);
 			sourceTree = "<group>";
 		};
