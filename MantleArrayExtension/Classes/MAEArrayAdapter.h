@@ -11,6 +11,7 @@
 #import "MAESeparatedString.h"
 #import <Foundation/Foundation.h>
 #import <Mantle/MTLModel.h>
+#import <Mantle/MTLTransformerErrorHandling.h>
 
 @protocol MAEArraySerializing <MTLModel>
 
@@ -38,7 +39,7 @@
  *      (Conversely, if optional is set, nil is set when there is no value)
  *
  * Nested model:
- *    - You MUST be sure to specify different separator for parent and child.
+ *    - You MUST be sure to specify different separator for parent and child except when using variadic.
  *
  */
 + (NSArray* _Nonnull)formatByPropertyKey;
@@ -83,7 +84,6 @@
 @interface MAEArrayAdapter : NSObject
 
 #pragma mark - Public Methods
-#pragma mark Conversion between Array and Model
 
 /**
  * Convert to model from string
@@ -115,8 +115,8 @@
  * @param error If it return nil, error information is saved here.
  * @return If conversion is success, it returns an array. Otherwise, it returns nil.
  */
-+ (NSArray<NSString*>* _Nullable)arrayFromModel:(id<MAEArraySerializing> _Nullable)model
-                                          error:(NSError* _Nullable* _Nullable)error;
++ (NSArray<MAESeparatedString*>* _Nullable)arrayFromModel:(id<MAEArraySerializing> _Nullable)model
+                                                    error:(NSError* _Nullable* _Nullable)error;
 
 /**
  * Convert to string from model
@@ -128,16 +128,43 @@
 + (NSString* _Nullable)stringFromModel:(id<MAEArraySerializing> _Nullable)model
                                  error:(NSError* _Nullable* _Nullable)error;
 
-#pragma mark Transformer
+/**
+ * @see modelOfClass:fromString:error:
+ */
+- (id<MAEArraySerializing> _Nullable)modelFromString:(NSString* _Nullable)string
+                                               error:(NSError* _Nullable* _Nullable)error;
+
+/**
+ * @see modelOfClass:fromArray:error:
+ */
+- (id<MAEArraySerializing> _Nullable)modelFromArray:(NSArray<NSString*>* _Nullable)array
+                                              error:(NSError* _Nullable* _Nullable)error;
+
+/**
+ * @see arrayFromModel:error:
+ */
+- (NSArray<MAESeparatedString*>* _Nullable)arrayFromModel:(id<MAEArraySerializing> _Nullable)model
+                                                    error:(NSError* _Nullable* _Nullable)error;
+
+/**
+ * @see stringFromModel:error:
+ */
+- (NSString* _Nullable)stringFromModel:(id<MAEArraySerializing> _Nullable)model
+                                 error:(NSError* _Nullable* _Nullable)error;
+
+@end
+
+@interface MAEArrayAdapter (Transformers)
 
 /**
  * It returns a transformer for converting MAEArraySerializing modelClass and NSArray.
- * It can be used to define another model a part defined by MAEVariadic. However, validation such as Quoted and Enum is broken now.
+ * It can be used to define another model a part defined by MAEVariadic.
  *
  * @param modelClass A modelClass that conforms MAEArraySerializing
  * @return A transformer
  */
-+ (NSValueTransformer* _Nonnull)variadicArrayTransformerWithModelClass:(Class _Nonnull)modelClass;
++ (NSValueTransformer<MTLTransformerErrorHandling>* _Nonnull)
+    variadicTransformerWithArrayModelClass:(Class _Nonnull)modelClass;
 
 /**
  * It returns a transformer for converting MAEArraySerializing modelClass and NSString.
@@ -145,20 +172,35 @@
  * @param modelClass A modelClass that conforms MAEArraySerializing
  * @return A transformer
  */
-+ (NSValueTransformer* _Nonnull)arrayTransformerWithModelClass:(Class _Nonnull)modelClass;
++ (NSValueTransformer<MTLTransformerErrorHandling>* _Nonnull)
+    stringTransformerWithArrayModelClass:(Class _Nonnull)modelClass;
 
 /**
  * It returns transformer for converting between number and NSString.
  *
  * @return A transformer
  */
-+ (NSValueTransformer* _Nonnull)numberStringTransformer;
++ (NSValueTransformer<MTLTransformerErrorHandling>* _Nonnull)numberTransformer;
 
 /**
  * It returns transformer for converting between bool and NSString.
  *
  * @return A transformer
  */
-+ (NSValueTransformer* _Nonnull)boolStringTransformer;
++ (NSValueTransformer<MTLTransformerErrorHandling>* _Nonnull)boolTransformer;
 
+@end
+
+@interface MAEArrayAdapter (Deprecated)
+
++ (NSValueTransformer<MTLTransformerErrorHandling>* _Nonnull)numberStringTransformer
+    __attribute__((unavailable("Replaced by numberTransformer")));
++ (NSValueTransformer<MTLTransformerErrorHandling>* _Nonnull)boolStringTransformer
+    __attribute__((unavailable("Replaced by boolTransformer")));
++ (NSValueTransformer<MTLTransformerErrorHandling>* _Nonnull)
+    arrayTransformerWithModelClass:(Class _Nonnull)modelClass
+    __attribute__((unavailable("Replaced by stringTransformerWithArrayModelClass:")));
++ (NSValueTransformer<MTLTransformerErrorHandling>* _Nonnull)
+    variadicArrayTransformerWithModelClass:(Class _Nonnull)modelClass
+    __attribute__((unavailable("Replaced by variadicTransformerWithArrayModelClass:")));
 @end

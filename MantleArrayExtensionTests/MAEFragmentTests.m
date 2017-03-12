@@ -61,5 +61,27 @@ QuickSpecBegin(MAEFragmentTests)
         expect(fragment.isOptional).to(equal(NO));
         expect(fragment.isVariadic).to(equal(YES));
     });
+
+    it(@"isEqual:", ^{
+        expect(MAEVariadic(MAEOptional(MAEQuoted(@"a")))).to(equal(MAEOptional(MAEVariadic(MAEQuoted(@"a")))));
+        expect(MAEVariadic(MAEOptional(MAEQuoted(@"a")))).notTo(equal(MAEOptional(MAEVariadic(MAEQuoted(@"b")))));
+        expect(MAEQuoted(@"a")).notTo(equal(MAEVariadic(MAEQuoted(@"a"))));
+        expect(MAEQuoted(@"a")).notTo(equal(MAEOptional(MAEQuoted(@"a"))));
+        expect(MAEQuoted(@"a")).notTo(equal(MAESingleQuoted(@"a")));
+        expect(MAESingleQuoted(@"a")).notTo(equal([[MAEFragment alloc] initWithPropertyName:@"a"]));
+        expect(MAEOptional(@"a")).to(equal(MAEOptional([[MAEFragment alloc] initWithPropertyName:@"a"])));
+        expect([[MAEFragment alloc] initWithPropertyName:@"a"]).notTo(equal(@"a"));
+    });
+
+    it(@"description", ^{
+        expect([MAEVariadic(@"a") description]).to(equal(@"<MAEFragment: a :--V>"));
+        expect([MAEOptional(@"a") description]).to(equal(@"<MAEFragment: a :-O->"));
+        expect([MAEQuoted(@"b") description]).to(equal(@"<MAEFragment: b :D-->"));
+        expect([MAESingleQuoted(@"c") description]).to(equal(@"<MAEFragment: c :S-->"));
+        expect([MAEVariadic([[MAEFragment alloc] initWithPropertyName:@"d"]) description])
+            .to(equal(@"<MAEFragment: d :--V>"));
+        expect([MAEVariadic(MAEOptional(MAESingleQuoted(@"e"))) description])
+            .to(equal(@"<MAEFragment: e :SOV>"));
+    });
 }
 QuickSpecEnd

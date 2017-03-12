@@ -23,7 +23,8 @@ static inline MAEFragment* _Nonnull makeFragment(id _Nonnull v)
     if ([v isKindOfClass:MAEFragment.class]) {
         fragment = v;
     } else {
-        NSCAssert([v isKindOfClass:NSString.class], @"It only allow NSString and MAEFramgnet");
+        NSCAssert([v isKindOfClass:NSString.class],
+                  @"It only allow NSString and MAEFramgnet, but got %@", [v class]);
         fragment = [[MAEFragment alloc] initWithPropertyName:v];
     }
     return fragment;
@@ -68,13 +69,61 @@ extern MAEFragment* _Nonnull MAEVariadic(id _Nonnull v)
 
 #pragma mark - Lifecycle
 
+- (instancetype _Nullable)init
+{
+    NSAssert(NO, @"%@ MUST be initialized with designated initializer", self.class);
+    return nil;
+}
+
 - (instancetype _Nonnull)initWithPropertyName:(NSString* _Nonnull)propertyName
 {
     NSParameterAssert(propertyName != nil);
+
     if (self = [super init]) {
         self.propertyName = propertyName;
     }
     return self;
+}
+
+#pragma mark - NSObject (Override)
+
+- (BOOL)isEqual:(id _Nullable)other
+{
+    if ([other isKindOfClass:MAEFragment.class]) {
+        typeof(self) otherFragment = other;
+        return [otherFragment.propertyName isEqual:self.propertyName]
+            && otherFragment.type == self.type
+            && otherFragment.optional == self.optional
+            && otherFragment.variadic == self.variadic;
+    }
+    return NO;
+}
+
+- (NSUInteger)hash
+{
+    return [self.propertyName hash];
+}
+
+- (NSString* _Nonnull)description
+{
+    char type = ' ';
+    switch (self.type) {
+        case MAEFragmentEnumerateString:
+            type = 'E';
+            break;
+        case MAEFragmentDoubleQuotedString:
+            type = 'D';
+            break;
+        case MAEFragmentSingleQuotedString:
+            type = 'S';
+            break;
+        default:
+            type = '-';
+    }
+
+    return [NSString stringWithFormat:@"<%@: %@ :%c%c%c>",
+                                      self.class, self.propertyName, type,
+                                      (self.optional ? 'O' : '-'), (self.variadic ? 'V' : '-')];
 }
 
 @end

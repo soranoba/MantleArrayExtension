@@ -1,5 +1,6 @@
 # MantleArrayExtension
-[![CI Status](http://img.shields.io/travis/soranoba/MantleArrayExtension.svg?style=flat)](https://travis-ci.org/soranoba/MantleArrayExtension)
+[![Build Status](https://travis-ci.org/soranoba/MantleArrayExtension.svg?branch=master)](https://travis-ci.org/soranoba/MantleArrayExtension)
+[![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Version](https://img.shields.io/cocoapods/v/MantleArrayExtension.svg?style=flat)](http://cocoapods.org/pods/MantleArrayExtension)
 [![License](https://img.shields.io/cocoapods/l/MantleArrayExtension.svg?style=flat)](http://cocoapods.org/pods/MantleArrayExtension)
 [![Platform](https://img.shields.io/cocoapods/p/MantleArrayExtension.svg?style=flat)](http://cocoapods.org/pods/MantleArrayExtension)
@@ -85,14 +86,14 @@ Model MUST inherit [MTLModel](https://github.com/Mantle/Mantle#mtlmodel) and con
 ### Transformer
 You can use serializer for MAEArraySerializing object.
 
-- `MAEArrayAdapter # arrayTransformerWithModelClass:`
-- `MAEArrayAdapter # variadicArrayTransformerWithModelClass:`
+- `MAEArrayAdapter # stringTransformerWithArrayModelClass:`
+- `MAEArrayAdapter # variadicTransformerWithArrayModelClass:`
 
 For MAEArraySerializing property, it is used by default, so you do not need to specify it.
 
 ### Other information
 
-Please refer to documentation, [unit tests](MantleArrayExtensionTests) and [Mantle](https://github.com/Mantle/Mantle).
+Please refer to [documentation](http://cocoadocs.org/docsets/MantleArrayExtension), [unit tests](MantleArrayExtensionTests) and [Mantle](https://github.com/Mantle/Mantle).
 
 ## Contribute
 

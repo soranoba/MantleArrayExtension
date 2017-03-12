@@ -8,19 +8,13 @@
 
 #import "MAEArrayAdapter.h"
 #import "MAESeparatedString.h"
+#import "NSArray+MAESeparatedString.h"
 #import "NSError+MAEErrorCode.h"
 #import <Mantle/EXTRuntimeExtensions.h>
-#import <Mantle/MTLReflection.h>
-#import <Mantle/MTLValueTransformer.h>
 #import <Mantle/NSValueTransformer+MTLPredefinedTransformerAdditions.h>
 #import <objc/runtime.h>
 
 static unichar const MAEDefaultSeparator = ' ';
-
-/// It is a Key to use for non-local exits (NSException)
-static NSString* const MAESeparatorChanged = @"MAESeparatorChanged";
-
-static NSString* const MAEAdapter = @"MAEAdapter";
 
 @interface MAEArrayAdapter ()
 
@@ -32,8 +26,7 @@ static NSString* const MAEAdapter = @"MAEAdapter";
 /// A cached copy of the return value of +propertyKeys
 @property (nonatomic, nonnull, copy) NSSet<NSString*>* propertyKeys;
 /// A cached copy of the return value of -valueTransforersForModelClass:
-@property (nonatomic, nonnull, copy)
-    NSDictionary* valueTransformersByPropertyKey;
+@property (nonatomic, nonnull, copy) NSDictionary* valueTransformersByPropertyKey;
 /// A cached copy of the return value of +ignoreEdgeBlank
 @property (nonatomic, assign) BOOL ignoreEdgeBlank;
 
@@ -45,7 +38,7 @@ static NSString* const MAEAdapter = @"MAEAdapter";
 
 - (instancetype _Nullable)init
 {
-    NSAssert(NO, @"%@ MUST be initialized with designed initializer", self.class);
+    NSAssert(NO, @"%@ MUST be initialized with designated initializer", self.class);
     return nil;
 }
 
@@ -72,30 +65,32 @@ static NSString* const MAEAdapter = @"MAEAdapter";
         NSMutableArray* formatByPropertyKey = [NSMutableArray array];
         BOOL foundVariadic = NO;
         for (id fragment in [modelClass formatByPropertyKey]) {
-            if ([fragment isKindOfClass:NSString.class]) {
-                [formatByPropertyKey addObject:[[MAEFragment alloc] initWithPropertyName:fragment]];
-            } else if (foundVariadic) {
+            if (foundVariadic) {
                 NSAssert(NO, @"Variadic MUST be the last");
                 break;
+            } else if ([fragment isKindOfClass:NSString.class]) {
+                NSAssert([self.propertyKeys containsObject:fragment],
+                         @"Not found a property named %@", fragment);
+                [formatByPropertyKey addObject:[[MAEFragment alloc] initWithPropertyName:fragment]];
             } else {
                 NSAssert([fragment isKindOfClass:MAEFragment.class],
                          @"formatByPropertyKey only support NSString and MAEFragment, but got %@", [fragment class]);
                 foundVariadic |= [fragment isVariadic];
-                if ([self.propertyKeys containsObject:[fragment propertyName]]) {
-                    [formatByPropertyKey addObject:fragment];
-                }
+                NSAssert([self.propertyKeys containsObject:[fragment propertyName]],
+                         @"Not found a property named %@", [fragment propertyName]);
+                [formatByPropertyKey addObject:fragment];
             }
         }
+        NSAssert([NSSet setWithArray:formatByPropertyKey].count == formatByPropertyKey.count,
+                 @"The same property key is used more than once");
         self.formatByPropertyKey = formatByPropertyKey;
 
-        self.valueTransformersByPropertyKey = [self.class valueTransformeresForModelClass:modelClass];
+        self.valueTransformersByPropertyKey = [self.class valueTransformersForModelClass:modelClass];
     }
     return self;
 }
 
 #pragma mark - Public Methods
-
-#pragma mark Convertion between model to string or array
 
 + (id<MAEArraySerializing> _Nullable)modelOfClass:(Class _Nonnull)modelClass
                                        fromString:(NSString* _Nullable)string
@@ -115,11 +110,12 @@ static NSString* const MAEAdapter = @"MAEAdapter";
     return [adapter modelFromArray:array error:error];
 }
 
-+ (NSArray<NSString*>* _Nullable)arrayFromModel:(id<MAEArraySerializing> _Nullable)model
-                                          error:(NSError* _Nullable* _Nullable)error
++ (NSArray<MAESeparatedString*>* _Nullable)arrayFromModel:(id<MAEArraySerializing> _Nullable)model
+                                                    error:(NSError* _Nullable* _Nullable)error
 {
     if (!model) {
-        SET_ERROR(error, MAEErrorInputNil, @"The model instance is nil");
+        SET_ERROR(error, MAEErrorNilInputData,
+                  @{ NSLocalizedFailureReasonErrorKey : @"The model instance is nil" });
         return nil;
     }
     MAEArrayAdapter* adapter = [[self alloc] initWithModelClass:[model class]];
@@ -130,73 +126,66 @@ static NSString* const MAEAdapter = @"MAEAdapter";
                                  error:(NSError* _Nullable* _Nullable)error
 {
     if (!model) {
-        SET_ERROR(error, MAEErrorInputNil, @"The model instance is nil");
+        SET_ERROR(error, MAEErrorNilInputData,
+                  @{ NSLocalizedFailureReasonErrorKey : @"The model instance is nil" });
         return nil;
     }
     MAEArrayAdapter* adapter = [[self alloc] initWithModelClass:[model class]];
     return [adapter stringFromModel:model error:error];
 }
 
+#pragma mark Instance Methods
+
 - (id<MAEArraySerializing> _Nullable)modelFromString:(NSString* _Nullable)string
                                                error:(NSError* _Nullable* _Nullable)error
 {
     if (!string) {
-        SET_ERROR(error, MAEErrorInputNil, @"Input string is nil");
+        SET_ERROR(error, MAEErrorNilInputData,
+                  @{ NSLocalizedFailureReasonErrorKey : @"Input string is nil" });
         return nil;
     }
 
-    @try {
-        return [self modelFromSeparatedStrings:[self separateString:string]
-                                         error:error];
-    } @catch (NSException* exception) {
-        if (exception.name == MAESeparatorChanged) {
-            MAEArrayAdapter* otherAdapter = exception.userInfo[MAEAdapter];
-            return [otherAdapter modelFromString:string error:error];
-        }
-        @throw exception;
-    }
+    return [self modelFromSeparatedStrings:[self separateString:string]
+                                     error:error];
 }
 
 - (id<MAEArraySerializing> _Nullable)modelFromArray:(NSArray<NSString*>* _Nullable)array
                                               error:(NSError* _Nullable* _Nullable)error
 {
     if (!array) {
-        SET_ERROR(error, MAEErrorInputNil, @"Input array is nil");
+        SET_ERROR(error, MAEErrorNilInputData,
+                  @{ NSLocalizedFailureReasonErrorKey : @"Input array is nil" });
         return nil;
     }
 
     NSMutableArray<MAESeparatedString*>* separatedStrings = [NSMutableArray arrayWithCapacity:array.count];
     for (NSString* s in array) {
-        [separatedStrings addObject:[[MAESeparatedString alloc] initWithString:s]];
+        if ([s isKindOfClass:MAESeparatedString.class]) {
+            [separatedStrings addObject:(MAESeparatedString*)s];
+        } else {
+            [separatedStrings addObject:[[MAESeparatedString alloc] initWithOriginalCharacters:s ignoreEdgeBlank:NO]];
+        }
     }
 
-    @try {
-        return [self modelFromSeparatedStrings:separatedStrings error:error];
-    } @catch (NSException* exception) {
-        if (exception.name == MAESeparatorChanged) {
-            MAEArrayAdapter* otherAdapter = exception.userInfo[MAEAdapter];
-            return [otherAdapter modelFromSeparatedStrings:separatedStrings error:error];
-        }
-        @throw exception;
-    }
+    return [self modelFromSeparatedStrings:separatedStrings error:error];
 }
 
 - (NSString* _Nullable)stringFromModel:(id<MAEArraySerializing> _Nullable)model
                                  error:(NSError* _Nullable* _Nullable)error
 {
-    NSArray<NSString*>* array = [self arrayFromModel:model error:error];
+    NSArray<MAESeparatedString*>* array = [self arrayFromModel:model error:error];
     if (!array) {
         return nil;
     }
-    unichar c = self.separator;
-    return [array componentsJoinedByString:[NSString stringWithCharacters:&c length:1]];
+    return [array mae_componentsJoinedBySeparatedString:self.separator];
 }
 
-- (NSArray<NSString*>* _Nullable)arrayFromModel:(id<MAEArraySerializing> _Nullable)model
-                                          error:(NSError* _Nullable* _Nullable)error
+- (NSArray<MAESeparatedString*>* _Nullable)arrayFromModel:(id<MAEArraySerializing> _Nullable)model
+                                                    error:(NSError* _Nullable* _Nullable)error
 {
     if (!model) {
-        SET_ERROR(error, MAEErrorInputNil, @"Input model is nil");
+        SET_ERROR(error, MAEErrorNilInputData,
+                  @{ NSLocalizedFailureReasonErrorKey : @"Input model is nil" });
         return nil;
     }
 
@@ -204,7 +193,7 @@ static NSString* const MAEAdapter = @"MAEAdapter";
         return [self.class arrayFromModel:model error:error];
     }
 
-    NSMutableArray<NSString*>* result = [NSMutableArray array];
+    NSMutableArray<MAESeparatedString*>* result = [NSMutableArray array];
     NSDictionary* dictionaryValue = [model.dictionaryValue dictionaryWithValuesForKeys:self.propertyKeys.allObjects];
     for (MAEFragment* fragment in self.formatByPropertyKey) {
         id value = dictionaryValue[fragment.propertyName];
@@ -226,7 +215,7 @@ static NSString* const MAEAdapter = @"MAEAdapter";
             }
         }
 
-        if (value == NSNull.null) {
+        if (!value || value == NSNull.null) {
             value = @"";
         }
 
@@ -236,9 +225,9 @@ static NSString* const MAEAdapter = @"MAEAdapter";
 
         for (NSString* transformedString in value) {
             if (![transformedString isKindOfClass:NSString.class]) {
-                SET_ERROR(error, MAEErrorTransform,
-                          [NSString stringWithFormat:@"The result of reverseTransform MUST be NSString or NSArray, but got %@",
-                                                     [value class]]);
+                SET_ERROR(error, MAEErrorInvalidInputData,
+                          @{ NSLocalizedFailureReasonErrorKey :
+                                 format(@"The result of reverseTransform MUST be NSString or NSArray, but got %@", [value class]) });
                 return nil;
             }
 
@@ -251,7 +240,7 @@ static NSString* const MAEAdapter = @"MAEAdapter";
                     type = MAEStringTypeSingleQuoted;
                     break;
                 case MAEFragmentMaybeQuotedString:
-                    type = [transformedString rangeOfString:@" "].location == NSNotFound
+                    type = ([transformedString rangeOfString:@" "].location == NSNotFound && transformedString.length > 0)
                         ? MAEStringTypeEnumerate
                         : MAEStringTypeDoubleQuoted;
                     break;
@@ -259,168 +248,10 @@ static NSString* const MAEAdapter = @"MAEAdapter";
                     type = MAEStringTypeEnumerate;
                     break;
             }
-            [result addObject:[[[MAESeparatedString alloc] initWithCharacters:transformedString type:type] toString]];
+            [result addObject:[[MAESeparatedString alloc] initWithCharacters:transformedString type:type]];
         }
     }
     return result;
-}
-
-#pragma mark Transformer
-
-+ (NSValueTransformer* _Nonnull)variadicArrayTransformerWithModelClass:(Class _Nonnull)modelClass
-{
-    return [MTLValueTransformer
-        transformerUsingForwardBlock:
-            ^id _Nullable(id _Nullable value, BOOL* _Nonnull success, NSError* _Nullable* _Nullable error) {
-                if (!value) {
-                    return nil;
-                }
-
-                if (![value isKindOfClass:NSArray.class]) {
-                    SET_ERROR(error, MAEErrorBadArguemt,
-                              @"arrayTransformerWithModelClass only support to convert from between NSArray and MTLModel");
-                    *success = NO;
-                    return nil;
-                }
-                id model = [self modelOfClass:modelClass fromArray:value error:error];
-                *success = model != nil;
-                return model;
-            }
-        reverseBlock:^id _Nullable(id _Nullable value, BOOL* _Nonnull success, NSError* _Nullable* _Nullable error) {
-            if (!value) {
-                return nil;
-            }
-
-            if (!([value isKindOfClass:MTLModel.class] &&
-                  [value conformsToProtocol:@protocol(MAEArraySerializing)])) {
-                SET_ERROR(error, MAEErrorBadArguemt,
-                          @"arrayTransformerWithModelClass only support MAEArraySerializing MTLModel");
-                *success = NO;
-                return nil;
-            }
-
-            NSArray* array = [self arrayFromModel:value error:error];
-            *success = array != nil;
-            return array;
-        }];
-}
-
-+ (NSValueTransformer* _Nonnull)arrayTransformerWithModelClass:(Class _Nonnull)modelClass
-{
-    return [MTLValueTransformer
-        transformerUsingForwardBlock:
-            ^id _Nullable(id _Nullable value, BOOL* _Nonnull success, NSError* _Nullable* _Nullable error) {
-                if (!value) {
-                    return nil;
-                }
-
-                if (![value isKindOfClass:NSString.class]) {
-                    SET_ERROR(error, MAEErrorBadArguemt,
-                              @"arrayTransformerWithModelClass only support to convert between string and MTLModel");
-                    *success = NO;
-                    return nil;
-                }
-                id model = [self modelOfClass:modelClass fromString:value error:error];
-                *success = model != nil;
-                return model;
-            }
-        reverseBlock:^id _Nullable(id _Nullable value, BOOL* _Nonnull success, NSError* _Nullable* _Nullable error) {
-            if (!value) {
-                return nil;
-            }
-
-            if (!([value isKindOfClass:MTLModel.class] &&
-                  [value conformsToProtocol:@protocol(MAEArraySerializing)])) {
-                SET_ERROR(error, MAEErrorBadArguemt,
-                          @"arrayTransformerWithModelClass only support MAEArraySerializing MTLModel");
-                *success = NO;
-                return nil;
-            }
-
-            NSString* str = [self stringFromModel:value error:error];
-            *success = str != nil;
-            return str;
-        }];
-}
-
-+ (NSValueTransformer* _Nonnull)numberStringTransformer
-{
-    return [MTLValueTransformer
-        transformerUsingForwardBlock:
-            ^id _Nullable(id _Nullable value, BOOL* _Nonnull success, NSError* _Nullable* _Nullable error) {
-                NSValueTransformer<MTLTransformerErrorHandling>* transformer
-                    = [NSValueTransformer mtl_transformerWithFormatter:[NSNumberFormatter new]
-                                                        forObjectClass:NSNumber.class];
-                return [transformer transformedValue:value success:success error:error];
-            }
-        reverseBlock:^id _Nullable(id _Nullable value, BOOL* _Nonnull success, NSError* _Nullable* _Nullable error) {
-            if (!value) {
-                return nil;
-            }
-            if (![value isKindOfClass:NSNumber.class]) {
-                SET_ERROR(error, MAEErrorBadArguemt,
-                          [NSString stringWithFormat:@"Input data expected NSNumber, but got %@", [value class]]);
-                *success = NO;
-                return nil;
-            }
-            *success = YES;
-            return [(NSNumber*)value stringValue];
-        }];
-}
-
-+ (NSValueTransformer* _Nonnull)boolStringTransformer
-{
-    return [MTLValueTransformer
-        transformerUsingForwardBlock:
-            ^NSNumber* _Nullable(id _Nullable str, BOOL* _Nonnull success, NSError* _Nullable* _Nullable error) {
-
-                if (!str) {
-                    return nil;
-                }
-                if (![str isKindOfClass:NSString.class]) {
-                    SET_ERROR(error, MAEErrorBadArguemt,
-                              [NSString stringWithFormat:@"Input data expected a numeric string, but got %@.", [str class]]);
-                    *success = NO;
-                    return nil;
-                }
-
-                *success = YES;
-                return [NSNumber numberWithBool:[str boolValue]];
-            }
-        reverseBlock:^NSString* _Nullable(id _Nullable value, BOOL* _Nonnull success, NSError* _Nullable* _Nullable error) {
-            if (!value) {
-                return nil;
-            }
-            if (![value isKindOfClass:NSNumber.class]) {
-                SET_ERROR(error, MAEErrorBadArguemt,
-                          [NSString stringWithFormat:@"Input data expected NSNumber, but got %@", [value class]]);
-                *success = NO;
-                return nil;
-            }
-            *success = YES;
-            return [(NSNumber*)value integerValue] ? @"true" : @"false";
-        }];
-}
-
-/**
- * It returns transformer for converting between NSString and ObjCType
- *
- * @param type An ObjCType
- * @return If the type does not support, it returns nil. Otherwise, it returns transfomer.
- */
-+ (NSValueTransformer* _Nullable)stringTransformerObjCType:
-        (const char* _Nonnull)type
-{
-    if (strcmp(type, @encode(NSUInteger)) == 0
-        || strcmp(type, @encode(NSInteger)) == 0
-        || strcmp(type, @encode(NSNumber)) == 0
-        || strcmp(type, @encode(float)) == 0
-        || strcmp(type, @encode(double)) == 0) {
-        return [self numberStringTransformer];
-    } else if (strcmp(type, @encode(BOOL)) == 0) {
-        return [self boolStringTransformer];
-    }
-    return nil;
 }
 
 #pragma mark - Private Methods
@@ -435,26 +266,27 @@ static NSString* const MAEAdapter = @"MAEAdapter";
 - (id<MAEArraySerializing> _Nullable)modelFromSeparatedStrings:(NSArray<MAESeparatedString*>* _Nonnull)separatedStrings
                                                          error:(NSError* _Nullable* _Nullable)error
 {
+    NSParameterAssert(separatedStrings != nil);
+
     if ([self.modelClass respondsToSelector:@selector(classForParsingArray:)]) {
         Class class = [self.modelClass classForParsingArray:separatedStrings];
         if (class == nil) {
             SET_ERROR(error, MAEErrorNoConversionTarget,
-                      ([NSString stringWithFormat:@"%@ # classForParsingArray returns nil", self.modelClass]));
+                      @{ NSLocalizedFailureReasonErrorKey :
+                             format(@"%@ # classForParsingArray returns nil", self.modelClass) });
             return nil;
         }
 
         if (class != self.modelClass) {
             NSAssert([class conformsToProtocol:@protocol(MAEArraySerializing)],
-                     ([NSString stringWithFormat:@"classForParsingArray MUST return MAEArraySerializing MTLModel class. but got %@", class]));
+                     @"classForParsingArray MUST return MAEArraySerializing MTLModel class. but got %@", class);
 
             MAEArrayAdapter* otherAdapter = [[self.class alloc] initWithModelClass:class];
 
             // NOTE: If separator is different, it will start over from separate process again.
             if (otherAdapter.separator != self.separator) {
-                NSException* exception = [[NSException alloc] initWithName:MAESeparatorChanged
-                                                                    reason:nil
-                                                                  userInfo:@{ MAEAdapter : otherAdapter }];
-                @throw exception;
+                NSString* mergeString = [separatedStrings mae_componentsJoinedBySeparatedString:self.separator];
+                return [otherAdapter modelFromString:mergeString error:error];
             }
             return [otherAdapter modelFromSeparatedStrings:separatedStrings error:error];
         }
@@ -463,46 +295,40 @@ static NSString* const MAEAdapter = @"MAEAdapter";
     NSArray<MAEFragment*>* fragments = [self.class chooseFormatByPropertyKey:self.formatByPropertyKey
                                                                    withCount:separatedStrings.count];
     if (!fragments) {
-        SET_ERROR(error, MAEErrorInvalidCount,
-                  @"Number of separated strings and format does not match");
+        SET_ERROR(error, MAEErrorNotMatchFragmentCount,
+                  @{ NSLocalizedFailureReasonErrorKey :
+                         format(@"Expected format is %@, but got fragment count is %@",
+                                self.formatByPropertyKey, @(separatedStrings.count)) });
         return nil;
     }
 
-    BOOL (^validate)
-    (MAEFragment * _Nonnull, MAESeparatedString * _Nonnull)
-        = ^BOOL(MAEFragment* _Nonnull f, MAESeparatedString* _Nonnull s) {
-              switch (f.type) {
-                  case MAEFragmentDoubleQuotedString:
-                      if (s.type != MAEStringTypeDoubleQuoted) {
-                          SET_ERROR(error, MAEErrorNotQuoted,
-                                    [NSString stringWithFormat:@"%@ expected double-quoted-string", f.propertyName]);
-                          return NO;
-                      }
-                      break;
-                  case MAEFragmentSingleQuotedString:
-                      if (s.type != MAEStringTypeSingleQuoted) {
-                          SET_ERROR(error, MAEErrorNotEnum,
-                                    [NSString stringWithFormat:@"%@ expected single-quoted-string", f.propertyName]);
-                          return NO;
-                      }
-                      break;
-                  case MAEFragmentEnumerateString:
-                      if (s.type != MAEStringTypeEnumerate) {
-                          SET_ERROR(error, MAEErrorNotEnum,
-                                    [NSString stringWithFormat:@"%@ expected enumerate-string", f.propertyName]);
-                          return NO;
-                      }
-                      break;
-                  default:
-                      break;
-              }
-              return YES;
-          };
+    NSMutableDictionary* dictionaryValue = [NSMutableDictionary dictionaryWithCapacity:fragments.count];
+    NSEnumerator* sEnum = separatedStrings.objectEnumerator;
 
-    id _Nullable (^transform)(NSString* _Nonnull, id _Nonnull)
-        = ^id _Nullable(NSString* _Nonnull propertyName, id _Nonnull value)
-    {
-        NSValueTransformer* transformer = self.valueTransformersByPropertyKey[propertyName];
+    MAESeparatedString* s;
+    for (MAEFragment* fragment in fragments) {
+        id value;
+
+        if (fragment.isVariadic) {
+            NSMutableArray* arr = [NSMutableArray array];
+            while ((s = [sEnum nextObject])) {
+                if (![self.class validateOfSeparatedString:s withExpectedFragment:fragment error:error]) {
+                    return nil;
+                }
+                [arr addObject:s];
+            }
+            value = arr;
+        } else {
+            s = [sEnum nextObject];
+            NSAssert(s, @"Incorrect number of elements in separatedString");
+
+            if (![self.class validateOfSeparatedString:s withExpectedFragment:fragment error:error]) {
+                return nil;
+            }
+            value = s;
+        }
+
+        NSValueTransformer* transformer = self.valueTransformersByPropertyKey[fragment.propertyName];
         if (transformer) {
             if ([transformer respondsToSelector:@selector(transformedValue:success:error:)]) {
                 id<MTLTransformerErrorHandling> errorHandlingTransformer = (id)transformer;
@@ -515,45 +341,54 @@ static NSString* const MAEAdapter = @"MAEAdapter";
                 value = [transformer transformedValue:value];
             }
         }
-        return value;
-    };
 
-    NSMutableDictionary* dictionaryValue = [NSMutableDictionary dictionaryWithCapacity:fragments.count];
-    NSEnumerator* fEnum = fragments.objectEnumerator;
-    NSEnumerator* sEnum = separatedStrings.objectEnumerator;
-
-    MAEFragment* f;
-    MAESeparatedString* s;
-    while ((f = [fEnum nextObject])) {
-        id value;
-
-        if (f.isVariadic) {
-            NSMutableArray* arr = [NSMutableArray array];
-            while ((s = [sEnum nextObject])) {
-                if (!validate(f, s)) {
-                    return nil;
-                }
-                [arr addObject:s.characters];
-            }
-            value = arr;
-        } else {
-            s = [sEnum nextObject];
-            NSAssert(s, @"Incorrect number of elements in separatedString");
-
-            if (!validate(f, s)) {
-                return nil;
-            }
-            value = s.characters;
-        }
-
-        value = transform(f.propertyName, value);
-        if (!value) {
-            return nil;
-        }
-        dictionaryValue[f.propertyName] = value;
+        dictionaryValue[fragment.propertyName] = value;
     }
     id model = [self.modelClass modelWithDictionary:dictionaryValue error:error];
     return [model validate:error] ? model : nil;
+}
+
+/**
+ * Validate that separated string matches the form of fragment
+ *
+ * @param separatedString  A SeparatedString to be validated.
+ * @param fragment         A fragment to be expected.
+ * @param error            If it return nil, error information is saved here
+ * @return If it is valid, it returns YES. Otherwise, it returns NO.
+ */
++ (BOOL)validateOfSeparatedString:(MAESeparatedString* _Nonnull)separatedString
+             withExpectedFragment:(MAEFragment* _Nonnull)fragment
+                            error:(NSError* _Nullable* _Nullable)error
+{
+    NSParameterAssert(separatedString != nil && fragment != nil);
+
+    NSString* expectedType = nil;
+    switch (fragment.type) {
+        case MAEFragmentDoubleQuotedString:
+            if (separatedString.type != MAEStringTypeDoubleQuoted) {
+                expectedType = @"double quoted string";
+            }
+            break;
+        case MAEFragmentSingleQuotedString:
+            if (separatedString.type != MAEStringTypeSingleQuoted) {
+                expectedType = @"single quoted string";
+            }
+            break;
+        case MAEFragmentEnumerateString:
+            if (separatedString.type != MAEStringTypeEnumerate) {
+                expectedType = @"enumerate string";
+            }
+            break;
+        default:
+            break;
+    }
+    if (expectedType) {
+        SET_ERROR(error, MAEErrorNotMatchFragmentType,
+                  @{ NSLocalizedFailureReasonErrorKey :
+                         format(@"%@ expected %@", fragment.propertyName, expectedType) });
+        return NO;
+    }
+    return YES;
 }
 
 /**
@@ -565,76 +400,49 @@ static NSString* const MAEAdapter = @"MAEAdapter";
  */
 - (NSArray<MAESeparatedString*>* _Nullable)separateString:(NSString* _Nonnull)string
 {
+    NSParameterAssert(string != nil);
+
     unichar* chars = malloc(sizeof(unichar) * (string.length + 1));
     [string getCharacters:chars range:NSMakeRange(0, string.length)];
     chars[string.length] = '\0';
 
     unichar* p = chars;
-    __block unichar *start = nil, *end = nil;
+    unichar *start = nil, *end = nil;
     BOOL doubleQuoted = NO, singleQuoted = NO;
     NSMutableArray<MAESeparatedString*>* separatedStrings =
         [NSMutableArray arrayWithCapacity:self.formatByPropertyKey.count];
 
     void (^append)(unichar* _Nullable, unichar* _Nullable) = ^void(unichar* _Nullable start, unichar* _Nullable end) {
-        NSString* str;
-        if (start && end) {
-            if ((start > chars)
-                && ((*(start - 1) == '"' && *end == '"') || (*(start - 1) == '\'' && *end == '\''))) {
-                start -= 1;
-                end += 1;
-            }
-            str = [NSString stringWithCharacters:start length:end - start];
-        } else {
-            str = [NSString string];
-        }
-        [separatedStrings addObject:[[MAESeparatedString alloc] initWithString:str]];
+        NSString* str = (start <= end) ? [NSString stringWithCharacters:start length:end - start + 1] : @"";
+        [separatedStrings addObject:[[MAESeparatedString alloc] initWithOriginalCharacters:str
+                                                                           ignoreEdgeBlank:self.ignoreEdgeBlank]];
     };
 
-    for (; *p != '\0'; p++) {
+    for (start = p; *p != '\0'; p++) {
         if (*p == '\\') {
-            if (++p == '\0') {
+            if (*(++p) == '\0') {
                 break;
             }
         } else if (!singleQuoted && !doubleQuoted && *p == self.separator) {
-            if (*p == ' ' && !start) {
-                if (!self.ignoreEdgeBlank) {
-                    append(nil, nil);
-                }
+            if (*p == ' ' && self.ignoreEdgeBlank && *(p + 1) == ' ') {
+                // NOP
             } else {
-                append(start, (end ?: p));
-                start = end = nil;
+                end = p - 1;
+                append(start, end);
+                start = p + 1;
+                end = nil;
             }
         } else if (!singleQuoted && *p == '"') {
-            if (doubleQuoted) {
-                end = p;
-            }
             doubleQuoted = !doubleQuoted;
         } else if (!doubleQuoted && *p == '\'') {
-            if (singleQuoted) {
-                end = p;
-            }
             singleQuoted = !singleQuoted;
-        } else if (doubleQuoted || singleQuoted) {
-            if (!start) {
-                start = p;
-            }
-            continue;
-        } else if (*p == ' ') {
-            if (start && self.ignoreEdgeBlank) {
-                end = p;
-            } else if (!start && !self.ignoreEdgeBlank) {
-                start = p;
-            }
-        } else if (!start) {
-            start = p;
-        } else {
-            end = nil;
         }
     }
+    end = p - 1;
 
-    if (start) {
+    if (*start != '\0') {
         if (!doubleQuoted && !singleQuoted) {
-            append(start, (end ?: p));
+            append(start, end);
         } else {
             // NOTE: unclosed-quoted
             separatedStrings = nil;
@@ -651,33 +459,33 @@ static NSString* const MAEAdapter = @"MAEAdapter";
  * @param fragments The fragments that contains optional elements
  * @param count     The count of separated string. It is not fragments.count.
  * @return If it does not correspond to the count, it returns nil.
- *         Otherwise, it returns fragments with unnecessary optional elements
- * removed for the count elements.
+ *         Otherwise, it returns fragments with unnecessary optional elements removed for the count elements.
  */
-+ (NSArray<MAEFragment*>* _Nullable)chooseFormatByPropertyKey:(NSArray<MAEFragment*>* _Nullable)fragments
++ (NSArray<MAEFragment*>* _Nullable)chooseFormatByPropertyKey:(NSArray<MAEFragment*>* _Nonnull)fragments
                                                     withCount:(NSUInteger)count
 {
+    NSParameterAssert(fragments != nil);
+
     if (fragments.count == count) {
         return fragments;
     } else if (fragments.count < count) {
         if ([fragments lastObject].variadic) {
             return fragments;
-        } else {
-            return nil;
         }
-    }
+    } else { // fragments.count > count
+        BOOL hasRequirementsVariadic = NO;
+        NSMutableArray<MAEFragment*>* filteredFragments = [fragments mutableCopy];
+        for (MAEFragment* fragment in fragments.reverseObjectEnumerator) {
+            if (fragment.optional) {
+                [filteredFragments removeObject:fragment];
+            } else if (fragment.variadic) {
+                NSAssert(hasRequirementsVariadic == NO, @"Variadic is allowed only one, but there are multiple variadic");
+                hasRequirementsVariadic = YES;
+            }
 
-    BOOL hasVariadic = NO;
-    NSMutableArray<MAEFragment*>* filteredFragments = [fragments mutableCopy];
-    for (MAEFragment* fragment in fragments.reverseObjectEnumerator) {
-        if (fragment.optional) {
-            [filteredFragments removeObject:fragment];
-        } else if (fragment.variadic) {
-            hasVariadic = YES;
-        }
-
-        if (filteredFragments.count - (int)hasVariadic == count) {
-            return filteredFragments;
+            if (filteredFragments.count - (int)hasRequirementsVariadic == count) {
+                return filteredFragments;
+            }
         }
     }
     return nil;
@@ -688,17 +496,17 @@ static NSString* const MAEAdapter = @"MAEAdapter";
  *
  * It also solve the default transformer.
  *
- * @param modelClass A modelClass that conforms to MAEArraySerializing
+ * @param modelClass   A modelClass that conforms to MAEArraySerializing
  * @return transformers
  */
-+ (NSDictionary* _Nonnull)valueTransformeresForModelClass:(Class _Nonnull)modelClass
++ (NSDictionary* _Nonnull)valueTransformersForModelClass:(Class _Nonnull)modelClass
 {
     NSParameterAssert(modelClass != nil);
     NSParameterAssert([modelClass conformsToProtocol:@protocol(MAEArraySerializing)]);
 
     NSMutableDictionary* result = [NSMutableDictionary dictionary];
     for (NSString* propertyKey in [modelClass propertyKeys]) {
-        SEL selector = MTLSelectorWithKeyPattern(propertyKey, "ArrayTransformer");
+        SEL selector = NSSelectorFromString([propertyKey stringByAppendingString:@"ArrayTransformer"]);
         if ([modelClass respondsToSelector:selector]) {
             IMP imp = [modelClass methodForSelector:selector];
             result[propertyKey] = ((NSValueTransformer * (*)(id, SEL))imp)(modelClass, selector);
@@ -721,18 +529,53 @@ static NSString* const MAEAdapter = @"MAEAdapter";
         mtl_propertyAttributes* attributes = mtl_copyPropertyAttributes(property);
         if (*(attributes->type) == *(@encode(id))) {
             Class klass = attributes->objectClass;
+
+            NSValueTransformer* transformer = nil;
             if ([klass conformsToProtocol:@protocol(MAEArraySerializing)]) {
-                result[propertyKey] = [self arrayTransformerWithModelClass:klass];
-            } else {
-                result[propertyKey] = [NSValueTransformer mtl_validatingTransformerForClass:(klass ?: NSObject.class)];
+                transformer = [self stringTransformerWithArrayModelClass:klass];
+            } else if ([klass isSubclassOfClass:NSNumber.class]) {
+                transformer = [self numberTransformer];
             }
+
+            if (!transformer) {
+                transformer = [NSValueTransformer mtl_validatingTransformerForClass:(klass ?: NSObject.class)];
+            }
+            result[propertyKey] = transformer;
         } else {
-            result[propertyKey] = [self stringTransformerObjCType:attributes->type]
+            result[propertyKey] = [self stringTransformerForObjCType:attributes->type]
                 ?: [NSValueTransformer mtl_validatingTransformerForClass:NSValue.class];
         }
         free(attributes);
     }
     return result;
+}
+
+/**
+ * It returns a transformer for converting between NSString and ObjCType.
+ *
+ * @param objCType   An ObjCType
+ * @return If the type does not support, it returns nil. Otherwise, it returns a transfomer.
+ */
++ (NSValueTransformer* _Nullable)stringTransformerForObjCType:(const char* _Nonnull)objCType
+{
+    NSParameterAssert(objCType != nil);
+
+    if (strcmp(objCType, @encode(int)) == 0
+        || strcmp(objCType, @encode(short)) == 0
+        || strcmp(objCType, @encode(long)) == 0
+        || strcmp(objCType, @encode(long long)) == 0
+        || strcmp(objCType, @encode(unsigned short)) == 0
+        || strcmp(objCType, @encode(unsigned long)) == 0
+        || strcmp(objCType, @encode(unsigned long long)) == 0
+        || strcmp(objCType, @encode(float)) == 0
+        || strcmp(objCType, @encode(double)) == 0) {
+        return [self.class numberTransformer];
+    }
+    if (strcmp(objCType, @encode(BOOL)) == 0) {
+        return [self.class boolTransformer];
+    }
+
+    return nil;
 }
 
 @end
