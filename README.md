@@ -86,14 +86,14 @@ Model MUST inherit [MTLModel](https://github.com/Mantle/Mantle#mtlmodel) and con
 ### Transformer
 You can use serializer for MAEArraySerializing object.
 
-- `MAEArrayAdapter # arrayTransformerWithModelClass:`
-- `MAEArrayAdapter # variadicArrayTransformerWithModelClass:`
+- `MAEArrayAdapter # stringTransformerWithArrayModelClass:`
+- `MAEArrayAdapter # variadicTransformerWithArrayModelClass:`
 
 For MAEArraySerializing property, it is used by default, so you do not need to specify it.
 
 ### Other information
 
-Please refer to documentation, [unit tests](MantleArrayExtensionTests) and [Mantle](https://github.com/Mantle/Mantle).
+Please refer to [documentation](http://cocoadocs.org/docsets/MantleArrayExtension), [unit tests](MantleArrayExtensionTests) and [Mantle](https://github.com/Mantle/Mantle).
 
 ## Contribute
 
