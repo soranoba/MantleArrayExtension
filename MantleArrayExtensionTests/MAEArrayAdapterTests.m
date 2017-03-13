@@ -20,6 +20,7 @@
                                                     withCount:(NSUInteger)count;
 
 + (NSDictionary* _Nonnull)valueTransformersForModelClass:(Class _Nonnull)modelClass;
++ (NSValueTransformer* _Nullable)stringTransformerForObjCType:(const char* _Nonnull)objCType;
 @end
 
 QuickSpecBegin(MAEArrayAdapterTests)
@@ -291,6 +292,34 @@ QuickSpecBegin(MAEArrayAdapterTests)
             expect(error).notTo(beNil());
             expect(error.domain).to(equal(MAEErrorDomain));
             expect(error.code).to(equal(MAEErrorNotMatchFragmentType));
+        });
+    });
+
+    describe(@"stringTransformerForObjCType:", ^{
+        it(@"supported basic type", ^{
+            expect([MAEArrayAdapter stringTransformerForObjCType:@encode(char)]).notTo(beNil());
+            expect([MAEArrayAdapter stringTransformerForObjCType:@encode(int8_t)]).notTo(beNil());
+            expect([MAEArrayAdapter stringTransformerForObjCType:@encode(short)]).notTo(beNil());
+            expect([MAEArrayAdapter stringTransformerForObjCType:@encode(int16_t)]).notTo(beNil());
+            expect([MAEArrayAdapter stringTransformerForObjCType:@encode(int)]).notTo(beNil());
+            expect([MAEArrayAdapter stringTransformerForObjCType:@encode(long)]).notTo(beNil());
+            expect([MAEArrayAdapter stringTransformerForObjCType:@encode(int32_t)]).notTo(beNil());
+            expect([MAEArrayAdapter stringTransformerForObjCType:@encode(long long)]).notTo(beNil());
+            expect([MAEArrayAdapter stringTransformerForObjCType:@encode(int64_t)]).notTo(beNil());
+            expect([MAEArrayAdapter stringTransformerForObjCType:@encode(unsigned char)]).notTo(beNil());
+            expect([MAEArrayAdapter stringTransformerForObjCType:@encode(uint8_t)]).notTo(beNil());
+            expect([MAEArrayAdapter stringTransformerForObjCType:@encode(unsigned int)]).notTo(beNil());
+            expect([MAEArrayAdapter stringTransformerForObjCType:@encode(unsigned short)]).notTo(beNil());
+            expect([MAEArrayAdapter stringTransformerForObjCType:@encode(uint16_t)]).notTo(beNil());
+            expect([MAEArrayAdapter stringTransformerForObjCType:@encode(unsigned long)]).notTo(beNil());
+            expect([MAEArrayAdapter stringTransformerForObjCType:@encode(uint32_t)]).notTo(beNil());
+            expect([MAEArrayAdapter stringTransformerForObjCType:@encode(unsigned long long)]).notTo(beNil());
+            expect([MAEArrayAdapter stringTransformerForObjCType:@encode(uint64_t)]).notTo(beNil());
+            expect([MAEArrayAdapter stringTransformerForObjCType:@encode(NSInteger)]).notTo(beNil());
+            expect([MAEArrayAdapter stringTransformerForObjCType:@encode(NSUInteger)]).notTo(beNil());
+            expect([MAEArrayAdapter stringTransformerForObjCType:@encode(bool)]).notTo(beNil());
+            expect([MAEArrayAdapter stringTransformerForObjCType:@encode(BOOL)]).notTo(beNil());
+            expect([MAEArrayAdapter stringTransformerForObjCType:@encode(boolean_t)]).notTo(beNil());
         });
     });
 
