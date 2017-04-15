@@ -55,6 +55,11 @@
     return NO;
 }
 
++ (MAEArrayQuotedOptions)quotedOptions
+{
+    return MAEArraySingleQuotedEnable | MAEArrayDoubleQuotedEnable;
+}
+
 @end
 
 @implementation MAETModel3
