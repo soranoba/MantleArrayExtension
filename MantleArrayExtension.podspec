@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'MantleArrayExtension'
-  s.version          = '1.0.1'
+  s.version          = '1.0.2'
   s.summary          = 'MantleArrayExtension support mutual conversion between Model object and character-delimited String with Mantle.'
   s.homepage         = 'https://github.com/soranoba/MantleArrayExtension'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
