@@ -732,6 +732,26 @@ QuickSpecBegin(MAEArrayAdapterTests)
             MAEArrayAdapter* adapter = [[MAEArrayAdapter alloc] initWithModelClass:MAETModel2.class];
             expect([adapter separateString:@"a | I have a pen | c"]).to(equal(@[ @"a", @"I have a pen", @"c" ]));
         });
+
+        it(@"consider single quoted as simple a character, if option does not include MAEArraySingleQuotedEnable", ^{
+            mock = OCMClassMock(MAETModel2.class);
+            OCMStub([mock ignoreEdgeBlank]).andReturn(YES);
+            OCMStub([mock separator]).andReturn(' ');
+            OCMStub([mock quotedOptions]).andReturn(MAEArrayDoubleQuotedEnable);
+
+            MAEArrayAdapter* adapter = [[MAEArrayAdapter alloc] initWithModelClass:MAETModel2.class];
+            expect([adapter separateString:@"I'm not \"a Reflector\""]).to(equal(@[ @"I'm", @"not", @"a Reflector" ]));
+        });
+
+        it(@"consider double quoted as simple a character, if option does not include MAEArrayDoubleQuotedEnable", ^{
+            mock = OCMClassMock(MAETModel2.class);
+            OCMStub([mock ignoreEdgeBlank]).andReturn(YES);
+            OCMStub([mock separator]).andReturn(' ');
+            OCMStub([mock quotedOptions]).andReturn(MAEArraySingleQuotedEnable);
+
+            MAEArrayAdapter* adapter = [[MAEArrayAdapter alloc] initWithModelClass:MAETModel2.class];
+            expect([adapter separateString:@"\"Do you 'know Reflector?'\""]).to(equal(@[ @"\"Do", @"you", @"'know Reflector?'\"" ]));
+        });
     });
 
     describe(@"chooseFormatByPropertyKey:withCount:", ^{

@@ -13,6 +13,11 @@
 #import <Mantle/MTLModel.h>
 #import <Mantle/MTLTransformerErrorHandling.h>
 
+typedef NS_OPTIONS(NSUInteger, MAEArrayQuotedOptions) {
+    MAEArraySingleQuotedEnable = 0x1,
+    MAEArrayDoubleQuotedEnable = 0x1 << 1,
+};
+
 @protocol MAEArraySerializing <MTLModel>
 
 /**
@@ -78,6 +83,15 @@
  * @return a MAEArraySerializing class
  */
 + (Class _Nullable)classForParsingArray:(NSArray<MAESeparatedString*>* _Nonnull)array;
+
+/**
+ * If you want to select quotes to use, you can use this.
+ *
+ * If it is not implemented, it use `MAEArraySingleQuotedEnable | MAEArrayDoubleQuotedEnabled`.
+ *
+ * @return quoted options
+ */
++ (MAEArrayQuotedOptions)quotedOptions;
 
 @end
 

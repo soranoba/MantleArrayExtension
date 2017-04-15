@@ -29,6 +29,8 @@ static unichar const MAEDefaultSeparator = ' ';
 @property (nonatomic, nonnull, copy) NSDictionary* valueTransformersByPropertyKey;
 /// A cached copy of the return value of +ignoreEdgeBlank
 @property (nonatomic, assign) BOOL ignoreEdgeBlank;
+/// A cached copy of the return value of +quotedOptions
+@property (nonatomic, assign) MAEArrayQuotedOptions quotedOptions;
 
 @end
 
@@ -60,6 +62,12 @@ static unichar const MAEDefaultSeparator = ' ';
             self.ignoreEdgeBlank = [modelClass ignoreEdgeBlank];
         } else {
             self.ignoreEdgeBlank = YES;
+        }
+
+        if ([modelClass respondsToSelector:@selector(quotedOptions)]) {
+            self.quotedOptions = [modelClass quotedOptions];
+        } else {
+            self.quotedOptions = MAEArraySingleQuotedEnable | MAEArrayDoubleQuotedEnable;
         }
 
         NSMutableArray* formatByPropertyKey = [NSMutableArray array];
@@ -439,9 +447,9 @@ static unichar const MAEDefaultSeparator = ' ';
                 start = p + 1;
                 end = nil;
             }
-        } else if (!singleQuoted && *p == '"') {
+        } else if (!singleQuoted && (self.quotedOptions & MAEArrayDoubleQuotedEnable) && *p == '"') {
             doubleQuoted = !doubleQuoted;
-        } else if (!doubleQuoted && *p == '\'') {
+        } else if (!doubleQuoted && (self.quotedOptions & MAEArraySingleQuotedEnable) && *p == '\'') {
             singleQuoted = !singleQuoted;
         }
     }
