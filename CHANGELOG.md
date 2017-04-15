@@ -1,3 +1,9 @@
+## 1.1.0
+
+### Additional functions
+
+- It became to be able to select quoted string to use
+
 ## 1.0.2
 
 ### Bug fixed

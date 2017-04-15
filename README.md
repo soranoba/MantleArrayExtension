@@ -14,9 +14,9 @@ Mantle only support Json and Dictionary.
 This library is an extension that convert between array and model with Mantle.
 
 - Support these
- - Split a string with the specified character and convert it to model
- - Convert between array and model
- - Customizable transformer
+  - Split a string with the specified character and convert it to model
+  - Convert between array and model
+  - Customizable transformer
 
 ### What is Mantle ?
 Model framework for Cocoa and Cocoa Touch
@@ -73,15 +73,15 @@ Model MUST inherit [MTLModel](https://github.com/Mantle/Mantle#mtlmodel) and con
 ### Kind of format
 
 - `@"propetyName"`
- - Double quoted-string, single quoted-string or enumerate-string
+  - Double quoted-string, single quoted-string or enumerate-string
 - `MAEQuoted(@"propertyName")`
- - Double quoted-string
+  - Double quoted-string
 - `MAESingleQuoted(@"propertyName")`
- - Single quoted-string
+  - Single quoted-string
 - `MAEOptional(@"propertyName")`
- - Optional
+  - Optional
 - `MAEVariadic(@"propertyName")`
- - Group from this position as one array.
+  - Group from this position as one array.
 
 ### Transformer
 You can use serializer for MAEArraySerializing object.
