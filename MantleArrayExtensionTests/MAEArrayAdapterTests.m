@@ -225,6 +225,14 @@ QuickSpecBegin(MAEArrayAdapterTests)
             expect(error.domain).to(equal(MAEErrorDomain));
             expect(error.code).to(equal(MAEErrorNotMatchFragmentCount));
         });
+
+        it(@"returns nil, if unclosed quoted is exist", ^{
+            __block NSError* error = nil;
+            expect([MAEArrayAdapter modelOfClass:MAETModel2.class fromString:@"'" error:&error]).to(beNil());
+            expect(error).notTo(beNil());
+            expect(error.domain).to(equal(MAEErrorDomain));
+            expect(error.code).to(equal(MAEErrorInvalidInputData));
+        });
     });
 
     describe(@"modelOfClass:fromArray:error:", ^{
