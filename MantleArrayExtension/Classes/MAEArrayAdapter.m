@@ -145,7 +145,14 @@ static unichar const MAEDefaultSeparator = ' ';
         return nil;
     }
 
-    return [self modelFromSeparatedStrings:[self separateString:string]
+    NSArray<MAESeparatedString*>* separatedStrings = [self separateString:string];
+    if (!separatedStrings) {
+        SET_ERROR(error, MAEErrorInvalidInputData,
+                  @{ NSLocalizedFailureReasonErrorKey : @"Unclosed single or double quoted string is exist" });
+        return nil;
+    }
+
+    return [self modelFromSeparatedStrings:separatedStrings
                                      error:error];
 }
 

@@ -1,3 +1,9 @@
+## 1.0.2
+
+### Bug fixed
+
+- Fix that it crashed if unclosed quoted is exist.
+
 ## 1.0.1
 
 ### Bug fixes
