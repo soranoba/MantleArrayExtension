@@ -1,3 +1,9 @@
+## 1.1.1
+
+### Bug fixes
+
+- Fix that it can not parse correctly if it returning a class with different quotedOption in classForParsingArray.
+
 ## 1.1.0
 
 ### Additional functions
@@ -6,7 +12,7 @@
 
 ## 1.0.2
 
-### Bug fixed
+### Bug fixes
 
 - Fix that it crashed if unclosed quoted is exist.
 
