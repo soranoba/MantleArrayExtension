@@ -14,6 +14,7 @@
 #import <Mantle/MTLTransformerErrorHandling.h>
 
 typedef NS_OPTIONS(NSUInteger, MAEArrayQuotedOptions) {
+    MAEArrayQuotedNone = 0,
     MAEArraySingleQuotedEnable = 0x1,
     MAEArrayDoubleQuotedEnable = 0x1 << 1,
 };
