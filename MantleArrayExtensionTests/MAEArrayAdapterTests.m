@@ -610,6 +610,24 @@ QuickSpecBegin(MAEArrayAdapterTests)
             expect(error).to(beNil());
         });
 
+        it(@"corresponds to different quotedOptions", ^{
+            __block MAETModel2* model;
+            __block NSError* error = nil;
+
+            mock = OCMClassMock(MAETModel5.class);
+            OCMStub([mock classForParsingArray:OCMOCK_ANY]).andReturn(MAETModel2.class);
+
+            id model2Mock = OCMClassMock(MAETModel2.class);
+            OCMStub([model2Mock quotedOptions]).andReturn(0);
+
+            expect(model = [MAEArrayAdapter modelOfClass:MAETModel5.class fromString:@"\"a b\" \"c\"" error:&error]).notTo(beNil());
+            expect([model isKindOfClass:MAETModel2.class]).to(equal(YES));
+            expect(model.a).to(equal(@"\"a"));
+            expect(model.b).to(equal(@"b\""));
+            expect(model.c).to(equal(@"c"));
+            expect(error).to(beNil());
+        });
+
         it(@"returns nil, if there is invalid type when classForParsingArray used", ^{
             __block NSError* error = nil;
 

@@ -47,6 +47,8 @@ static unichar const MAEDefaultSeparator = ' ';
 - (instancetype _Nonnull)initWithModelClass:(Class _Nonnull)modelClass
 {
     NSParameterAssert(modelClass != nil);
+    NSAssert([modelClass conformsToProtocol:@protocol(MAEArraySerializing)],
+             @"Specified class for MAEArrayAdapter does not conform to MAEArraySerialing, got %@", modelClass);
 
     if (self = [super init]) {
         self.modelClass = modelClass;
@@ -160,6 +162,20 @@ static unichar const MAEDefaultSeparator = ' ';
         return nil;
     }
 
+    if ([self.modelClass respondsToSelector:@selector(classForParsingArray:)]) {
+        Class class = [self.modelClass classForParsingArray:separatedStrings];
+        if (class == nil) {
+            SET_ERROR(error, MAEErrorNoConversionTarget,
+                      @{ NSLocalizedFailureReasonErrorKey :
+                             format(@"%@ # classForParsingArray returns nil", self.modelClass) });
+            return nil;
+        }
+
+        if (class != self.modelClass) {
+            return [self.class modelOfClass:class fromString:string error:error];
+        }
+    }
+
     return [self modelFromSeparatedStrings:separatedStrings
                                      error:error];
 }
@@ -179,6 +195,22 @@ static unichar const MAEDefaultSeparator = ' ';
             [separatedStrings addObject:(MAESeparatedString*)s];
         } else {
             [separatedStrings addObject:[[MAESeparatedString alloc] initWithOriginalCharacters:s ignoreEdgeBlank:NO]];
+        }
+    }
+
+    if ([self.modelClass respondsToSelector:@selector(classForParsingArray:)]) {
+        Class class = [self.modelClass classForParsingArray:separatedStrings];
+        if (class == nil) {
+            SET_ERROR(error, MAEErrorNoConversionTarget,
+                      @{ NSLocalizedFailureReasonErrorKey :
+                             format(@"%@ # classForParsingArray returns nil", self.modelClass) });
+            return nil;
+        }
+
+        if (class != self.modelClass) {
+            return [self.class modelOfClass:class
+                                 fromString:[separatedStrings mae_componentsJoinedBySeparatedString:self.separator]
+                                      error:error];
         }
     }
 
@@ -282,30 +314,6 @@ static unichar const MAEDefaultSeparator = ' ';
                                                          error:(NSError* _Nullable* _Nullable)error
 {
     NSParameterAssert(separatedStrings != nil);
-
-    if ([self.modelClass respondsToSelector:@selector(classForParsingArray:)]) {
-        Class class = [self.modelClass classForParsingArray:separatedStrings];
-        if (class == nil) {
-            SET_ERROR(error, MAEErrorNoConversionTarget,
-                      @{ NSLocalizedFailureReasonErrorKey :
-                             format(@"%@ # classForParsingArray returns nil", self.modelClass) });
-            return nil;
-        }
-
-        if (class != self.modelClass) {
-            NSAssert([class conformsToProtocol:@protocol(MAEArraySerializing)],
-                     @"classForParsingArray MUST return MAEArraySerializing MTLModel class. but got %@", class);
-
-            MAEArrayAdapter* otherAdapter = [[self.class alloc] initWithModelClass:class];
-
-            // NOTE: If separator is different, it will start over from separate process again.
-            if (otherAdapter.separator != self.separator) {
-                NSString* mergeString = [separatedStrings mae_componentsJoinedBySeparatedString:self.separator];
-                return [otherAdapter modelFromString:mergeString error:error];
-            }
-            return [otherAdapter modelFromSeparatedStrings:separatedStrings error:error];
-        }
-    }
 
     NSArray<MAEFragment*>* fragments = [self.class chooseFormatByPropertyKey:self.formatByPropertyKey
                                                                    withCount:separatedStrings.count];
