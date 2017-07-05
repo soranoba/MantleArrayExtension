@@ -55,7 +55,7 @@ QuickSpecBegin(MAEArrayAdapterTests)
         it(@"formatByPropertyKey is valid", ^{
             OCMStub([mock formatByPropertyKey])
                 .andReturn((@[ @"b", MAEQuoted(@"ui"), MAESingleQuoted(@"i"), MAEOptional(@"f"), MAEOptional(MAEQuoted(@"d")) ]));
-            expect([[MAEArrayAdapter alloc] initWithModelClass:MAETModel1.class]).notTo(equal(nil));
+            expect([[MAEArrayAdapter alloc] initWithModelClass:MAETModel1.class]).notTo(beNil());
         });
     });
 

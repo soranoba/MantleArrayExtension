@@ -199,6 +199,9 @@ QuickSpecBegin(MAEArrayAdapter_TransformersTests)
         NSValueTransformer<MTLTransformerErrorHandling>* transformer = [MAEArrayAdapter numberTransformer];
 
         it(@"can convert between integer and string", ^{
+            expect([transformer transformedValue:[@(ULONG_LONG_MAX) stringValue]]).to(equal(ULONG_LONG_MAX));
+            expect([transformer transformedValue:[@(LONG_LONG_MIN) stringValue]]).to(equal(LONG_LONG_MIN));
+
             expect([transformer transformedValue:@"1389477961"]).to(equal(@1389477961));
             expect([transformer transformedValue:@"-1389477961"]).to(equal(@(-1389477961)));
 
@@ -207,11 +210,19 @@ QuickSpecBegin(MAEArrayAdapter_TransformersTests)
         });
 
         it(@"can convert to double from string", ^{
-            expect([transformer transformedValue:@"1.797693"]).to(equal(@1.797693));
-            expect([transformer transformedValue:@"-1.797693"]).to(equal(@(-1.797693)));
+            expect([transformer transformedValue:@"1.797693"]).to(equal(1.797693));
+            expect([transformer transformedValue:@"-1.797693"]).to(equal(-1.797693));
 
             expect([transformer reverseTransformedValue:@1.797693]).to(equal(@"1.797693"));
             expect([transformer reverseTransformedValue:@(-1.797693)]).to(equal(@"-1.797693"));
+        });
+
+        it(@"can convert accurately at expression range", ^{
+            expect([transformer transformedValue:[@(DBL_DIG) stringValue]]).to(equal(DBL_DIG));
+            expect([transformer transformedValue:[@(-DBL_DIG) stringValue]]).to(equal(-DBL_DIG));
+
+            expect([transformer reverseTransformedValue:@(DBL_DIG)]).to(equal([@(DBL_DIG) stringValue]));
+            expect([transformer reverseTransformedValue:@(-DBL_DIG)]).to(equal([@(-DBL_DIG) stringValue]));
         });
 
         it(@"sets YES to success, when the conversion is successful", ^{
