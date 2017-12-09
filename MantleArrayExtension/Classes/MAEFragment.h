@@ -6,6 +6,7 @@
 //  Copyright © 2017年 Hinagiku Soranoba. All rights reserved.
 //
 
+#import "MAESeparatedString.h"
 #import <Foundation/Foundation.h>
 
 /**
@@ -22,6 +23,7 @@ typedef NS_ENUM(NSUInteger, MAEFragmentType) {
     MAEFragmentEnumerateString,
 };
 
+@protocol MAEFragment;
 @class MAEFragment;
 
 /**
@@ -56,7 +58,7 @@ MAEFragment* _Nonnull MAEEnum(NSString* _Nonnull);
  *    - MAEOptional(@"propertyName")
  *    - MAEOptional(MAEQuoted(@"proeprtyName"))
  */
-MAEFragment* _Nonnull MAEOptional(id _Nonnull);
+id<MAEFragment> _Nonnull MAEOptional(id _Nonnull);
 
 /**
  * A fragment that means to group from this position as one array.
@@ -66,14 +68,60 @@ MAEFragment* _Nonnull MAEOptional(id _Nonnull);
  *    - MAEVariadic(MAEQuoted(@"propertyName"))
  *    - MAEVariadic(MAEEnum(@"propertyName"))
  */
-MAEFragment* _Nonnull MAEVariadic(id _Nonnull);
+id<MAEFragment> _Nonnull MAEVariadic(id _Nonnull);
 
-@interface MAEFragment : NSObject
+@protocol MAEFragment <NSObject>
 
-@property (nonatomic, nonnull, copy, readonly) NSString* propertyName;
-@property (nonatomic, assign, readonly) MAEFragmentType type;
+// It returns that name, if it have corresponding property
+@property (nonatomic, nullable, copy, readonly) NSString* propertyName;
+// If it is optional element, it returns YES. Otherwise, it returns NO.
 @property (nonatomic, assign, readonly, getter=isOptional) BOOL optional;
+// If it is variadic elements, it returns YES. Otherwise, it returns NO.
 @property (nonatomic, assign, readonly, getter=isVariadic) BOOL variadic;
+
+/**
+ * Returns whether separatedString is in correct format.
+ *
+ * @param separatedString  A corresponding string
+ * @param error            If it return nil, an error information is saved here.
+ * @return Returns YES, if the separatedString is correct. Otherwise, it returns NO.
+ */
+- (BOOL)validateWithSeparatedString:(MAESeparatedString* _Nonnull)separatedString
+                              error:(NSError* _Nullable* _Nullable)error;
+
+/**
+ * It convert separatedString from transformedValue.
+ *
+ *
+ */
+- (MAESeparatedString* _Nullable)separatedStringFromTransformedValue:(NSString* _Nonnull)transformedValue
+                                                               error:(NSError* _Nullable* _Nullable)error;
+
+@optional
+
+/**
+ * You should implements, if it support optional.
+ *
+ * @param optional  The value of optional to be set.
+ */
+- (void)setOptional:(BOOL)optional;
+
+/**
+ * You should implements, if it support variadic.
+ *
+ * @param variadic  The value of variadic to be set.
+ */
+- (void)setVariadic:(BOOL)variadic;
+
+@end
+
+/**
+ * A Class is the simplest MAEFragment
+ * It use to define a value corresponding to one property.
+ */
+@interface MAEFragment : NSObject <MAEFragment>
+
+@property (nonatomic, assign, readonly) MAEFragmentType type;
 
 #pragma mark - Lifecycle
 

@@ -7,6 +7,7 @@
 //
 
 #import "MAEFragment.h"
+#import "NSError+MAEErrorCode.h"
 
 @interface MAEFragment ()
 @property (nonatomic, nonnull, copy, readwrite) NSString* propertyName;
@@ -51,14 +52,14 @@ extern MAEFragment* _Nonnull MAEEnum(NSString* _Nonnull propertyName)
     return fragment;
 }
 
-extern MAEFragment* _Nonnull MAEOptional(id _Nonnull v)
+extern id<MAEFragment> _Nonnull MAEOptional(id _Nonnull v)
 {
     MAEFragment* fragment = makeFragment(v);
     fragment.optional = YES;
     return fragment;
 }
 
-extern MAEFragment* _Nonnull MAEVariadic(id _Nonnull v)
+extern id<MAEFragment> _Nonnull MAEVariadic(id _Nonnull v)
 {
     MAEFragment* fragment = makeFragment(v);
     fragment.variadic = YES;
@@ -83,6 +84,67 @@ extern MAEFragment* _Nonnull MAEVariadic(id _Nonnull v)
         self.propertyName = propertyName;
     }
     return self;
+}
+
+#pragma mark - MAEFragment
+
+- (BOOL)validateWithSeparatedString:(MAESeparatedString* _Nonnull)separatedString
+                              error:(NSError* _Nullable* _Nullable)error
+{
+    NSParameterAssert(separatedString != nil);
+
+    NSString* expectedType = nil;
+    switch (self.type) {
+        case MAEFragmentDoubleQuotedString:
+            if (separatedString.type != MAEStringTypeDoubleQuoted) {
+                expectedType = @"double quoted string";
+            }
+            break;
+        case MAEFragmentSingleQuotedString:
+            if (separatedString.type != MAEStringTypeSingleQuoted) {
+                expectedType = @"single quoted string";
+            }
+            break;
+        case MAEFragmentEnumerateString:
+            if (separatedString.type != MAEStringTypeEnumerate) {
+                expectedType = @"enumerate string";
+            }
+            break;
+        default:
+            break;
+    }
+    if (expectedType) {
+        SET_ERROR(error, MAEErrorNotMatchFragmentType,
+                  @{ NSLocalizedFailureReasonErrorKey :
+                         format(@"%@ expected %@", self.propertyName, expectedType) });
+        return NO;
+    }
+    return YES;
+}
+
+- (MAESeparatedString* _Nullable)separatedStringFromTransformedValue:(NSString* _Nonnull)transformedValue
+                                                               error:(NSError* _Nullable* _Nullable)error
+{
+    NSParameterAssert(transformedValue != nil);
+
+    MAEStringType type;
+    switch (self.type) {
+        case MAEFragmentDoubleQuotedString:
+            type = MAEStringTypeDoubleQuoted;
+            break;
+        case MAEFragmentSingleQuotedString:
+            type = MAEStringTypeSingleQuoted;
+            break;
+        case MAEFragmentMaybeQuotedString:
+            type = ([transformedValue rangeOfString:@" "].location == NSNotFound && transformedValue.length > 0)
+                ? MAEStringTypeEnumerate
+                : MAEStringTypeDoubleQuoted;
+            break;
+        default:
+            type = MAEStringTypeEnumerate;
+            break;
+    }
+    return [[MAESeparatedString alloc] initWithCharacters:transformedValue type:type];
 }
 
 #pragma mark - NSObject (Override)
@@ -121,9 +183,8 @@ extern MAEFragment* _Nonnull MAEVariadic(id _Nonnull v)
             type = '-';
     }
 
-    return [NSString stringWithFormat:@"<%@: %@ :%c%c%c>",
-                                      self.class, self.propertyName, type,
-                                      (self.optional ? 'O' : '-'), (self.variadic ? 'V' : '-')];
+    return format(@"<%@: %@ :%c%c%c>", self.class, self.propertyName, type,
+                  (self.optional ? 'O' : '-'), (self.variadic ? 'V' : '-'));
 }
 
 @end
