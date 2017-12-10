@@ -13,6 +13,7 @@ The following affects some users.
   - Syntax sugars creating a `MAEFragment` has changed only the type of return value.
 - Add a protocol named `MAEFragment`. You can create `MAEFragment` by yourself.
 - `MAEFragment # isEqual:` and `MAEFragment # hash` become to return the same result as that of `NSObject`.
+- All unavailable methods deleted.
 
 ## 1.1.1
 

@@ -205,17 +205,3 @@ typedef NS_OPTIONS(NSUInteger, MAEArrayQuotedOptions) {
 + (NSValueTransformer<MTLTransformerErrorHandling>* _Nonnull)boolTransformer;
 
 @end
-
-@interface MAEArrayAdapter (Deprecated)
-
-+ (NSValueTransformer<MTLTransformerErrorHandling>* _Nonnull)numberStringTransformer
-    __attribute__((unavailable("Replaced by numberTransformer")));
-+ (NSValueTransformer<MTLTransformerErrorHandling>* _Nonnull)boolStringTransformer
-    __attribute__((unavailable("Replaced by boolTransformer")));
-+ (NSValueTransformer<MTLTransformerErrorHandling>* _Nonnull)
-    arrayTransformerWithModelClass:(Class _Nonnull)modelClass
-    __attribute__((unavailable("Replaced by stringTransformerWithArrayModelClass:")));
-+ (NSValueTransformer<MTLTransformerErrorHandling>* _Nonnull)
-    variadicArrayTransformerWithModelClass:(Class _Nonnull)modelClass
-    __attribute__((unavailable("Replaced by variadicTransformerWithArrayModelClass:")));
-@end

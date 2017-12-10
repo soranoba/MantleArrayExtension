@@ -71,12 +71,3 @@ typedef NS_ENUM(NSUInteger, MAEStringType) {
 - (BOOL)isEqualToSeparatedString:(NSString* _Nonnull)otherString;
 
 @end
-
-@interface MAESeparatedString (Deprecated)
-
-- (instancetype _Nonnull)initWithString:(NSString* _Nonnull)string
-    __attribute__((unavailable("Replaced by initWithOriginalCharacters:ignoreEdgeBlank:")));
-- (NSString* _Nonnull)toString
-    __attribute__((unavailable("Replaced by +stringFromCharacters:withType:")));
-
-@end
