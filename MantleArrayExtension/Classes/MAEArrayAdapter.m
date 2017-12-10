@@ -72,29 +72,38 @@ static unichar const MAEDefaultSeparator = ' ';
             self.quotedOptions = MAEArraySingleQuotedEnable | MAEArrayDoubleQuotedEnable;
         }
 
+        NSMutableSet<NSString*>* usingPropertyNames = [NSMutableSet set];
         NSMutableArray* formatByPropertyKey = [NSMutableArray array];
         BOOL foundVariadic = NO;
         for (id fragment in [modelClass formatByPropertyKey]) {
+            NSString* propertyName = nil;
+
             if (foundVariadic) {
                 NSAssert(NO, @"Variadic MUST be the last");
                 break;
             } else if ([fragment isKindOfClass:NSString.class]) {
                 NSAssert([self.propertyKeys containsObject:fragment],
                          @"Not found a property named %@", fragment);
+                propertyName = fragment;
                 [formatByPropertyKey addObject:[[MAEFragment alloc] initWithPropertyName:fragment]];
             } else {
                 NSAssert([fragment conformsToProtocol:@protocol(MAEFragment)],
                          @"formatByPropertyKey only support NSString and id<MAEFragment>, but got %@", [fragment class]);
                 foundVariadic |= [fragment isVariadic];
-                NSAssert([self.propertyKeys containsObject:[fragment propertyName]],
-                         @"Not found a property named %@", [fragment propertyName]);
+                propertyName = [fragment propertyName];
                 [formatByPropertyKey addObject:fragment];
             }
-        }
-        NSAssert([NSSet setWithArray:formatByPropertyKey].count == formatByPropertyKey.count,
-                 @"The same property key is used more than once");
-        self.formatByPropertyKey = formatByPropertyKey;
 
+            if (propertyName != nil) {
+                NSAssert([self.propertyKeys containsObject:propertyName],
+                         @"Not found a property named %@", propertyName);
+                NSAssert(![usingPropertyNames containsObject:propertyName],
+                         @"A property named %@ is used more than once", propertyName);
+                [usingPropertyNames addObject:propertyName];
+            }
+        }
+
+        self.formatByPropertyKey = formatByPropertyKey;
         self.valueTransformersByPropertyKey = [self.class valueTransformersForModelClass:modelClass];
     }
     return self;
@@ -266,19 +275,27 @@ static unichar const MAEDefaultSeparator = ' ';
             }
         }
 
-        if (!value || value == NSNull.null) {
-            value = @"";
+        if (!value) {
+            value = NSNull.null;
+        }
+
+        if ([value isEqual:NSNull.null] && fragment.isOptional) {
+            continue;
         }
 
         if (![value isKindOfClass:NSArray.class]) {
             value = @[ value ];
         }
 
-        for (NSString* transformedString in value) {
-            if (![transformedString isKindOfClass:NSString.class]) {
+        for (id v in value) {
+            id transformedString = v;
+
+            if ([transformedString isEqual:NSNull.null]) {
+                transformedString = nil;
+            } else if (![transformedString isKindOfClass:NSString.class]) {
                 SET_ERROR(error, MAEErrorInvalidInputData,
                           @{ NSLocalizedFailureReasonErrorKey :
-                                 format(@"The result of reverseTransform MUST be NSString or NSArray, but got %@", [value class]) });
+                                 format(@"The result of reverseTransform MUST be NSString or NSArray<NSString>, but got %@", value) });
                 return nil;
             }
 

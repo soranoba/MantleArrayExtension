@@ -1,3 +1,19 @@
+## 2.0.0
+
+### Additional functions
+
+- It possible to easily specify expecting that it equals to specified characters.
+  - Please refer to a class that name is `MAERawFragment`.
+
+### Major changes
+
+The following affects some users.
+
+- The I/F of `MAEFragment` has been greatly changed.
+  - Syntax sugars creating a `MAEFragment` has changed only the type of return value.
+- Add a protocol named `MAEFragment`. You can create `MAEFragment` by yourself.
+- `MAEFragment # isEqual:` and `MAEFragment # hash` become to return the same result as that of `NSObject`.
+
 ## 1.1.1
 
 ### Bug fixes
@@ -28,8 +44,8 @@
 
 - Some method name changed. Please fix your code according to compile error.
 - MAESeparatedString has been reborn.
- - It become subclass of NSString.
- - Return value of `description` and `isEqual:` has been changed.
+  - It become subclass of NSString.
+  - Return value of `description` and `isEqual:` has been changed.
 
 ### Additional functions
 

@@ -21,11 +21,11 @@
 static inline MAEFragment* _Nonnull makeFragment(id _Nonnull v)
 {
     MAEFragment* fragment;
-    if ([v isKindOfClass:MAEFragment.class]) {
+    if ([v conformsToProtocol:@protocol(MAEFragment)]) {
         fragment = v;
     } else {
         NSCAssert([v isKindOfClass:NSString.class],
-                  @"It only allow NSString and MAEFramgnet, but got %@", [v class]);
+                  @"It only allow NSString and id<MAEFramgnet>, but got %@", [v class]);
         fragment = [[MAEFragment alloc] initWithPropertyName:v];
     }
     return fragment;
@@ -55,6 +55,8 @@ extern MAEFragment* _Nonnull MAEEnum(NSString* _Nonnull propertyName)
 extern id<MAEFragment> _Nonnull MAEOptional(id _Nonnull v)
 {
     MAEFragment* fragment = makeFragment(v);
+    NSCAssert([fragment respondsToSelector:@selector(setOptional:)],
+              format(@"%@ does not support optional", v));
     fragment.optional = YES;
     return fragment;
 }
@@ -62,6 +64,8 @@ extern id<MAEFragment> _Nonnull MAEOptional(id _Nonnull v)
 extern id<MAEFragment> _Nonnull MAEVariadic(id _Nonnull v)
 {
     MAEFragment* fragment = makeFragment(v);
+    NSCAssert([fragment respondsToSelector:@selector(setVariadic:)],
+              format(@"%@ does not support variadic", v));
     fragment.variadic = YES;
     return fragment;
 }
@@ -122,10 +126,12 @@ extern id<MAEFragment> _Nonnull MAEVariadic(id _Nonnull v)
     return YES;
 }
 
-- (MAESeparatedString* _Nullable)separatedStringFromTransformedValue:(NSString* _Nonnull)transformedValue
+- (MAESeparatedString* _Nullable)separatedStringFromTransformedValue:(NSString* _Nullable)transformedValue
                                                                error:(NSError* _Nullable* _Nullable)error
 {
-    NSParameterAssert(transformedValue != nil);
+    if (!transformedValue) {
+        transformedValue = @"";
+    }
 
     MAEStringType type;
     switch (self.type) {
@@ -136,7 +142,7 @@ extern id<MAEFragment> _Nonnull MAEVariadic(id _Nonnull v)
             type = MAEStringTypeSingleQuoted;
             break;
         case MAEFragmentMaybeQuotedString:
-            type = ([transformedValue rangeOfString:@" "].location == NSNotFound && transformedValue.length > 0)
+            type = (transformedValue.length > 0 && [transformedValue rangeOfString:@" "].location == NSNotFound)
                 ? MAEStringTypeEnumerate
                 : MAEStringTypeDoubleQuoted;
             break;
@@ -148,23 +154,6 @@ extern id<MAEFragment> _Nonnull MAEVariadic(id _Nonnull v)
 }
 
 #pragma mark - NSObject (Override)
-
-- (BOOL)isEqual:(id _Nullable)other
-{
-    if ([other isKindOfClass:MAEFragment.class]) {
-        typeof(self) otherFragment = other;
-        return [otherFragment.propertyName isEqual:self.propertyName]
-            && otherFragment.type == self.type
-            && otherFragment.optional == self.optional
-            && otherFragment.variadic == self.variadic;
-    }
-    return NO;
-}
-
-- (NSUInteger)hash
-{
-    return [self.propertyName hash];
-}
 
 - (NSString* _Nonnull)description
 {

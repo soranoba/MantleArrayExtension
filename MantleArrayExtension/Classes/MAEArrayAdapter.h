@@ -7,7 +7,7 @@
 //
 
 #import "MAEErrorCode.h"
-#import "MAEFragment.h"
+#import "MAERawFragment.h"
 #import "MAESeparatedString.h"
 #import <Foundation/Foundation.h>
 #import <Mantle/MTLModel.h>

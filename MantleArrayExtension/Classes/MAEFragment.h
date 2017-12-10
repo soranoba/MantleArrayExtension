@@ -81,6 +81,7 @@ id<MAEFragment> _Nonnull MAEVariadic(id _Nonnull);
 
 /**
  * Returns whether separatedString is in correct format.
+ * It will call when a string convert to model.
  *
  * @param separatedString  A corresponding string
  * @param error            If it return nil, an error information is saved here.
@@ -90,11 +91,14 @@ id<MAEFragment> _Nonnull MAEVariadic(id _Nonnull);
                               error:(NSError* _Nullable* _Nullable)error;
 
 /**
- * It convert separatedString from transformedValue.
+ * Returns a string corresponding the fragment.
+ * It will call when a model convert to string.
  *
- *
+ * @param transformedValue  A string after transformer is executed.
+ * @param error             If it return nil, an error information is saved here.
+ * @return Returns a string corresponding the fragment.
  */
-- (MAESeparatedString* _Nullable)separatedStringFromTransformedValue:(NSString* _Nonnull)transformedValue
+- (MAESeparatedString* _Nullable)separatedStringFromTransformedValue:(NSString* _Nullable)transformedValue
                                                                error:(NSError* _Nullable* _Nullable)error;
 
 @optional

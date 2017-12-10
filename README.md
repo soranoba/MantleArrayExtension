@@ -82,6 +82,10 @@ Model MUST inherit [MTLModel](https://github.com/Mantle/Mantle#mtlmodel) and con
   - Optional
 - `MAEVariadic(@"propertyName")`
   - Group from this position as one array.
+- `MAERaw(@"rawString")`, `MAERawEither(@[@"value1", @"value2"])`
+  - The string expect one of specified strings
+- `MAERawEither(@[@"value1", @"value2"]).withProperty(@"propertyName")`
+  - `MAERaw` or `MAERawEither` associate with property.
 
 ### Transformer
 You can use serializer for MAEArraySerializing object.
