@@ -72,39 +72,19 @@ static unichar const MAEDefaultSeparator = ' ';
             self.quotedOptions = MAEArraySingleQuotedEnable | MAEArrayDoubleQuotedEnable;
         }
 
+        self.formatByPropertyKey = [self.class fragmentsFromFormat:[modelClass formatByPropertyKey]];
+        self.valueTransformersByPropertyKey = [self.class valueTransformersForModelClass:modelClass];
+
         NSMutableSet<NSString*>* usingPropertyNames = [NSMutableSet set];
-        NSMutableArray* formatByPropertyKey = [NSMutableArray array];
-        BOOL foundVariadic = NO;
-        for (id fragment in [modelClass formatByPropertyKey]) {
-            NSString* propertyName = nil;
-
-            if (foundVariadic) {
-                NSAssert(NO, @"Variadic MUST be the last");
-                break;
-            } else if ([fragment isKindOfClass:NSString.class]) {
-                NSAssert([self.propertyKeys containsObject:fragment],
-                         @"Not found a property named %@", fragment);
-                propertyName = fragment;
-                [formatByPropertyKey addObject:[[MAEFragment alloc] initWithPropertyName:fragment]];
-            } else {
-                NSAssert([fragment conformsToProtocol:@protocol(MAEFragment)],
-                         @"formatByPropertyKey only support NSString and id<MAEFragment>, but got %@", [fragment class]);
-                foundVariadic |= [fragment isVariadic];
-                propertyName = [fragment propertyName];
-                [formatByPropertyKey addObject:fragment];
-            }
-
-            if (propertyName != nil) {
-                NSAssert([self.propertyKeys containsObject:propertyName],
-                         @"Not found a property named %@", propertyName);
-                NSAssert(![usingPropertyNames containsObject:propertyName],
-                         @"A property named %@ is used more than once", propertyName);
-                [usingPropertyNames addObject:propertyName];
+        for (id<MAEFragment> fragment in self.formatByPropertyKey) {
+            if (fragment.propertyName) {
+                NSAssert([self.propertyKeys containsObject:fragment.propertyName],
+                         @"Not found a property named %@", fragment.propertyName);
+                NSAssert(![usingPropertyNames containsObject:fragment.propertyName],
+                         @"A property named %@ is used more than once", fragment.propertyName);
+                [usingPropertyNames addObject:fragment.propertyName];
             }
         }
-
-        self.formatByPropertyKey = formatByPropertyKey;
-        self.valueTransformersByPropertyKey = [self.class valueTransformersForModelClass:modelClass];
     }
     return self;
 }
@@ -311,6 +291,51 @@ static unichar const MAEDefaultSeparator = ' ';
     return result;
 }
 
++ (NSMutableDictionary<id<MAEFragment>, id>* _Nullable)valueByFragmentWithFormat:(NSArray* _Nonnull)formatByPropertyKey
+                                                                separatedStrings:(NSArray<MAESeparatedString*>* _Nonnull)separatedStrings
+                                                                           error:(NSError* _Nullable* _Nullable)error
+{
+    NSParameterAssert(formatByPropertyKey != nil && separatedStrings != nil);
+
+    NSArray<id<MAEFragment> >* fragments = [self fragmentsFromFormat:formatByPropertyKey];
+
+    NSArray<id<MAEFragment> >* filteredFragments = [self chooseFormatByPropertyKey:fragments withCount:separatedStrings.count];
+    if (!filteredFragments) {
+        SET_ERROR(error, MAEErrorNotMatchFragmentCount,
+                  @{ NSLocalizedFailureReasonErrorKey :
+                         format(@"Expected format is %@, but got fragment count is %@", fragments, @(separatedStrings.count)) });
+        return nil;
+    }
+
+    NSMutableDictionary<id<MAEFragment>, id>* valueByFragment = [NSMutableDictionary dictionary];
+
+    NSEnumerator* sEnum = separatedStrings.objectEnumerator;
+    for (id<MAEFragment> fragment in filteredFragments) {
+        id value;
+
+        if (fragment.isVariadic) {
+            NSMutableArray* arr = [NSMutableArray array];
+            while ((value = [sEnum nextObject])) {
+                if (![fragment validateWithSeparatedString:value error:error]) {
+                    return nil;
+                }
+                [arr addObject:value];
+            }
+            value = arr;
+        } else {
+            value = [sEnum nextObject];
+            NSAssert(value, @"Incorrect number of elements in separatedString");
+
+            if (![fragment validateWithSeparatedString:value error:error]) {
+                return nil;
+            }
+        }
+
+        valueByFragment[fragment] = value;
+    }
+    return valueByFragment;
+}
+
 #pragma mark - Private Methods
 
 /**
@@ -325,43 +350,19 @@ static unichar const MAEDefaultSeparator = ' ';
 {
     NSParameterAssert(separatedStrings != nil);
 
-    NSArray<MAEFragment*>* fragments = [self.class chooseFormatByPropertyKey:self.formatByPropertyKey
-                                                                   withCount:separatedStrings.count];
-    if (!fragments) {
-        SET_ERROR(error, MAEErrorNotMatchFragmentCount,
-                  @{ NSLocalizedFailureReasonErrorKey :
-                         format(@"Expected format is %@, but got fragment count is %@",
-                                self.formatByPropertyKey, @(separatedStrings.count)) });
+    NSDictionary<id<MAEFragment>, id>* valueByFragment = [self.class valueByFragmentWithFormat:self.formatByPropertyKey
+                                                                              separatedStrings:separatedStrings
+                                                                                         error:error];
+    if (!valueByFragment) {
         return nil;
     }
 
-    NSMutableDictionary* dictionaryValue = [NSMutableDictionary dictionaryWithCapacity:fragments.count];
-    NSEnumerator* sEnum = separatedStrings.objectEnumerator;
+    NSMutableDictionary* dictionaryValue = [NSMutableDictionary dictionaryWithCapacity:valueByFragment.count];
 
-    MAESeparatedString* s;
-    for (id<MAEFragment> fragment in fragments) {
-        id value;
-
-        if (fragment.isVariadic) {
-            NSMutableArray* arr = [NSMutableArray array];
-            while ((s = [sEnum nextObject])) {
-                if (![fragment validateWithSeparatedString:s error:error]) {
-                    return nil;
-                }
-                [arr addObject:s];
-            }
-            value = arr;
-        } else {
-            s = [sEnum nextObject];
-            NSAssert(s, @"Incorrect number of elements in separatedString");
-
-            if (![fragment validateWithSeparatedString:s error:error]) {
-                return nil;
-            }
-            value = s;
-        }
-
+    for (id<MAEFragment> fragment in valueByFragment) {
         if (fragment.propertyName) {
+            id value = valueByFragment[fragment];
+
             NSValueTransformer* transformer = self.valueTransformersByPropertyKey[fragment.propertyName];
             if (transformer) {
                 if ([transformer respondsToSelector:@selector(transformedValue:success:error:)]) {
@@ -375,10 +376,10 @@ static unichar const MAEDefaultSeparator = ' ';
                     value = [transformer transformedValue:value];
                 }
             }
-
             dictionaryValue[fragment.propertyName] = value;
         }
     }
+
     id model = [self.modelClass modelWithDictionary:dictionaryValue error:error];
     return [model validate:error] ? model : nil;
 }
@@ -443,6 +444,36 @@ static unichar const MAEDefaultSeparator = ' ';
 
     free(chars);
     return separatedStrings;
+}
+
+/**
+ * `MAEFragment # formatByPropertyKey` allow NSString. It convert `MAEFragment` this and returns `NSArray<id<MAEFragment>>*`
+ *
+ * @param formatByPropertyKey  See MAEFragment # formatByPropertyKey
+ * @return The correct array of MAEFragment.
+ */
++ (NSArray<id<MAEFragment> >* _Nonnull)fragmentsFromFormat:(NSArray* _Nonnull)formatByPropertyKey
+{
+    NSParameterAssert(formatByPropertyKey != nil);
+
+    BOOL foundVariadic = NO;
+    NSMutableArray<id<MAEFragment> >* fragments = [NSMutableArray array];
+
+    for (id fragment in formatByPropertyKey) {
+        if (foundVariadic) {
+            NSAssert(NO, @"Variadic MUST be the last");
+            break;
+        } else if ([fragment isKindOfClass:NSString.class]) {
+            [fragments addObject:[[MAEFragment alloc] initWithPropertyName:fragment]];
+        } else {
+            NSAssert([fragment conformsToProtocol:@protocol(MAEFragment)],
+                     @"formatByPropertyKey only support NSString and id<MAEFragment>, but got %@", [fragment class]);
+            foundVariadic |= [fragment isVariadic];
+            [fragments addObject:fragment];
+        }
+    }
+
+    return fragments;
 }
 
 /**

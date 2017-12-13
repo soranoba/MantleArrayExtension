@@ -70,7 +70,7 @@ id<MAEFragment> _Nonnull MAEOptional(id _Nonnull);
  */
 id<MAEFragment> _Nonnull MAEVariadic(id _Nonnull);
 
-@protocol MAEFragment <NSObject>
+@protocol MAEFragment <NSObject, NSCopying>
 
 // It returns that name, if it have corresponding property
 @property (nonatomic, nullable, copy, readonly) NSString* propertyName;

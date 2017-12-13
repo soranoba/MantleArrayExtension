@@ -111,6 +111,15 @@ QuickSpecBegin(MAERawFragmentTests)
         });
     });
 
+    describe(@"copy", ^{
+        it(@"shallow copy", ^{
+            MAERawFragment* fragment1 = MAERaw(@"hoge");
+            MAERawFragment* fragment2 = [fragment1 copy];
+
+            expect(fragment1 == fragment2).to(beTrue());
+        });
+    });
+
     describe(@"description", ^{
         it(@"returns expectig one", ^{
             expect(MAERawEither(@[ @"value1", @"value2" ]).withProperty(@"name").description)

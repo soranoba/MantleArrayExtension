@@ -153,6 +153,13 @@ extern id<MAEFragment> _Nonnull MAEVariadic(id _Nonnull v)
     return [[MAESeparatedString alloc] initWithCharacters:transformedValue type:type];
 }
 
+#pragma mark - NSCopying
+
+- (id)copyWithZone:(NSZone* _Nullable)zone
+{
+    return self;
+}
+
 #pragma mark - NSObject (Override)
 
 - (NSString* _Nonnull)description

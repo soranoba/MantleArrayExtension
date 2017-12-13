@@ -62,6 +62,13 @@ QuickSpecBegin(MAEFragmentTests)
         expect(fragment.isVariadic).to(equal(YES));
     });
 
+    it(@"copy", ^{
+        MAEFragment* fragment1 = MAEEnum(@"hoge");
+        MAEFragment* fragment2 = [fragment1 copy];
+
+        expect(fragment1 == fragment2).to(beTrue());
+    });
+
     it(@"description", ^{
         expect([MAEVariadic(@"a") description]).to(equal(@"<MAEFragment: a :--V>"));
         expect([MAEOptional(@"a") description]).to(equal(@"<MAEFragment: a :-O->"));

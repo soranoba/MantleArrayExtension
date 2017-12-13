@@ -86,6 +86,13 @@ extern MAERawFragment* _Nonnull MAERawEither(NSArray<NSString*>* _Nonnull rawStr
     return YES;
 }
 
+#pragma mark - NSCopying
+
+- (id)copyWithZone:(NSZone* _Nullable)zone
+{
+    return self;
+}
+
 #pragma mark - NSObject (Override)
 
 - (NSString* _Nonnull)description

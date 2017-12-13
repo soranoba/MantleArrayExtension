@@ -83,7 +83,7 @@ typedef NS_OPTIONS(NSUInteger, MAEArrayQuotedOptions) {
  * @param array An array that will be parsed.
  * @return a MAEArraySerializing class
  */
-+ (Class _Nullable)classForParsingArray:(NSArray<MAESeparatedString*>* _Nonnull)array;
++ (Class<MAEArraySerializing> _Nullable)classForParsingArray:(NSArray<MAESeparatedString*>* _Nonnull)array;
 
 /**
  * If you want to select quotes to use, you can use this.
@@ -166,6 +166,21 @@ typedef NS_OPTIONS(NSUInteger, MAEArrayQuotedOptions) {
  */
 - (NSString* _Nullable)stringFromModel:(id<MAEArraySerializing> _Nullable)model
                                  error:(NSError* _Nullable* _Nullable)error;
+
+#pragma mark Utility
+
+/**
+ * It confirm the format and returns a dictionary of values corresponding to fragment.
+ *
+ * @param formatByPropertyKey  Specifies how to map property keys to index in Array. See `MAEFragment # formatByPropertyKey`
+ * @param separatedStrings     Already separated input string.
+ * @param error                If it return nil, error information is saved here.
+ * @return If the separatedString is invalid format, it returns nil.
+ *         Otherwise, it returns a dictionary of values corresponding to fragment.
+ */
++ (NSMutableDictionary<id<MAEFragment>, id>* _Nullable)valueByFragmentWithFormat:(NSArray* _Nonnull)formatByPropertyKey
+                                                                separatedStrings:(NSArray<MAESeparatedString*>* _Nonnull)separatedStrings
+                                                                           error:(NSError* _Nullable* _Nullable)error;
 
 @end
 
