@@ -291,6 +291,21 @@ static unichar const MAEDefaultSeparator = ' ';
     return result;
 }
 
++ (Class<MAEArraySerializing> _Nullable)defaultClassForParsingArray:(NSArray<MAESeparatedString*>* _Nonnull)separatedStrings
+                                               withCandidateClasses:(NSArray<Class<MAEArraySerializing>>* _Nonnull)classes
+{
+    NSParameterAssert(separatedStrings != nil && classes != nil);
+
+    for (Class<MAEArraySerializing> klass in classes) {
+        if ([MAEArrayAdapter valueByFragmentWithFormat:[klass formatByPropertyKey]
+                                      separatedStrings:separatedStrings
+                                                 error:nil]) {
+            return klass;
+        }
+    }
+    return nil;
+}
+
 + (NSMutableDictionary<id<MAEFragment>, id>* _Nullable)valueByFragmentWithFormat:(NSArray* _Nonnull)formatByPropertyKey
                                                                 separatedStrings:(NSArray<MAESeparatedString*>* _Nonnull)separatedStrings
                                                                            error:(NSError* _Nullable* _Nullable)error

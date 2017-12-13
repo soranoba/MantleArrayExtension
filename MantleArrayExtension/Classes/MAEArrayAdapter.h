@@ -170,6 +170,23 @@ typedef NS_OPTIONS(NSUInteger, MAEArrayQuotedOptions) {
 #pragma mark Utility
 
 /**
+ * It returns a block that find the class that matches format.
+ *
+ * usage:
+ *   + (Class<MAEArraySerializing> _Nullable)classForParsingArray:(NSArray<MAESeparatedString*>* _Nonnull)array
+ *   {
+ *       return [MAEArrayAdapter defaultClassForParsingArray:array
+ *                                      withCandidateClasses:@[YouClass1.class, YourClass2.class]];
+ *   }
+ *
+ * @param separatedStrings  An array that will be parsed.
+ * @param classes           Candidate class list
+ * @return It returns a class that matches format, if it found. Otherwise, it returns nil.
+ */
++ (Class<MAEArraySerializing> _Nullable)defaultClassForParsingArray:(NSArray<MAESeparatedString*>* _Nonnull)separatedStrings
+                                               withCandidateClasses:(NSArray<Class<MAEArraySerializing>>* _Nonnull)classes;
+
+/**
  * It confirm the format and returns a dictionary of values corresponding to fragment.
  *
  * @param formatByPropertyKey  Specifies how to map property keys to index in Array. See `MAEFragment # formatByPropertyKey`
