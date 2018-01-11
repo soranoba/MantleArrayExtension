@@ -69,7 +69,7 @@ extern MAERawFragment* _Nonnull MAERawEither(NSArray<NSString*>* _Nonnull rawStr
     } else {
         SET_ERROR(error, MAEErrorInvalidInputData,
                   @{ NSLocalizedFailureReasonErrorKey :
-                         format(@"expected one of %@, but got %@", self.rawStrings, transformedValue) });
+                         format(@"expected one of (%@), but got %@", [self.rawStrings componentsJoinedByString:@", "], transformedValue) });
         return nil;
     }
 }
@@ -80,7 +80,7 @@ extern MAERawFragment* _Nonnull MAERawEither(NSArray<NSString*>* _Nonnull rawStr
     if (![self.rawStrings containsObject:separatedString.originalCharacters]) {
         SET_ERROR(error, MAEErrorInvalidInputData,
                   @{ NSLocalizedFailureReasonErrorKey :
-                         format(@"expected one of %@, but got %@", self.rawStrings, separatedString.originalCharacters) });
+                         format(@"expected one of (%@), but got %@", [self.rawStrings componentsJoinedByString:@", "], separatedString.originalCharacters) });
         return NO;
     }
     return YES;
