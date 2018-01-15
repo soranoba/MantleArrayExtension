@@ -4,9 +4,6 @@
 
 - It possible to easily specify expecting that it equals to specified characters.
   - Please refer to a class that name is `MAERawFragment`.
-- Implement of `classForParsingArray` will easier.
-  - `MAEArrayAdapter # valueByFragmentWithFormat:separatedStrings:error:`
-  - `MAEArrayAdapter # defaultClassForParsingArray:withCandidateClasses:`
 
 ### Major changes
 
