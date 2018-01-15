@@ -37,25 +37,25 @@ MAERawFragment* _Nonnull MAERawEither(NSArray<NSString*>* _Nonnull);
  */
 @interface MAERawFragment : NSObject <MAEFragment>
 
-/// Expecting raw strings
-@property (nonatomic, nonnull, copy, readonly) NSArray<NSString*>* rawStrings;
+/// Candidates for raw string.
+@property (nonatomic, nonnull, copy, readonly) NSArray<NSString*>* candidates;
 
 #pragma mark - Lifecycle
 
 /**
  * Create an instance
  *
- * @param rawStrings     Expecting raw strings
+ * @param candidates     Candidates for raw string.
  * @return An instance
  */
-- (instancetype _Nonnull)initWithRawStrings:(NSArray<NSString*>* _Nonnull)rawStrings;
+- (instancetype _Nonnull)initWithCandidates:(NSArray<NSString*>* _Nonnull)candidates;
 
 #pragma mark - Public Methods
 
 /**
  * Returns a block to set property
  *
- * @return A block
+ * @return A block to set property
  */
 - (MAERawFragment* _Nonnull (^_Nonnull)(NSString* _Nullable propertyName))withProperty;
 

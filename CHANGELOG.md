@@ -4,6 +4,7 @@
 
 - It possible to easily specify expecting that it equals to specified characters.
   - Please refer to a class that name is `MAERawFragment`.
+- Add a protocol named `MAEFragment`. You can create `MAEFragment` by yourself.
 
 ### Major changes
 
@@ -11,7 +12,6 @@ The following affects some users.
 
 - The I/F of `MAEFragment` has been greatly changed.
   - Syntax sugars creating a `MAEFragment` has changed only the type of return value.
-- Add a protocol named `MAEFragment`. You can create `MAEFragment` by yourself.
 - `MAEFragment # isEqual:` and `MAEFragment # hash` become to return the same result as that of `NSObject`.
 - All unavailable methods deleted.
 

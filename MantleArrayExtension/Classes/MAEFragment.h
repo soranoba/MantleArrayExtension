@@ -104,14 +104,14 @@ id<MAEFragment> _Nonnull MAEVariadic(id _Nonnull);
 @optional
 
 /**
- * You should implements, if it support optional.
+ * You should implements, if you want to be supported by `MAEOptional`.
  *
  * @param optional  The value of optional to be set.
  */
 - (void)setOptional:(BOOL)optional;
 
 /**
- * You should implements, if it support variadic.
+ * You should implements, if you want to be supported by `MAEVariadic`.
  *
  * @param variadic  The value of variadic to be set.
  */
@@ -125,6 +125,7 @@ id<MAEFragment> _Nonnull MAEVariadic(id _Nonnull);
  */
 @interface MAEFragment : NSObject <MAEFragment>
 
+/// Type of string
 @property (nonatomic, assign, readonly) MAEFragmentType type;
 
 #pragma mark - Lifecycle
