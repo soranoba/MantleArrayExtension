@@ -11,19 +11,19 @@
 
 extern MAERawFragment* _Nonnull MAERaw(NSString* _Nonnull rawString)
 {
-    return [[MAERawFragment alloc] initWithRawStrings:@[ rawString ]];
+    return [[MAERawFragment alloc] initWithCandidates:@[ rawString ]];
 }
 
-extern MAERawFragment* _Nonnull MAERawEither(NSArray<NSString*>* _Nonnull rawStrings)
+extern MAERawFragment* _Nonnull MAERawEither(NSArray<NSString*>* _Nonnull candidates)
 {
-    return [[MAERawFragment alloc] initWithRawStrings:rawStrings];
+    return [[MAERawFragment alloc] initWithCandidates:candidates];
 }
 
 @interface MAERawFragment ()
 @property (nonatomic, nullable, copy, readwrite) NSString* propertyName;
 @property (nonatomic, assign, readwrite, getter=isOptional) BOOL optional;
 @property (nonatomic, assign, readwrite, getter=isVariadic) BOOL variadic;
-@property (nonatomic, nonnull, copy, readwrite) NSArray<NSString*>* rawStrings;
+@property (nonatomic, nonnull, copy, readwrite) NSArray<NSString*>* candidates;
 @end
 
 @implementation MAERawFragment
@@ -36,13 +36,13 @@ extern MAERawFragment* _Nonnull MAERawEither(NSArray<NSString*>* _Nonnull rawStr
     return nil;
 }
 
-- (instancetype _Nonnull)initWithRawStrings:(NSArray<NSString*>* _Nonnull)rawStrings
+- (instancetype _Nonnull)initWithCandidates:(NSArray<NSString*>* _Nonnull)candidates
 {
-    NSParameterAssert(rawStrings != nil);
-    NSAssert(rawStrings.count > 0, @"rawStrings MUST NOT empty");
+    NSParameterAssert(candidates != nil);
+    NSAssert(candidates.count > 0, @"candidates MUST NOT empty");
 
     if (self = [super init]) {
-        self.rawStrings = rawStrings;
+        self.candidates = candidates;
     }
     return self;
 }
@@ -63,13 +63,13 @@ extern MAERawFragment* _Nonnull MAERawEither(NSArray<NSString*>* _Nonnull rawStr
                                                                error:(NSError* _Nullable* _Nullable)error
 {
     if (transformedValue == nil) {
-        return [[MAESeparatedString alloc] initWithOriginalCharacters:self.rawStrings.firstObject ignoreEdgeBlank:NO];
-    } else if ([self.rawStrings containsObject:transformedValue]) {
+        return [[MAESeparatedString alloc] initWithOriginalCharacters:self.candidates.firstObject ignoreEdgeBlank:NO];
+    } else if ([self.candidates containsObject:transformedValue]) {
         return [[MAESeparatedString alloc] initWithOriginalCharacters:transformedValue ignoreEdgeBlank:NO];
     } else {
         SET_ERROR(error, MAEErrorInvalidInputData,
                   @{ NSLocalizedFailureReasonErrorKey :
-                         format(@"expected one of (%@), but got %@", [self.rawStrings componentsJoinedByString:@", "], transformedValue) });
+                         format(@"expected one of (%@), but got %@", [self.candidates componentsJoinedByString:@", "], transformedValue) });
         return nil;
     }
 }
@@ -77,10 +77,10 @@ extern MAERawFragment* _Nonnull MAERawEither(NSArray<NSString*>* _Nonnull rawStr
 - (BOOL)validateWithSeparatedString:(MAESeparatedString* _Nonnull)separatedString
                               error:(NSError* _Nullable* _Nullable)error
 {
-    if (![self.rawStrings containsObject:separatedString.originalCharacters]) {
+    if (![self.candidates containsObject:separatedString.originalCharacters]) {
         SET_ERROR(error, MAEErrorInvalidInputData,
                   @{ NSLocalizedFailureReasonErrorKey :
-                         format(@"expected one of (%@), but got %@", [self.rawStrings componentsJoinedByString:@", "], separatedString.originalCharacters) });
+                         format(@"expected one of (%@), but got %@", [self.candidates componentsJoinedByString:@", "], separatedString.originalCharacters) });
         return NO;
     }
     return YES;
@@ -98,7 +98,7 @@ extern MAERawFragment* _Nonnull MAERawEither(NSArray<NSString*>* _Nonnull rawStr
 - (NSString* _Nonnull)description
 {
     return format(@"<%@ : candidates=(%@), property=%@>", self.class,
-                  [self.rawStrings componentsJoinedByString:@","], self.propertyName);
+                  [self.candidates componentsJoinedByString:@","], self.propertyName);
 }
 
 @end

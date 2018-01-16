@@ -12,20 +12,20 @@
 QuickSpecBegin(MAERawFragmentTests)
 {
     describe(@"initialize", ^{
-        it(@"returns a fragment that set single rawString using MAERaw", ^{
+        it(@"returns a fragment that set a candidate using MAERaw", ^{
             MAERawFragment* fragment = MAERaw(@"raw");
 
             expect(fragment.propertyName).to(beNil());
-            expect(fragment.rawStrings).to(equal(@[ @"raw" ]));
+            expect(fragment.candidates).to(equal(@[ @"raw" ]));
             expect(fragment.isOptional).to(beFalse());
             expect(fragment.isVariadic).to(beFalse());
         });
 
-        it(@"returns a fragment that set multiple rawStrings using MAERawEither", ^{
+        it(@"returns a fragment that set multiple candidates using MAERawEither", ^{
             MAERawFragment* fragment = MAERawEither(@[ @"a", @"b" ]);
 
             expect(fragment.propertyName).to(beNil());
-            expect(fragment.rawStrings).to(equal(@[ @"a", @"b" ]));
+            expect(fragment.candidates).to(equal(@[ @"a", @"b" ]));
             expect(fragment.isOptional).to(beFalse());
             expect(fragment.isVariadic).to(beFalse());
         });
@@ -79,7 +79,7 @@ QuickSpecBegin(MAERawFragmentTests)
         it(@"returns first one, when transformedValue is nil", ^{
             __block NSError* error = nil;
             expect([fragment separatedStringFromTransformedValue:nil error:&error])
-                .to(equal(fragment.rawStrings.firstObject));
+                .to(equal(fragment.candidates.firstObject));
             expect(error).to(beNil());
         });
     });

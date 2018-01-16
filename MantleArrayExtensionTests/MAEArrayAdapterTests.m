@@ -916,53 +916,5 @@ QuickSpecBegin(MAEArrayAdapterTests)
             expect([transformers[@"b"] transformedValue:@"true"]).to(equal(@YES));
         });
     });
-
-    describe(@"valueByFragmentWithFormat:separatedStrings:error:", ^{
-        it(@"returns nil, if the separatedString is invalid format", ^{
-            NSArray* format = @[ MAEEnum(@"hoge"), MAEEnum(@"fuga") ];
-            __block NSError* error = nil;
-
-            expect([MAEArrayAdapter valueByFragmentWithFormat:format
-                                             separatedStrings:@[ [[MAESeparatedString alloc] initWithCharacters:@"hoge" type:MAEStringTypeEnumerate] ]
-                                                        error:&error])
-                .to(beNil());
-            expect(error).notTo(beNil());
-            expect(error.domain).to(equal(MAEErrorDomain));
-            expect(error.code).to(equal(MAEErrorNotMatchFragmentCount));
-        });
-
-        it(@"returns valueByFragment", ^{
-            NSArray* format = @[ MAEEnum(@"hoge"), MAEOptional(@"fuga"), MAEQuoted(@"piyo") ];
-            __block NSError* error = nil;
-            __block NSDictionary* valueByFragment = nil;
-
-            NSArray<MAESeparatedString*>* separatedStrings = @[ [[MAESeparatedString alloc] initWithCharacters:@"hoge_value" type:MAEStringTypeEnumerate],
-                                                                [[MAESeparatedString alloc] initWithCharacters:@"piyo_value"
-                                                                                                          type:MAEStringTypeDoubleQuoted] ];
-            expect(valueByFragment = [MAEArrayAdapter valueByFragmentWithFormat:format
-                                                               separatedStrings:separatedStrings
-                                                                          error:&error])
-                .notTo(beNil());
-            expect(valueByFragment).to(equal(@{ format[0] : separatedStrings[0],
-                                                format[2] : separatedStrings[1] }));
-            expect(error).to(beNil());
-        });
-
-        it(@"returns value is array with variadic", ^{
-            NSArray* format = @[ MAEVariadic(@"hoge") ];
-            __block NSError* error = nil;
-            __block NSDictionary* valueByFragment = nil;
-
-            NSArray<MAESeparatedString*>* separatedStrings = @[ [[MAESeparatedString alloc] initWithCharacters:@"hoge_value" type:MAEStringTypeEnumerate],
-                                                                [[MAESeparatedString alloc] initWithCharacters:@"fuga_value"
-                                                                                                          type:MAEStringTypeDoubleQuoted] ];
-            expect(valueByFragment = [MAEArrayAdapter valueByFragmentWithFormat:format
-                                                               separatedStrings:separatedStrings
-                                                                          error:&error])
-                .notTo(beNil());
-            expect(valueByFragment).to(equal(@{ format[0] : separatedStrings }));
-            expect(error).to(beNil());
-        });
-    });
 }
 QuickSpecEnd

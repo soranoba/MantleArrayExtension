@@ -291,66 +291,6 @@ static unichar const MAEDefaultSeparator = ' ';
     return result;
 }
 
-+ (Class<MAEArraySerializing> _Nullable)defaultClassForParsingArray:(NSArray<MAESeparatedString*>* _Nonnull)separatedStrings
-                                               withCandidateClasses:(NSArray<Class<MAEArraySerializing>>* _Nonnull)classes
-{
-    NSParameterAssert(separatedStrings != nil && classes != nil);
-
-    for (Class<MAEArraySerializing> klass in classes) {
-        if ([MAEArrayAdapter valueByFragmentWithFormat:[klass formatByPropertyKey]
-                                      separatedStrings:separatedStrings
-                                                 error:nil]) {
-            return klass;
-        }
-    }
-    return nil;
-}
-
-+ (NSMutableDictionary<id<MAEFragment>, id>* _Nullable)valueByFragmentWithFormat:(NSArray* _Nonnull)formatByPropertyKey
-                                                                separatedStrings:(NSArray<MAESeparatedString*>* _Nonnull)separatedStrings
-                                                                           error:(NSError* _Nullable* _Nullable)error
-{
-    NSParameterAssert(formatByPropertyKey != nil && separatedStrings != nil);
-
-    NSArray<id<MAEFragment> >* fragments = [self fragmentsFromFormat:formatByPropertyKey];
-
-    NSArray<id<MAEFragment> >* filteredFragments = [self chooseFormatByPropertyKey:fragments withCount:separatedStrings.count];
-    if (!filteredFragments) {
-        SET_ERROR(error, MAEErrorNotMatchFragmentCount,
-                  @{ NSLocalizedFailureReasonErrorKey :
-                         format(@"Expected format is %@, but got fragment count is %@", fragments, @(separatedStrings.count)) });
-        return nil;
-    }
-
-    NSMutableDictionary<id<MAEFragment>, id>* valueByFragment = [NSMutableDictionary dictionary];
-
-    NSEnumerator* sEnum = separatedStrings.objectEnumerator;
-    for (id<MAEFragment> fragment in filteredFragments) {
-        id value;
-
-        if (fragment.isVariadic) {
-            NSMutableArray* arr = [NSMutableArray array];
-            while ((value = [sEnum nextObject])) {
-                if (![fragment validateWithSeparatedString:value error:error]) {
-                    return nil;
-                }
-                [arr addObject:value];
-            }
-            value = arr;
-        } else {
-            value = [sEnum nextObject];
-            NSAssert(value, @"Incorrect number of elements in separatedString");
-
-            if (![fragment validateWithSeparatedString:value error:error]) {
-                return nil;
-            }
-        }
-
-        valueByFragment[fragment] = value;
-    }
-    return valueByFragment;
-}
-
 #pragma mark - Private Methods
 
 /**
@@ -365,19 +305,43 @@ static unichar const MAEDefaultSeparator = ' ';
 {
     NSParameterAssert(separatedStrings != nil);
 
-    NSDictionary<id<MAEFragment>, id>* valueByFragment = [self.class valueByFragmentWithFormat:self.formatByPropertyKey
-                                                                              separatedStrings:separatedStrings
-                                                                                         error:error];
-    if (!valueByFragment) {
+    NSArray<MAEFragment*>* fragments = [self.class chooseFormatByPropertyKey:self.formatByPropertyKey
+                                                                   withCount:separatedStrings.count];
+    if (!fragments) {
+        SET_ERROR(error, MAEErrorNotMatchFragmentCount,
+                  @{ NSLocalizedFailureReasonErrorKey :
+                         format(@"Expected format is %@, but got fragment count is %@",
+                                self.formatByPropertyKey, @(separatedStrings.count)) });
         return nil;
     }
 
-    NSMutableDictionary* dictionaryValue = [NSMutableDictionary dictionaryWithCapacity:valueByFragment.count];
+    NSMutableDictionary* dictionaryValue = [NSMutableDictionary dictionaryWithCapacity:fragments.count];
+    NSEnumerator* sEnum = separatedStrings.objectEnumerator;
 
-    for (id<MAEFragment> fragment in valueByFragment) {
+    MAESeparatedString* s;
+    for (id<MAEFragment> fragment in fragments) {
+        id value;
+
+        if (fragment.isVariadic) {
+            NSMutableArray* arr = [NSMutableArray array];
+            while ((s = [sEnum nextObject])) {
+                if (![fragment validateWithSeparatedString:s error:error]) {
+                    return nil;
+                }
+                [arr addObject:s];
+            }
+            value = arr;
+        } else {
+            s = [sEnum nextObject];
+            NSAssert(s, @"Incorrect number of elements in separatedString");
+
+            if (![fragment validateWithSeparatedString:s error:error]) {
+                return nil;
+            }
+            value = s;
+        }
+
         if (fragment.propertyName) {
-            id value = valueByFragment[fragment];
-
             NSValueTransformer* transformer = self.valueTransformersByPropertyKey[fragment.propertyName];
             if (transformer) {
                 if ([transformer respondsToSelector:@selector(transformedValue:success:error:)]) {
@@ -391,10 +355,10 @@ static unichar const MAEDefaultSeparator = ' ';
                     value = [transformer transformedValue:value];
                 }
             }
+
             dictionaryValue[fragment.propertyName] = value;
         }
     }
-
     id model = [self.modelClass modelWithDictionary:dictionaryValue error:error];
     return [model validate:error] ? model : nil;
 }
