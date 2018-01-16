@@ -20,7 +20,7 @@ static unichar const MAEDefaultSeparator = ' ';
 
 @property (nonatomic, nonnull, strong) Class modelClass;
 /// A cached copy of the return value of +formatByPropertyKey
-@property (nonatomic, nonnull, copy) NSArray<MAEFragment*>* formatByPropertyKey;
+@property (nonatomic, nonnull, copy) NSArray<id<MAEFragment> >* formatByPropertyKey;
 /// A cached copy of the return value of +separator
 @property (nonatomic, assign) unichar separator;
 /// A cached copy of the return value of +propertyKeys
@@ -72,30 +72,19 @@ static unichar const MAEDefaultSeparator = ' ';
             self.quotedOptions = MAEArraySingleQuotedEnable | MAEArrayDoubleQuotedEnable;
         }
 
-        NSMutableArray* formatByPropertyKey = [NSMutableArray array];
-        BOOL foundVariadic = NO;
-        for (id fragment in [modelClass formatByPropertyKey]) {
-            if (foundVariadic) {
-                NSAssert(NO, @"Variadic MUST be the last");
-                break;
-            } else if ([fragment isKindOfClass:NSString.class]) {
-                NSAssert([self.propertyKeys containsObject:fragment],
-                         @"Not found a property named %@", fragment);
-                [formatByPropertyKey addObject:[[MAEFragment alloc] initWithPropertyName:fragment]];
-            } else {
-                NSAssert([fragment isKindOfClass:MAEFragment.class],
-                         @"formatByPropertyKey only support NSString and MAEFragment, but got %@", [fragment class]);
-                foundVariadic |= [fragment isVariadic];
-                NSAssert([self.propertyKeys containsObject:[fragment propertyName]],
-                         @"Not found a property named %@", [fragment propertyName]);
-                [formatByPropertyKey addObject:fragment];
+        self.formatByPropertyKey = [self.class fragmentsFromFormat:[modelClass formatByPropertyKey]];
+        self.valueTransformersByPropertyKey = [self.class valueTransformersForModelClass:modelClass];
+
+        NSMutableSet<NSString*>* usingPropertyNames = [NSMutableSet set];
+        for (id<MAEFragment> fragment in self.formatByPropertyKey) {
+            if (fragment.propertyName) {
+                NSAssert([self.propertyKeys containsObject:fragment.propertyName],
+                         @"Not found a property named %@", fragment.propertyName);
+                NSAssert(![usingPropertyNames containsObject:fragment.propertyName],
+                         @"A property named %@ is used more than once", fragment.propertyName);
+                [usingPropertyNames addObject:fragment.propertyName];
             }
         }
-        NSAssert([NSSet setWithArray:formatByPropertyKey].count == formatByPropertyKey.count,
-                 @"The same property key is used more than once");
-        self.formatByPropertyKey = formatByPropertyKey;
-
-        self.valueTransformersByPropertyKey = [self.class valueTransformersForModelClass:modelClass];
     }
     return self;
 }
@@ -242,63 +231,124 @@ static unichar const MAEDefaultSeparator = ' ';
 
     NSMutableArray<MAESeparatedString*>* result = [NSMutableArray array];
     NSDictionary* dictionaryValue = [model.dictionaryValue dictionaryWithValuesForKeys:self.propertyKeys.allObjects];
-    for (MAEFragment* fragment in self.formatByPropertyKey) {
-        id value = dictionaryValue[fragment.propertyName];
-        if ([value isEqual:NSNull.null] && fragment.optional) {
-            continue;
-        }
+    for (id<MAEFragment> fragment in self.formatByPropertyKey) {
+        id value = nil;
 
-        NSValueTransformer* transformer = self.valueTransformersByPropertyKey[fragment.propertyName];
-        if ([transformer.class allowsReverseTransformation]) {
-            if ([transformer respondsToSelector:@selector(reverseTransformedValue:success:error:)]) {
-                id<MTLTransformerErrorHandling> errorHandlingTransformer = (id)transformer;
-                BOOL success = YES;
-                value = [errorHandlingTransformer reverseTransformedValue:value success:&success error:error];
-                if (!success) {
-                    return nil;
+        if (fragment.propertyName) {
+            value = dictionaryValue[fragment.propertyName];
+            if ([value isEqual:NSNull.null] && fragment.optional) {
+                continue;
+            }
+
+            NSValueTransformer* transformer = self.valueTransformersByPropertyKey[fragment.propertyName];
+            if ([transformer.class allowsReverseTransformation]) {
+                if ([transformer respondsToSelector:@selector(reverseTransformedValue:success:error:)]) {
+                    id<MTLTransformerErrorHandling> errorHandlingTransformer = (id)transformer;
+                    BOOL success = YES;
+                    value = [errorHandlingTransformer reverseTransformedValue:value success:&success error:error];
+                    if (!success) {
+                        return nil;
+                    }
+                } else {
+                    value = [transformer reverseTransformedValue:value];
                 }
-            } else {
-                value = [transformer reverseTransformedValue:value];
             }
         }
 
-        if (!value || value == NSNull.null) {
-            value = @"";
+        if (!value) {
+            value = NSNull.null;
+        }
+
+        if ([value isEqual:NSNull.null] && fragment.isOptional) {
+            continue;
         }
 
         if (![value isKindOfClass:NSArray.class]) {
             value = @[ value ];
         }
 
-        for (NSString* transformedString in value) {
-            if (![transformedString isKindOfClass:NSString.class]) {
+        for (id v in value) {
+            id transformedString = v;
+
+            if ([transformedString isEqual:NSNull.null]) {
+                transformedString = nil;
+            } else if (![transformedString isKindOfClass:NSString.class]) {
                 SET_ERROR(error, MAEErrorInvalidInputData,
                           @{ NSLocalizedFailureReasonErrorKey :
-                                 format(@"The result of reverseTransform MUST be NSString or NSArray, but got %@", [value class]) });
+                                 format(@"The result of reverseTransform MUST be NSString or NSArray<NSString>, but got %@", value) });
                 return nil;
             }
 
-            MAEStringType type;
-            switch (fragment.type) {
-                case MAEFragmentDoubleQuotedString:
-                    type = MAEStringTypeDoubleQuoted;
-                    break;
-                case MAEFragmentSingleQuotedString:
-                    type = MAEStringTypeSingleQuoted;
-                    break;
-                case MAEFragmentMaybeQuotedString:
-                    type = ([transformedString rangeOfString:@" "].location == NSNotFound && transformedString.length > 0)
-                        ? MAEStringTypeEnumerate
-                        : MAEStringTypeDoubleQuoted;
-                    break;
-                default:
-                    type = MAEStringTypeEnumerate;
-                    break;
+            MAESeparatedString* separatedString = [fragment separatedStringFromTransformedValue:transformedString
+                                                                                          error:error];
+            if (!separatedString) {
+                return nil;
             }
-            [result addObject:[[MAESeparatedString alloc] initWithCharacters:transformedString type:type]];
+
+            [result addObject:separatedString];
         }
     }
     return result;
+}
+
++ (Class<MAEArraySerializing> _Nullable)defaultClassForParsingArray:(NSArray<MAESeparatedString*>* _Nonnull)separatedStrings
+                                               withCandidateClasses:(NSArray<Class<MAEArraySerializing>>* _Nonnull)classes
+{
+    NSParameterAssert(separatedStrings != nil && classes != nil);
+
+    for (Class<MAEArraySerializing> klass in classes) {
+        if ([MAEArrayAdapter valueByFragmentWithFormat:[klass formatByPropertyKey]
+                                      separatedStrings:separatedStrings
+                                                 error:nil]) {
+            return klass;
+        }
+    }
+    return nil;
+}
+
++ (NSMutableDictionary<id<MAEFragment>, id>* _Nullable)valueByFragmentWithFormat:(NSArray* _Nonnull)formatByPropertyKey
+                                                                separatedStrings:(NSArray<MAESeparatedString*>* _Nonnull)separatedStrings
+                                                                           error:(NSError* _Nullable* _Nullable)error
+{
+    NSParameterAssert(formatByPropertyKey != nil && separatedStrings != nil);
+
+    NSArray<id<MAEFragment> >* fragments = [self fragmentsFromFormat:formatByPropertyKey];
+
+    NSArray<id<MAEFragment> >* filteredFragments = [self chooseFormatByPropertyKey:fragments withCount:separatedStrings.count];
+    if (!filteredFragments) {
+        SET_ERROR(error, MAEErrorNotMatchFragmentCount,
+                  @{ NSLocalizedFailureReasonErrorKey :
+                         format(@"Expected format is %@, but got fragment count is %@", fragments, @(separatedStrings.count)) });
+        return nil;
+    }
+
+    NSMutableDictionary<id<MAEFragment>, id>* valueByFragment = [NSMutableDictionary dictionary];
+
+    NSEnumerator* sEnum = separatedStrings.objectEnumerator;
+    for (id<MAEFragment> fragment in filteredFragments) {
+        id value;
+
+        if (fragment.isVariadic) {
+            NSMutableArray* arr = [NSMutableArray array];
+            while ((value = [sEnum nextObject])) {
+                if (![fragment validateWithSeparatedString:value error:error]) {
+                    return nil;
+                }
+                [arr addObject:value];
+            }
+            value = arr;
+        } else {
+            value = [sEnum nextObject];
+            NSAssert(value, @"Incorrect number of elements in separatedString");
+
+            if (![fragment validateWithSeparatedString:value error:error]) {
+                return nil;
+            }
+        }
+
+        valueByFragment[fragment] = value;
+    }
+    return valueByFragment;
 }
 
 #pragma mark - Private Methods
@@ -315,103 +365,38 @@ static unichar const MAEDefaultSeparator = ' ';
 {
     NSParameterAssert(separatedStrings != nil);
 
-    NSArray<MAEFragment*>* fragments = [self.class chooseFormatByPropertyKey:self.formatByPropertyKey
-                                                                   withCount:separatedStrings.count];
-    if (!fragments) {
-        SET_ERROR(error, MAEErrorNotMatchFragmentCount,
-                  @{ NSLocalizedFailureReasonErrorKey :
-                         format(@"Expected format is %@, but got fragment count is %@",
-                                self.formatByPropertyKey, @(separatedStrings.count)) });
+    NSDictionary<id<MAEFragment>, id>* valueByFragment = [self.class valueByFragmentWithFormat:self.formatByPropertyKey
+                                                                              separatedStrings:separatedStrings
+                                                                                         error:error];
+    if (!valueByFragment) {
         return nil;
     }
 
-    NSMutableDictionary* dictionaryValue = [NSMutableDictionary dictionaryWithCapacity:fragments.count];
-    NSEnumerator* sEnum = separatedStrings.objectEnumerator;
+    NSMutableDictionary* dictionaryValue = [NSMutableDictionary dictionaryWithCapacity:valueByFragment.count];
 
-    MAESeparatedString* s;
-    for (MAEFragment* fragment in fragments) {
-        id value;
+    for (id<MAEFragment> fragment in valueByFragment) {
+        if (fragment.propertyName) {
+            id value = valueByFragment[fragment];
 
-        if (fragment.isVariadic) {
-            NSMutableArray* arr = [NSMutableArray array];
-            while ((s = [sEnum nextObject])) {
-                if (![self.class validateOfSeparatedString:s withExpectedFragment:fragment error:error]) {
-                    return nil;
+            NSValueTransformer* transformer = self.valueTransformersByPropertyKey[fragment.propertyName];
+            if (transformer) {
+                if ([transformer respondsToSelector:@selector(transformedValue:success:error:)]) {
+                    id<MTLTransformerErrorHandling> errorHandlingTransformer = (id)transformer;
+                    BOOL success = YES;
+                    value = [errorHandlingTransformer transformedValue:value success:&success error:error];
+                    if (!success) {
+                        return nil;
+                    }
+                } else {
+                    value = [transformer transformedValue:value];
                 }
-                [arr addObject:s];
             }
-            value = arr;
-        } else {
-            s = [sEnum nextObject];
-            NSAssert(s, @"Incorrect number of elements in separatedString");
-
-            if (![self.class validateOfSeparatedString:s withExpectedFragment:fragment error:error]) {
-                return nil;
-            }
-            value = s;
+            dictionaryValue[fragment.propertyName] = value;
         }
-
-        NSValueTransformer* transformer = self.valueTransformersByPropertyKey[fragment.propertyName];
-        if (transformer) {
-            if ([transformer respondsToSelector:@selector(transformedValue:success:error:)]) {
-                id<MTLTransformerErrorHandling> errorHandlingTransformer = (id)transformer;
-                BOOL success = YES;
-                value = [errorHandlingTransformer transformedValue:value success:&success error:error];
-                if (!success) {
-                    return nil;
-                }
-            } else {
-                value = [transformer transformedValue:value];
-            }
-        }
-
-        dictionaryValue[fragment.propertyName] = value;
     }
+
     id model = [self.modelClass modelWithDictionary:dictionaryValue error:error];
     return [model validate:error] ? model : nil;
-}
-
-/**
- * Validate that separated string matches the form of fragment
- *
- * @param separatedString  A SeparatedString to be validated.
- * @param fragment         A fragment to be expected.
- * @param error            If it return nil, error information is saved here
- * @return If it is valid, it returns YES. Otherwise, it returns NO.
- */
-+ (BOOL)validateOfSeparatedString:(MAESeparatedString* _Nonnull)separatedString
-             withExpectedFragment:(MAEFragment* _Nonnull)fragment
-                            error:(NSError* _Nullable* _Nullable)error
-{
-    NSParameterAssert(separatedString != nil && fragment != nil);
-
-    NSString* expectedType = nil;
-    switch (fragment.type) {
-        case MAEFragmentDoubleQuotedString:
-            if (separatedString.type != MAEStringTypeDoubleQuoted) {
-                expectedType = @"double quoted string";
-            }
-            break;
-        case MAEFragmentSingleQuotedString:
-            if (separatedString.type != MAEStringTypeSingleQuoted) {
-                expectedType = @"single quoted string";
-            }
-            break;
-        case MAEFragmentEnumerateString:
-            if (separatedString.type != MAEStringTypeEnumerate) {
-                expectedType = @"enumerate string";
-            }
-            break;
-        default:
-            break;
-    }
-    if (expectedType) {
-        SET_ERROR(error, MAEErrorNotMatchFragmentType,
-                  @{ NSLocalizedFailureReasonErrorKey :
-                         format(@"%@ expected %@", fragment.propertyName, expectedType) });
-        return NO;
-    }
-    return YES;
 }
 
 /**
@@ -477,6 +462,36 @@ static unichar const MAEDefaultSeparator = ' ';
 }
 
 /**
+ * `MAEFragment # formatByPropertyKey` allow NSString. It convert `MAEFragment` this and returns `NSArray<id<MAEFragment>>*`
+ *
+ * @param formatByPropertyKey  See MAEFragment # formatByPropertyKey
+ * @return The correct array of MAEFragment.
+ */
++ (NSArray<id<MAEFragment> >* _Nonnull)fragmentsFromFormat:(NSArray* _Nonnull)formatByPropertyKey
+{
+    NSParameterAssert(formatByPropertyKey != nil);
+
+    BOOL foundVariadic = NO;
+    NSMutableArray<id<MAEFragment> >* fragments = [NSMutableArray array];
+
+    for (id fragment in formatByPropertyKey) {
+        if (foundVariadic) {
+            NSAssert(NO, @"Variadic MUST be the last");
+            break;
+        } else if ([fragment isKindOfClass:NSString.class]) {
+            [fragments addObject:[[MAEFragment alloc] initWithPropertyName:fragment]];
+        } else {
+            NSAssert([fragment conformsToProtocol:@protocol(MAEFragment)],
+                     @"formatByPropertyKey only support NSString and id<MAEFragment>, but got %@", [fragment class]);
+            foundVariadic |= [fragment isVariadic];
+            [fragments addObject:fragment];
+        }
+    }
+
+    return fragments;
+}
+
+/**
  * It returns fragments with unnecessary optional elements removed for the count elements.
  *
  * @param fragments The fragments that contains optional elements
@@ -484,8 +499,8 @@ static unichar const MAEDefaultSeparator = ' ';
  * @return If it does not correspond to the count, it returns nil.
  *         Otherwise, it returns fragments with unnecessary optional elements removed for the count elements.
  */
-+ (NSArray<MAEFragment*>* _Nullable)chooseFormatByPropertyKey:(NSArray<MAEFragment*>* _Nonnull)fragments
-                                                    withCount:(NSUInteger)count
++ (NSArray<id<MAEFragment> >* _Nullable)chooseFormatByPropertyKey:(NSArray<id<MAEFragment> >* _Nonnull)fragments
+                                                        withCount:(NSUInteger)count
 {
     NSParameterAssert(fragments != nil);
 
@@ -497,8 +512,8 @@ static unichar const MAEDefaultSeparator = ' ';
         }
     } else { // fragments.count > count
         BOOL hasRequirementsVariadic = NO;
-        NSMutableArray<MAEFragment*>* filteredFragments = [fragments mutableCopy];
-        for (MAEFragment* fragment in fragments.reverseObjectEnumerator) {
+        NSMutableArray<id<MAEFragment> >* filteredFragments = [fragments mutableCopy];
+        for (id<MAEFragment> fragment in fragments.reverseObjectEnumerator) {
             if (fragment.optional) {
                 [filteredFragments removeObject:fragment];
             } else if (fragment.variadic) {

@@ -20,13 +20,6 @@ typedef NS_ENUM(NSUInteger, MAEErrorCode) {
     MAEErrorNotMatchFragmentCount,
     /// classForParsingArray: returns nil.
     MAEErrorNoConversionTarget,
-
-    MAEErrorInputNil __attribute__((unavailable("Replaced by MAEErrorNilInputData"))),
-    MAEErrorTransform __attribute__((unavailable("Replaced by MAEErrorInvalidInputData"))),
-    MAEErrorBadArguemt __attribute__((unavailable("Replaced by MAEErrorInvalidInputData"))),
-    MAEErrorNotQuoted __attribute__((unavailable("Replaced by MAEErrorNotMatchFragmentType"))),
-    MAEErrorNotEnum __attribute__((unavailable("Replaced by MAEErrorNotMatchFragmentType"))),
-    MAEErrorInvalidCount __attribute__((unavailable("Replaced by MAEErrorNotMatchFragmentCount"))),
 };
 
 /// The domain for errors originating from MantleArrayExtension

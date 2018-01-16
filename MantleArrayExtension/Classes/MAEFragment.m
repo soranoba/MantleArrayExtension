@@ -7,6 +7,7 @@
 //
 
 #import "MAEFragment.h"
+#import "NSError+MAEErrorCode.h"
 
 @interface MAEFragment ()
 @property (nonatomic, nonnull, copy, readwrite) NSString* propertyName;
@@ -20,11 +21,11 @@
 static inline MAEFragment* _Nonnull makeFragment(id _Nonnull v)
 {
     MAEFragment* fragment;
-    if ([v isKindOfClass:MAEFragment.class]) {
+    if ([v conformsToProtocol:@protocol(MAEFragment)]) {
         fragment = v;
     } else {
         NSCAssert([v isKindOfClass:NSString.class],
-                  @"It only allow NSString and MAEFramgnet, but got %@", [v class]);
+                  @"It only allow NSString and id<MAEFramgnet>, but got %@", [v class]);
         fragment = [[MAEFragment alloc] initWithPropertyName:v];
     }
     return fragment;
@@ -51,16 +52,20 @@ extern MAEFragment* _Nonnull MAEEnum(NSString* _Nonnull propertyName)
     return fragment;
 }
 
-extern MAEFragment* _Nonnull MAEOptional(id _Nonnull v)
+extern id<MAEFragment> _Nonnull MAEOptional(id _Nonnull v)
 {
     MAEFragment* fragment = makeFragment(v);
+    NSCAssert([fragment respondsToSelector:@selector(setOptional:)],
+              format(@"%@ does not support optional", v));
     fragment.optional = YES;
     return fragment;
 }
 
-extern MAEFragment* _Nonnull MAEVariadic(id _Nonnull v)
+extern id<MAEFragment> _Nonnull MAEVariadic(id _Nonnull v)
 {
     MAEFragment* fragment = makeFragment(v);
+    NSCAssert([fragment respondsToSelector:@selector(setVariadic:)],
+              format(@"%@ does not support variadic", v));
     fragment.variadic = YES;
     return fragment;
 }
@@ -85,24 +90,77 @@ extern MAEFragment* _Nonnull MAEVariadic(id _Nonnull v)
     return self;
 }
 
-#pragma mark - NSObject (Override)
+#pragma mark - MAEFragment
 
-- (BOOL)isEqual:(id _Nullable)other
+- (BOOL)validateWithSeparatedString:(MAESeparatedString* _Nonnull)separatedString
+                              error:(NSError* _Nullable* _Nullable)error
 {
-    if ([other isKindOfClass:MAEFragment.class]) {
-        typeof(self) otherFragment = other;
-        return [otherFragment.propertyName isEqual:self.propertyName]
-            && otherFragment.type == self.type
-            && otherFragment.optional == self.optional
-            && otherFragment.variadic == self.variadic;
+    NSParameterAssert(separatedString != nil);
+
+    NSString* expectedType = nil;
+    switch (self.type) {
+        case MAEFragmentDoubleQuotedString:
+            if (separatedString.type != MAEStringTypeDoubleQuoted) {
+                expectedType = @"double quoted string";
+            }
+            break;
+        case MAEFragmentSingleQuotedString:
+            if (separatedString.type != MAEStringTypeSingleQuoted) {
+                expectedType = @"single quoted string";
+            }
+            break;
+        case MAEFragmentEnumerateString:
+            if (separatedString.type != MAEStringTypeEnumerate) {
+                expectedType = @"enumerate string";
+            }
+            break;
+        default:
+            break;
     }
-    return NO;
+    if (expectedType) {
+        SET_ERROR(error, MAEErrorNotMatchFragmentType,
+                  @{ NSLocalizedFailureReasonErrorKey :
+                         format(@"%@ expected %@", self.propertyName, expectedType) });
+        return NO;
+    }
+    return YES;
 }
 
-- (NSUInteger)hash
+- (MAESeparatedString* _Nullable)separatedStringFromTransformedValue:(NSString* _Nullable)transformedValue
+                                                               error:(NSError* _Nullable* _Nullable)error
 {
-    return [self.propertyName hash];
+    if (!transformedValue) {
+        transformedValue = @"";
+    }
+
+    MAEStringType type;
+    switch (self.type) {
+        case MAEFragmentDoubleQuotedString:
+            type = MAEStringTypeDoubleQuoted;
+            break;
+        case MAEFragmentSingleQuotedString:
+            type = MAEStringTypeSingleQuoted;
+            break;
+        case MAEFragmentMaybeQuotedString:
+            type = (transformedValue.length > 0 && [transformedValue rangeOfString:@" "].location == NSNotFound)
+                ? MAEStringTypeEnumerate
+                : MAEStringTypeDoubleQuoted;
+            break;
+        default:
+            type = MAEStringTypeEnumerate;
+            break;
+    }
+    return [[MAESeparatedString alloc] initWithCharacters:transformedValue type:type];
 }
+
+#pragma mark - NSCopying
+
+- (id)copyWithZone:(NSZone* _Nullable)zone
+{
+    return self;
+}
+
+#pragma mark - NSObject (Override)
 
 - (NSString* _Nonnull)description
 {
@@ -121,9 +179,8 @@ extern MAEFragment* _Nonnull MAEVariadic(id _Nonnull v)
             type = '-';
     }
 
-    return [NSString stringWithFormat:@"<%@: %@ :%c%c%c>",
-                                      self.class, self.propertyName, type,
-                                      (self.optional ? 'O' : '-'), (self.variadic ? 'V' : '-')];
+    return format(@"<%@: %@ :%c%c%c>", self.class, self.propertyName, type,
+                  (self.optional ? 'O' : '-'), (self.variadic ? 'V' : '-'));
 }
 
 @end

@@ -62,15 +62,11 @@ QuickSpecBegin(MAEFragmentTests)
         expect(fragment.isVariadic).to(equal(YES));
     });
 
-    it(@"isEqual:", ^{
-        expect(MAEVariadic(MAEOptional(MAEQuoted(@"a")))).to(equal(MAEOptional(MAEVariadic(MAEQuoted(@"a")))));
-        expect(MAEVariadic(MAEOptional(MAEQuoted(@"a")))).notTo(equal(MAEOptional(MAEVariadic(MAEQuoted(@"b")))));
-        expect(MAEQuoted(@"a")).notTo(equal(MAEVariadic(MAEQuoted(@"a"))));
-        expect(MAEQuoted(@"a")).notTo(equal(MAEOptional(MAEQuoted(@"a"))));
-        expect(MAEQuoted(@"a")).notTo(equal(MAESingleQuoted(@"a")));
-        expect(MAESingleQuoted(@"a")).notTo(equal([[MAEFragment alloc] initWithPropertyName:@"a"]));
-        expect(MAEOptional(@"a")).to(equal(MAEOptional([[MAEFragment alloc] initWithPropertyName:@"a"])));
-        expect([[MAEFragment alloc] initWithPropertyName:@"a"]).notTo(equal(@"a"));
+    it(@"copy", ^{
+        MAEFragment* fragment1 = MAEEnum(@"hoge");
+        MAEFragment* fragment2 = [fragment1 copy];
+
+        expect(fragment1 == fragment2).to(beTrue());
     });
 
     it(@"description", ^{

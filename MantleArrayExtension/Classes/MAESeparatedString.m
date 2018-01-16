@@ -18,6 +18,12 @@
 
 #pragma mark - Lifecycle
 
+- (instancetype)init
+{
+    NSAssert(NO, @"%@ MUST be initialized with designated initializer", self.class);
+    return nil;
+}
+
 - (instancetype _Nonnull)initWithCharacters:(NSString* _Nonnull)characters
                                        type:(MAEStringType)type
 {
