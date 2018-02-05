@@ -1,3 +1,9 @@
+## 2.0.1
+
+### Bug fixes
+
+- In the case of 32 bit OS, properties of BOOL choose numberTransformer by default. It fix to choose boolTransformer.
+
 ## 2.0.0
 
 ### Additional functions

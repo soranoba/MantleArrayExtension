@@ -98,12 +98,12 @@ QuickSpecBegin(MAEArrayAdapterTests)
             __block MAETModel1* model;
             __block NSError* error = nil;
             expect(model = [MAEArrayAdapter modelOfClass:MAETModel1.class
-                                              fromString:@"true,5348765123,-1389477961,-2.5,1.797693,-9437138961"
+                                              fromString:@"true,48765123,-1389477961,-2.5,1.797693,-9437138961"
                                                    error:&error])
                 .notTo(beNil());
             expect(error).to(beNil());
             expect(model.b).to(equal(YES));
-            expect(model.ui).to(equal(5348765123));
+            expect(model.ui).to(equal(48765123));
             expect(model.i).to(equal(-1389477961));
             expect(model.f).to(equal(-2.5f));
             expect(model.d).to(equal(1.797693));
@@ -335,7 +335,7 @@ QuickSpecBegin(MAEArrayAdapterTests)
         it(@"can handle premitive type and NSNumber", ^{
             MAETModel1* model = [MAETModel1 new];
             model.b = YES;
-            model.ui = 5348765123;
+            model.ui = 48765123;
             model.i = -1389477961;
             model.f = -2.5f;
             model.d = 1.797693;
@@ -343,7 +343,7 @@ QuickSpecBegin(MAEArrayAdapterTests)
 
             __block NSError* error = nil;
             expect([MAEArrayAdapter stringFromModel:model error:&error])
-                .to(equal(@"true,5348765123,-1389477961,-2.5,1.797693,-9437138961"));
+                .to(equal(@"true,48765123,-1389477961,-2.5,1.797693,-9437138961"));
             expect(error).to(beNil());
         });
 
@@ -487,7 +487,7 @@ QuickSpecBegin(MAEArrayAdapterTests)
 
             MAETModel6* model = [MAETModel6 new];
             model.url = [NSURL URLWithString:@"http://localhost"];
-            model.boolean = @NO;
+            model.boolean = NO;
             model.empty = @"";
             error = nil;
 
@@ -530,7 +530,7 @@ QuickSpecBegin(MAEArrayAdapterTests)
 
             MAETModel6* model = [MAETModel6 new];
             model.url = [NSURL URLWithString:@"http://localhost"];
-            model.boolean = @NO;
+            model.boolean = NO;
             __block NSError* error = nil;
 
             expect([MAEArrayAdapter stringFromModel:model error:&error]).to(beNil());
