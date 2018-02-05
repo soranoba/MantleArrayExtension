@@ -23,11 +23,11 @@ QuickSpecBegin(MAEArrayAdapter_TransformersTests)
 
         it(@"can convert from array to model", ^{
             MAETModel1* model
-                = [transformer transformedValue:@[ separatedString(@"true"), separatedString(@"5348765123"),
+                = [transformer transformedValue:@[ separatedString(@"true"), separatedString(@"48765123"),
                                                    separatedString(@"-1389477961"), separatedString(@"-2.5"),
                                                    separatedString(@"1.797693") ]];
             expect(model.b).to(equal(YES));
-            expect(model.ui).to(equal(5348765123));
+            expect(model.ui).to(equal(48765123));
             expect(model.i).to(equal(-1389477961));
             expect(model.f).to(equal(-2.5f));
             expect(model.d).to(equal(1.797693));
@@ -36,12 +36,12 @@ QuickSpecBegin(MAEArrayAdapter_TransformersTests)
         it(@"can convert from model to array", ^{
             MAETModel1* model = [MAETModel1 new];
             model.b = YES;
-            model.ui = 5348765123;
+            model.ui = 48765123;
             model.i = -1389477961;
             model.f = -2.5f;
             model.d = 1.797693;
             expect([transformer reverseTransformedValue:model])
-                .to(equal(@[ @"true", @"5348765123", @"-1389477961", @"-2.5", @"1.797693" ]));
+                .to(equal(@[ @"true", @"48765123", @"-1389477961", @"-2.5", @"1.797693" ]));
         });
 
         it(@"validate of type correct", ^{
@@ -49,10 +49,10 @@ QuickSpecBegin(MAEArrayAdapter_TransformersTests)
             OCMStub([mock formatByPropertyKey])
                 .andReturn((@[ MAEEnum(@"b"), MAEQuoted(@"ui"), MAESingleQuoted(@"i"), @"f", @"d" ]));
 
-            NSArray* data1 = @[ separatedString(@"true"), separatedString(@"5348765123"),
+            NSArray* data1 = @[ separatedString(@"true"), separatedString(@"48765123"),
                                 separatedString(@"-1389477961"), separatedString(@"-2.5"),
                                 separatedString(@"1.797693") ];
-            NSArray* data2 = @[ separatedString(@"true"), separatedString(@"\"5348765123\""),
+            NSArray* data2 = @[ separatedString(@"true"), separatedString(@"\"48765123\""),
                                 separatedString(@"'-1389477961'"), separatedString(@"'-2.5'"),
                                 separatedString(@"1.797693") ];
 
@@ -70,7 +70,7 @@ QuickSpecBegin(MAEArrayAdapter_TransformersTests)
             expect(model = [transformer transformedValue:data2 success:&success error:&error]).notTo(beNil());
             expect(success).to(equal(YES));
             expect(error).to(beNil());
-            expect(model.ui).to(equal(5348765123));
+            expect(model.ui).to(equal(48765123));
             expect(model.i).to(equal(-1389477961));
             expect(model.f).to(equal(-2.5f));
             expect(model.d).to(equal(1.797693));
@@ -80,7 +80,7 @@ QuickSpecBegin(MAEArrayAdapter_TransformersTests)
             __block BOOL success = NO;
             __block NSError* error = nil;
             __block MAETModel1* model;
-            NSArray* data = @[ separatedString(@"true"), separatedString(@"5348765123"),
+            NSArray* data = @[ separatedString(@"true"), separatedString(@"48765123"),
                                separatedString(@"-1389477961"), separatedString(@"-2.5"),
                                separatedString(@"1.797693") ];
 
@@ -134,21 +134,21 @@ QuickSpecBegin(MAEArrayAdapter_TransformersTests)
             = [MAEArrayAdapter stringTransformerWithArrayModelClass:MAETModel1.class];
 
         it(@"can convert between model and string", ^{
-            MAETModel1* model = [transformer transformedValue:@"true,5348765123,-1389477961,-2.5,1.797693"];
+            MAETModel1* model = [transformer transformedValue:@"true,48765123,-1389477961,-2.5,1.797693"];
             expect(model.b).to(equal(YES));
-            expect(model.ui).to(equal(5348765123));
+            expect(model.ui).to(equal(48765123));
             expect(model.i).to(equal(-1389477961));
             expect(model.f).to(equal(-2.5f));
             expect(model.d).to(equal(1.797693));
 
-            expect([transformer reverseTransformedValue:model]).to(equal(@"true,5348765123,-1389477961,-2.5,1.797693"));
+            expect([transformer reverseTransformedValue:model]).to(equal(@"true,48765123,-1389477961,-2.5,1.797693"));
         });
 
         it(@"sets YES to success, when the conversion is successful", ^{
             __block BOOL success = NO;
             __block NSError* error = nil;
             __block MAETModel1* model;
-            expect(model = [transformer transformedValue:@"true,5348765123,-1389477961,-2.5,1.797693" success:&success error:&error])
+            expect(model = [transformer transformedValue:@"true,48765123,-1389477961,-2.5,1.797693" success:&success error:&error])
                 .notTo(beNil());
             expect(success).to(equal(YES));
             expect(error).to(beNil());
@@ -156,7 +156,7 @@ QuickSpecBegin(MAEArrayAdapter_TransformersTests)
             success = NO;
             error = nil;
             expect([transformer reverseTransformedValue:model success:&success error:&error])
-                .to(equal(@"true,5348765123,-1389477961,-2.5,1.797693"));
+                .to(equal(@"true,48765123,-1389477961,-2.5,1.797693"));
             expect(success).to(equal(YES));
             expect(error).to(beNil());
         });
