@@ -140,7 +140,7 @@
             }
         reverseBlock:^NSString* _Nullable(NSNumber* _Nullable num, BOOL* _Nonnull success, NSError* _Nullable* _Nullable error) {
             *success = YES;
-            if (!num) {
+            if (num == nil) {
                 return nil;
             }
             if (![num isKindOfClass:NSNumber.class]) {

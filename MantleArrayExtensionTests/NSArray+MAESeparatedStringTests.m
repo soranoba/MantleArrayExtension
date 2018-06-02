@@ -13,7 +13,7 @@ QuickSpecBegin(NSArray_MAESeparatedStringTests)
 {
     describe(@"mae_componentsJoinedBySeparatedString:", ^{
         it(@"throws an exception if there is any other than MAESeparatedString", ^{
-            NSArray<MAESeparatedString*>* array
+            NSArray* array
                 = @[ [[MAESeparatedString alloc] initWithOriginalCharacters:@"  \"hoge\"  " ignoreEdgeBlank:YES],
                      @"fuga" ];
             expectAction(^{
