@@ -1,3 +1,20 @@
+## 2.0.3
+
+### IMPORTANT
+
+It does not support Mantle 2.1.6.  
+If you can update Mantle 2.1.6 or later, please use the next version.
+
+- Carthage
+  - Please lock the Mantle version to 2.1.5 or lower in your Cartfile.
+- CocoaPods
+  - You don't need to do anything, because the dependency has been updated in the podspec.
+
+### Others
+
+- (Carthage) Xcode12 compatible
+- (Carthage) No longer create pre-build frameworks. (ref: https://github.com/Carthage/Carthage/issues/3130)
+
 ## 2.0.2
 
 - Fix to prevent warnings of analyze
