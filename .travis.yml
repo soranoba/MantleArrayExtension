@@ -1,8 +1,0 @@
-language: objective-c
-osx_image: xcode11
-rvm:
-  - 2.6
-script: "make ci"
-notifications:
-  email:
-    - soranoba@gmail.com
