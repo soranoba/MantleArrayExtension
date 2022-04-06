@@ -1,3 +1,6 @@
+**This repository has been archived.**  
+If you want to be a maintainer, please contact me an email.
+
 # MantleArrayExtension
 [![Build Status](https://github.com/soranoba/MantleArrayExtension/actions/workflows/ci.yml/badge.svg)](https://github.com/soranoba/MantleArrayExtension/actions?query=branch%3Amaster+workflow%3A"ci")
 [![Carthage compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
